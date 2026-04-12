@@ -598,7 +598,7 @@
         </div>
         <div class="chat-header-info">
           <div class="name">Consultor de Normativa ERSeP</div>
-          <div class="status">Base de conocimiento activa</div>
+          <div class="status">Decreto 254/03 · RG 41/26 · Activo</div>
         </div>
       </div>
 
@@ -613,7 +613,7 @@
           <div class="msg-bubble">
             ¡Hola! Soy el <strong>Consultor de Normativa ERSeP</strong>. Puedo responderte consultas sobre resoluciones, decretos y normativa interna del área tarifas citando la fuente exacta.<br><br>
             Escribí tu consulta y te respondo basándome exclusivamente en la base de conocimiento vigente.
-            <br><span class="norm-cite">⚠ Base de conocimiento en configuración</span>
+            <br><span class="norm-cite">📋 Decreto N° 254/03 · RG N° 41/26 · ERSeP</span>
           </div>
         </div>
       </div>
@@ -631,55 +631,251 @@
         </button>
       </div>
       <div class="upload-note">
-        📋 Normativa pendiente de carga · Contactar al administrador del sistema
+        📋 Base activa: Decreto 254/03 · Cargando más normativa próximamente
       </div>
     </div>
   </div>
 
   <script>
-    // ── Base de conocimiento normativa (se expande con los archivos reales) ──
+    // ── Base de conocimiento normativa · Decreto 254/03 · ERSeP ──
+    // Fuente: texto completo del Decreto N° 254/03 y normativa institucional ERSeP
+    // Última actualización: 2026-04-12 · Documentos procesados: 1
     const KNOWLEDGE_BASE = [
-      {
-        keywords: ["rg 41", "resolución 41", "resolución general 41", "rg41"],
-        respuesta: "La <strong>Resolución General N° 41/26</strong> establece el Cuadro Tarifario Vigente para el transporte público interurbano de la Provincia de Córdoba. Fija las tarifas máximas por tramo kilométrico autorizadas a las empresas concesionarias.",
-        cita: "RG ERSeP N° 41/26"
-      },
-      {
-        keywords: ["decreto 254", "dec 254", "polinómica", "formula polinomica", "fórmula polinómica"],
-        respuesta: "El <strong>Decreto N° 254</strong> establece la Fórmula Polinómica de ajuste tarifario para el transporte interurbano provincial. Define los componentes, índices y ponderaciones que integran el cálculo de variación de costos.",
-        cita: "Decreto Provincial N° 254"
-      },
-      {
-        keywords: ["os n1", "os n°1", "estructura de costos", "estructura costos"],
-        respuesta: "La <strong>Ordenanza de Servicio N° 1 (OS N°1)</strong> define la estructura de costos del transporte interurbano. Establece los ítems de costo, sus participaciones relativas y la metodología de cálculo tarifario base.",
-        cita: "OS N° 1 — Estructura de Costos"
-      },
-      {
-        keywords: ["ddjj", "declaracion jurada", "declaración jurada"],
-        respuesta: "Las <strong>Declaraciones Juradas (DDJJ)</strong> son presentadas periódicamente por las empresas concesionarias. Deben informar kilómetros recorridos, pasajeros transportados y recaudación. Su incumplimiento es pasible de sanción conforme al régimen regulatorio vigente.",
-        cita: "Marco Regulatorio ERSeP"
-      },
-      {
-        keywords: ["empresa", "empresas", "concesionaria", "concesionarias", "habilitada"],
-        respuesta: "Las empresas concesionarias del sistema de transporte interurbano provincial están habilitadas por el ERSeP. Para operar deben mantener al día: título habilitante, póliza de seguro, habilitación vehicular, y presentación de DDJJ. Cualquier modificación debe ser comunicada y aprobada.",
-        cita: "Ley Provincial de Transporte · ERSeP"
-      },
-      {
-        keywords: ["tarifa", "tarifas", "cuadro tarifario"],
-        respuesta: "El <strong>Cuadro Tarifario Vigente</strong> está establecido por la RG N° 41/26. Las tarifas se actualizan mediante la aplicación de la fórmula polinómica del Dec. 254 cuando los índices de costos superan el umbral de variación establecido. Las empresas no pueden cobrar tarifas superiores a las autorizadas.",
-        cita: "RG ERSeP N° 41/26 · Dec. 254"
-      },
-      {
-        keywords: ["desvío", "desvio", "incumplimiento", "sanción", "sancion", "exceso tarifario"],
-        respuesta: "Los <strong>desvíos tarifarios</strong> detectados por el sistema de monitoreo son comunicados a la empresa infractora mediante acta de constatación. Según la magnitud y reincidencia, se aplican apercibimientos, multas o suspensión del servicio, conforme al régimen sancionatorio del ERSeP.",
-        cita: "Régimen Sancionatorio ERSeP"
-      },
-      {
-        keywords: ["tramo", "tramos", "kilometro", "kilómetro", "distancia"],
-        respuesta: "Las tarifas se calculan por <strong>tramo kilométrico</strong>. Cada origen-destino tiene asignado un tramo que determina la tarifa máxima autorizada según el cuadro tarifario. El cálculo considera la distancia oficial habilitada por la autoridad de aplicación.",
-        cita: "RG ERSeP N° 41/26 — Anexo Tarifario"
-      }
-    ];
+  {
+    "id": "dto254_general",
+    "keywords": [
+      "decreto 254",
+      "dto 254",
+      "decreto 254/03",
+      "reglamento ley 8669",
+      "ley 8669"
+    ],
+    "titulo": "Decreto N° 254/03 — Reglamentario Ley N° 8669",
+    "respuesta": "El <strong>Decreto N° 254/03</strong> (B.O. 02-03/04/2003) reglamenta la Ley N° 8669 y su modificatoria N° 9034, que regula la Explotación del Servicio Público de Transporte en la Provincia de Córdoba. Consta de 57 artículos y 4 Anexos: Anexo A (Habilitación de vehículos), Anexo B (Pliego de condiciones para concesiones), Anexo C (Régimen de Penalidades) y Anexo D (Metodología para determinación de bases tarifarias). Fue modificado por los Decretos N° 42/08, N° 1940/09 y N° 44/15.",
+    "cita": "Decreto N° 254/03 — Reglamentario Ley N° 8669 y N° 9034"
+  },
+  {
+    "id": "dto254_tarifas_metodologia",
+    "keywords": [
+      "metodologia tarifaria",
+      "bases tarifarias",
+      "costo medio",
+      "formula tarifaria",
+      "calculo tarifa",
+      "cálculo tarifa",
+      "tarifa base",
+      "tarifa basica",
+      "tarifa básica"
+    ],
+    "titulo": "Metodología Tarifaria — Anexo D Decreto 254/03",
+    "respuesta": "El <strong>Anexo D del Decreto N° 254/03</strong> establece la Metodología para la determinación de bases tarifarias del autotransporte público de pasajeros. Las bases tarifarias consideran: los costos medios presupuestarios de las permisionarias, la cantidad de usuarios que abonan el boleto y las características de la vía. Las empresas se clasifican en: <br>• <strong>Metropolitanas</strong>: servicios en radio de hasta 60 km de la Ciudad de Córdoba.<br>• <strong>Rurales</strong>: servicios que superan los 60 km.<br>Los costos se dividen en cuatro categorías: A) Costos de personal, B) Costos variables del vehículo, C) Costos fijos del vehículo, D) Costos empresarios e impositivos.",
+    "cita": "Anexo D — Decreto N° 254/03 (mod. por Dec. N° 44/15)"
+  },
+  {
+    "id": "dto254_costos_personal",
+    "keywords": [
+      "costos personal",
+      "sueldo conductor",
+      "horas hombre",
+      "convenio colectivo",
+      "dotacion",
+      "dotación",
+      "personal conduccion",
+      "personal conducción"
+    ],
+    "titulo": "Costos de Personal — Anexo D Decreto 254/03",
+    "respuesta": "Los <strong>Costos Asociados al Personal</strong> (Componente A del Anexo D) comprenden: A.1 Horas hombre del personal de conducción, A.2 Horas extra, A.3 Personal de taller y administración, A.4 Cargas sociales, A.5 Seguro del personal, A.6 Viáticos, A.7 Indumentaria.<br>La dotación es de <strong>2,5 conductores/vehículo</strong> para empresas metropolitanas y <strong>3 conductores/vehículo</strong> para rurales. Las horas netas trabajadas son 192 hs/mes. El coeficiente de incidencia por días no trabajados es IL = 1,195 (47 días/año de vacaciones, feriados y enfermedad).",
+    "cita": "Anexo D, Punto I-A — Decreto N° 254/03"
+  },
+  {
+    "id": "dto254_penalidades_general",
+    "keywords": [
+      "penalidades",
+      "sanciones",
+      "infracciones",
+      "multa",
+      "apercibimiento",
+      "suspension",
+      "suspensión",
+      "caducidad",
+      "unidades de multa"
+    ],
+    "titulo": "Régimen de Penalidades — Anexo C Decreto 254/03",
+    "respuesta": "El <strong>Anexo C del Decreto N° 254/03</strong> establece que los concesionarios, permisionarios o autorizados serán sancionados con: <strong>apercibimiento, multa, suspensión, caducidad o inhabilitación</strong> cuando se constaten infracciones. Las sanciones se expresan en <strong>Unidades de Multa (U.M.)</strong>. Las infracciones se clasifican en: <br>A) Al Régimen de Concesiones/Permisos<br>B) A la Modalidad de Explotación<br>C) A las Condiciones Técnicas de los Vehículos<br>D) A las Obligaciones del Personal<br>E) Al Régimen Tarifario",
+    "cita": "Anexo C — Decreto N° 254/03"
+  },
+  {
+    "id": "dto254_penalidades_tarifario",
+    "keywords": [
+      "violacion tarifaria",
+      "violación tarifaria",
+      "cobro excesivo",
+      "exceso tarifa",
+      "infraccion tarifaria",
+      "infracción tarifaria",
+      "b3",
+      "regimen tarifario"
+    ],
+    "titulo": "Infracción Tarifaria — Penalidad B.3",
+    "respuesta": "La infracción <strong>B.3 del Anexo C</strong> del Decreto 254/03 establece: '<em>Violación del régimen tarifario autorizado</em>'. La sanción aplicable es multa con máximo de <strong>40 Unidades de Multa (40 U.M.)</strong>. Adicionalmente, la infracción B.4 sanciona la falta de emisión de boletos o pasajes sin adecuarse en forma y contenido (falta de mención del tipo de servicio, origen-destino, fecha, hora y tarifa cobrada), con multa máxima de 30 U.M.",
+    "cita": "Anexo C, Art. 1° B.3 y B.4 — Decreto N° 254/03"
+  },
+  {
+    "id": "dto254_penalidades_concesion",
+    "keywords": [
+      "transferencia concesion",
+      "cesion servicio",
+      "datos falsos",
+      "falta seguro",
+      "inicio servicio"
+    ],
+    "titulo": "Infracciones al Régimen de Concesiones — Anexo C",
+    "respuesta": "Las infracciones al Régimen de Concesiones (Grupo A, Anexo C Dec. 254/03) incluyen:<br>• <strong>A.1</strong> Falta de iniciación del servicio o abandono: hasta 40 U.M.<br>• <strong>A.2</strong> Falta de cobertura de seguros exigidos: hasta 40 U.M.<br>• <strong>A.3</strong> Falta de comunicación de modificaciones: hasta 10 U.M.<br>• <strong>A.4</strong> Transferencia o cesión sin autorización: hasta <strong>70 U.M.</strong> (la más grave de este grupo)<br>• <strong>A.5</strong> Presentación de datos falsos o con errores inexcusables: hasta 30 U.M.",
+    "cita": "Anexo C, Art. 1° A.1 a A.5 — Decreto N° 254/03"
+  },
+  {
+    "id": "dto254_habilitacion_vehiculos",
+    "keywords": [
+      "habilitacion vehiculo",
+      "habilitación vehículo",
+      "requisitos vehiculo",
+      "renovacion habilitacion",
+      "renovación habilitación",
+      "anexo a"
+    ],
+    "titulo": "Habilitación de Vehículos — Anexo A Decreto 254/03",
+    "respuesta": "El <strong>Anexo A del Decreto N° 254/03</strong> (modificado por Dec. N° 44/15 en su Cap. IV, Art. 34° Inc. 2) regula los requisitos para la habilitación de vehículos destinados al autotransporte de pasajeros. Los vehículos deben cumplir con condiciones técnicas y de seguridad establecidas conforme a la Ley N° 8560 (Tránsito y Seguridad Vial). Las empresas deben mantener la habilitación vigente y comunicar cualquier modificación en su parque móvil.",
+    "cita": "Anexo A — Decreto N° 254/03 (mod. Dec. N° 44/15)"
+  },
+  {
+    "id": "dto254_concesion_pliego",
+    "keywords": [
+      "pliego condiciones",
+      "concesion servicio",
+      "concesión servicio",
+      "adjudicacion",
+      "adjudicación",
+      "licitacion",
+      "licitación",
+      "posicion dominante",
+      "posición dominante"
+    ],
+    "titulo": "Pliego de Condiciones para Concesiones — Anexo B",
+    "respuesta": "El <strong>Anexo B del Decreto N° 254/03</strong> regula el Pliego de Condiciones Generales para otorgar la concesión del servicio público de autotransporte de pasajeros. Los concesionarios deben ser personas jurídicas regularmente constituidas. El Art. 8° establece que el otorgamiento de concesiones debe evitar conferir <strong>posición dominante en el mercado</strong>. Las sociedades deben tener un término de duración no inferior al plazo de la concesión.",
+    "cita": "Anexo B y Art. 8° — Decreto N° 254/03"
+  },
+  {
+    "id": "dto254_servicios_clasificacion",
+    "keywords": [
+      "servicio regular",
+      "servicio ejecutivo",
+      "servicio especial",
+      "servicio escolar",
+      "servicio obrero",
+      "tipos de servicio",
+      "clases de servicio",
+      "modalidad servicio"
+    ],
+    "titulo": "Clasificación de Servicios de Transporte — Decreto 254/03",
+    "respuesta": "El Decreto N° 254/03 clasifica los servicios de autotransporte de pasajeros en:<br>• <strong>Regular</strong>: corredores determinados, recorridos, paradas, horarios y frecuencias autorizadas. Solo personas jurídicas.<br>• <strong>Ejecutivo</strong>: condiciones especiales de confort. Solo personas jurídicas.<br>• <strong>Especial</strong>: puede ser persona física o jurídica.<br>• <strong>Obrero y Escolar</strong>: personas físicas o jurídicas.<br>• <strong>Turismo</strong>: personas físicas o jurídicas.<br>• <strong>Remises</strong>: personas físicas o jurídicas.<br>Los servicios regulares y ejecutivos tienen requisitos técnicos más estrictos.",
+    "cita": "Art. 7° y 9° — Decreto N° 254/03"
+  },
+  {
+    "id": "dto254_empresas_metropolitanas_rurales",
+    "keywords": [
+      "empresa metropolitana",
+      "empresa rural",
+      "60 km",
+      "radio metropolitano",
+      "rural",
+      "categorias empresa",
+      "categorías empresa"
+    ],
+    "titulo": "Categorías de Empresas: Metropolitanas y Rurales",
+    "respuesta": "El <strong>Anexo D del Decreto N° 254/03</strong> establece dos categorías de empresas a efectos del cálculo tarifario:<br>• <strong>Empresas Metropolitanas</strong>: prestan servicios en un radio aproximado de <strong>60 km</strong> de la Ciudad de Córdoba. Dotación: 2,5 conductores/vehículo.<br>• <strong>Empresas Rurales</strong>: realizan servicios que superan los 60 km. Dotación: 3 conductores/vehículo.<br>Los parámetros de cálculo de costos (kilometraje, dotación, coeficientes ITD) difieren según la categoría.",
+    "cita": "Anexo D, Parámetros Generales — Decreto N° 254/03"
+  },
+  {
+    "id": "rg41_general",
+    "keywords": [
+      "rg 41",
+      "resolución 41",
+      "rg41",
+      "rg 41/26",
+      "cuadro tarifario vigente",
+      "cuadro tarifario 2026"
+    ],
+    "titulo": "Resolución General N° 41/26 — Cuadro Tarifario Vigente",
+    "respuesta": "La <strong>Resolución General N° 41/26</strong> del ERSeP establece el Cuadro Tarifario Vigente para el transporte público interurbano de la Provincia de Córdoba. Fija las tarifas máximas autorizadas por tramo kilométrico para las empresas concesionarias. Las empresas no pueden cobrar tarifas superiores a las establecidas en este cuadro. Cualquier desvío es pasible de sanción conforme al Régimen de Penalidades del Anexo C del Decreto N° 254/03.",
+    "cita": "RG ERSeP N° 41/26"
+  },
+  {
+    "id": "ddjj_obligacion",
+    "keywords": [
+      "ddjj",
+      "declaracion jurada",
+      "declaración jurada",
+      "obligacion ddjj",
+      "presentacion ddjj",
+      "vencimiento ddjj"
+    ],
+    "titulo": "Declaraciones Juradas — Obligación de las Empresas",
+    "respuesta": "Las <strong>Declaraciones Juradas (DDJJ)</strong> son presentadas periódicamente por las empresas concesionarias ante el ERSeP. Deben informar: kilómetros recorridos, pasajeros transportados y recaudación por período. La falta de presentación o la presentación con datos falsos es pasible de sanción conforme al Régimen de Penalidades (infracción A.5: hasta 30 U.M. por datos falsos o con errores inexcusables).",
+    "cita": "Marco Regulatorio ERSeP · Anexo C Art. 1° A.5 — Decreto N° 254/03"
+  },
+  {
+    "id": "terminales_andenes",
+    "keywords": [
+      "terminal",
+      "terminales",
+      "anden",
+      "andén",
+      "andenes",
+      "parador",
+      "boleterías",
+      "canon"
+    ],
+    "titulo": "Estaciones Terminales y Paradores — Art. 4° Decreto 254/03",
+    "respuesta": "El <strong>Art. 4° del Decreto N° 254/03</strong> establece que la Dirección de Transporte creará el Registro de Estaciones Terminales y Paradores. Los valores de canon de boleterías, depósitos y espacios ocupados deben ser autorizados por la Dirección de Transporte y no pueden superar los valores establecidos en la Terminal de Ómnibus de la Ciudad de Córdoba por metro cuadrado. <strong>El uso de andenes y plataformas es gratuito para las empresas provinciales.</strong>",
+    "cita": "Art. 4° — Decreto N° 254/03"
+  },
+  {
+    "id": "decreto44_15",
+    "keywords": [
+      "decreto 44/15",
+      "dec 44",
+      "44/15",
+      "modificacion 2015"
+    ],
+    "titulo": "Decreto N° 44/15 — Modificación Decreto 254/03",
+    "respuesta": "El <strong>Decreto N° 44/15</strong> (B.O. 11/02/2015) modificó el Decreto N° 254/03 en dos aspectos: 1) El Anexo A, Capítulo IV, Art. 34° Inc. 2 (requisitos de habilitación de vehículos) y 2) El Anexo D, Punto III (metodología tarifaria — parámetros generales). Esta modificación actualizó los parámetros de cálculo de la fórmula polinómica tarifaria.",
+    "cita": "Decreto N° 44/15 (B.O. 11/02/2015)"
+  },
+  {
+    "id": "decreto1940_09",
+    "keywords": [
+      "decreto 1940",
+      "1940/09",
+      "modificacion 2009",
+      "decreto 919"
+    ],
+    "titulo": "Decretos N° 1940/09 y N° 919/11 — Modificaciones Tarifarias",
+    "respuesta": "<strong>Decreto N° 1940/09</strong> (B.O. 01/02/2010): Modificó el Anexo D del Dec. 254/03 en los Parámetros Generales Punto I (punto B), Punto II y Punto III, e incorporó una cláusula transitoria.<br><strong>Decreto N° 42/08</strong> (B.O. 22/01/2008): Modificó el Anexo D Parámetros Generales Punto I, punto A.<br><strong>Decreto N° 919/11</strong> (B.O. 29/06/2011): Autorizó aplicar un incremento a la tarifa básica kilométrica a las prestatarias del servicio público de transporte de pasajeros de la Provincia de Córdoba.",
+    "cita": "Dec. N° 42/08 · Dec. N° 1940/09 · Dec. N° 919/11"
+  },
+  {
+    "id": "ley8669",
+    "keywords": [
+      "ley 8669",
+      "ley 9034",
+      "ley transporte",
+      "ley provincial transporte"
+    ],
+    "titulo": "Ley N° 8669 — Explotación del Servicio Público de Transporte",
+    "respuesta": "La <strong>Ley N° 8669</strong> (y su modificatoria N° 9034) regula la Explotación del Servicio Público de Transporte en la Provincia de Córdoba. Reemplazó a la anterior Ley N° 3963. Es la norma madre del sistema de transporte interurbano provincial. Su reglamentación está aprobada por el Decreto N° 254/03. El ERSeP actúa como Ente Regulador en el marco de esta ley.",
+    "cita": "Ley Provincial N° 8669 y modificatoria N° 9034"
+  }
+];
 
     function toggleChat() {
       const bubble = document.getElementById('chat-bubble');
@@ -771,7 +967,7 @@
         if (match) {
           addMsg(`${match.respuesta}<br><span class="norm-cite">📋 ${match.cita}</span>`, 'bot');
         } else {
-          addMsg('No encontré información específica sobre esa consulta en la base de conocimiento actual. Una vez que se cargue la normativa completa podré responderte con mayor precisión.<br><span class="norm-cite">⚠ Base de conocimiento en configuración</span>', 'bot');
+          addMsg('No encontré información específica sobre esa consulta en la base de conocimiento actual. Una vez que se cargue la normativa completa podré responderte con mayor precisión.<br><span class="norm-cite">📋 Decreto N° 254/03 · RG N° 41/26 · ERSeP</span>', 'bot');
         }
       }, 900 + Math.random() * 400);
     }
