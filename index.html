@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ERSeP · Gerencia de Transporte · Área Tarifas</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(ellipse at 60% 30%, #1a4080 0%, #0d2550 40%, #07152e 100%);
+      color: #fff;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Subtle animated orbs */
+    body::before {
+      content: '';
+      position: absolute;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 70%);
+      top: -100px; right: -100px;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    body::after {
+      content: '';
+      position: absolute;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(100,180,255,0.10) 0%, transparent 70%);
+      bottom: -80px; left: -80px;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .container {
+      text-align: center;
+      z-index: 1;
+      padding: 2rem;
+      animation: fadeIn 0.8s ease both;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Logo card */
+    .logo-card {
+      display: inline-block;
+      background: #fff;
+      border-radius: 18px;
+      padding: 18px 28px 14px;
+      margin-bottom: 2.2rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+    }
+
+    .logo-card svg { display: block; }
+
+    /* Department label */
+    .dept {
+      font-size: 0.72rem;
+      letter-spacing: 0.25em;
+      color: #a0c4f8;
+      text-transform: uppercase;
+      margin-bottom: 1.1rem;
+      font-weight: 400;
+    }
+
+    /* Main title */
+    h1 {
+      font-size: clamp(1.9rem, 5vw, 3.1rem);
+      font-weight: 800;
+      line-height: 1.18;
+      max-width: 680px;
+      margin: 0 auto 0.5rem;
+    }
+    h1 span { color: #5badff; }
+
+    /* Subtitle */
+    .subtitle {
+      font-size: 0.78rem;
+      letter-spacing: 0.18em;
+      color: #8ab8e8;
+      text-transform: uppercase;
+      margin-bottom: 2.8rem;
+      font-weight: 400;
+    }
+
+    /* INGRESAR button */
+    .btn-ingresar {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 50px;
+      padding: 1rem 2.8rem;
+      cursor: pointer;
+      box-shadow: 0 4px 24px rgba(59,130,246,0.45);
+      text-decoration: none;
+      transition: transform 0.18s, box-shadow 0.18s, background 0.18s;
+    }
+    .btn-ingresar:hover {
+      background: linear-gradient(135deg, #60a5fa, #3b82f6);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(59,130,246,0.55);
+    }
+    .btn-ingresar svg { flex-shrink: 0; }
+
+    /* Footer */
+    footer {
+      position: absolute;
+      bottom: 1.2rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: #4a7aad;
+      text-transform: uppercase;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- ERSeP Logo Card -->
+    <div class="logo-card">
+      <svg width="160" height="64" viewBox="0 0 160 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- ERSeP text -->
+        <text x="14" y="38" font-family="Arial Black, Arial" font-weight="900" font-size="30" fill="#c0392b" letter-spacing="-1">ER</text>
+        <text x="72" y="38" font-family="Arial Black, Arial" font-weight="900" font-size="30" fill="#2980b9">Se</text>
+        <text x="118" y="38" font-family="Arial Black, Arial" font-weight="900" font-size="30" fill="#c0392b">P</text>
+        <!-- Colored bar below -->
+        <rect x="14" y="46" width="28" height="4" rx="2" fill="#e74c3c"/>
+        <rect x="44" y="46" width="28" height="4" rx="2" fill="#f39c12"/>
+        <rect x="74" y="46" width="28" height="4" rx="2" fill="#27ae60"/>
+        <rect x="104" y="46" width="28" height="4" rx="2" fill="#3498db"/>
+        <!-- Subtitle below logo -->
+        <text x="80" y="60" font-family="Arial, sans-serif" font-size="6.5" fill="#666" text-anchor="middle" letter-spacing="0.5">ENTE REGULADOR DE LOS SERVICIOS PÚBLICOS</text>
+      </svg>
+    </div>
+
+    <p class="dept">Gerencia de Transporte</p>
+
+    <h1>Tarifas del Transporte Interurbano<br>de la Provincia de <span>Córdoba</span></h1>
+
+    <p class="subtitle">Sistema Intranet · Área Tarifas &nbsp;·&nbsp; RG 41/26</p>
+
+    <a href="panel.html" class="btn-ingresar">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+        <polyline points="10 17 15 12 10 7"/>
+        <line x1="15" y1="12" x2="3" y2="12"/>
+      </svg>
+      Ingresar
+    </a>
+  </div>
+
+  <footer>ERSeP &nbsp;·&nbsp; Ente Regulador de los Servicios Públicos &nbsp;·&nbsp; Provincia de Córdoba</footer>
+
+</body>
+</html>
