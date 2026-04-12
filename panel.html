@@ -6,7 +6,6 @@
   <title>Panel Principal · ERSeP Tarifas</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
@@ -18,7 +17,7 @@
 
     /* ── HEADER ── */
     header {
-      background: rgba(7, 26, 56, 0.85);
+      background: rgba(7,26,56,0.85);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border-bottom: 1px solid rgba(255,255,255,0.08);
@@ -32,7 +31,6 @@
       z-index: 100;
       box-shadow: 0 2px 24px rgba(0,0,0,0.4);
     }
-
     header::after {
       content: '';
       position: absolute;
@@ -40,91 +38,37 @@
       height: 3px;
       background: linear-gradient(90deg, #c0392b 0%, #e67e22 25%, #27ae60 50%, #2980b9 75%, #7f8c8d 100%);
     }
-
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
+    .header-left { display: flex; align-items: center; gap: 1rem; }
     .header-logo-wrap {
       background: rgba(255,255,255,0.96);
       border-radius: 10px;
       padding: 6px 10px 5px;
       box-shadow: 0 2px 12px rgba(0,0,0,0.3);
     }
-    .header-logo-wrap img {
-      height: 42px;
-      width: auto;
-      display: block;
-      object-fit: contain;
-    }
-
-    .header-info {
-      border-left: 1px solid rgba(255,255,255,0.15);
-      padding-left: 1rem;
-    }
+    .header-logo-wrap img { height: 42px; width: auto; display: block; object-fit: contain; }
+    .header-info { border-left: 1px solid rgba(255,255,255,0.15); padding-left: 1rem; }
     .header-info .title { font-size: 0.93rem; font-weight: 700; color: #fff; }
-    .header-info .sub   { font-size: 0.65rem; letter-spacing: 0.1em; color: #7ab3e0; text-transform: uppercase; margin-top: 2px; }
-
-    .header-right { display: flex; align-items: center; gap: 1rem; }
-
-    .badge {
-      background: rgba(255,255,255,0.10);
-      border: 1px solid rgba(255,255,255,0.18);
-      color: rgba(255,255,255,0.80);
-      font-size: 0.68rem;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      padding: 5px 14px;
-      border-radius: 20px;
-    }
-
+    .header-info .sub { font-size: 0.65rem; letter-spacing: 0.1em; color: #7ab3e0; text-transform: uppercase; margin-top: 2px; }
     .btn-back {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      color: rgba(255,255,255,0.55);
-      font-size: 0.78rem;
-      font-weight: 500;
-      text-decoration: none;
-      padding: 7px 16px;
-      border-radius: 8px;
-      border: 1px solid rgba(255,255,255,0.15);
-      transition: all 0.2s;
+      display: inline-flex; align-items: center; gap: 6px;
+      color: rgba(255,255,255,0.55); font-size: 0.78rem; font-weight: 500;
+      text-decoration: none; padding: 7px 16px; border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.15); transition: all 0.2s;
     }
-    .btn-back:hover {
-      color: #fff;
-      border-color: rgba(255,255,255,0.35);
-      background: rgba(255,255,255,0.07);
-    }
+    .btn-back:hover { color: #fff; border-color: rgba(255,255,255,0.35); background: rgba(255,255,255,0.07); }
 
-    /* ── HERO BAND ── */
+    /* ── HERO ── */
     .hero-band {
-      padding: 2.5rem 2.5rem 2rem;
-      position: relative;
-      overflow: hidden;
+      padding: 2.5rem 2.5rem 1.5rem;
       max-width: 1200px;
       margin: 0 auto;
     }
     .hero-band h2 {
-      font-size: 1.5rem;
-      font-weight: 800;
-      color: #fff;
-      margin-bottom: 0.3rem;
-      letter-spacing: -0.01em;
-    }
-    .hero-band p {
-      font-size: 0.82rem;
-      color: rgba(255,255,255,0.45);
+      font-size: 1.5rem; font-weight: 800; color: #fff; letter-spacing: -0.01em;
     }
 
     /* ── MAIN ── */
-    main {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 2.5rem 4rem;
-    }
+    main { max-width: 1200px; margin: 0 auto; padding: 0 2.5rem 6rem; }
 
     /* ── GRID ── */
     .tools-grid {
@@ -139,45 +83,28 @@
       border: 1px solid rgba(255,255,255,0.10);
       border-radius: 20px;
       padding: 1.8rem 1.8rem 1.5rem;
-      text-decoration: none;
-      color: inherit;
-      display: flex;
-      flex-direction: column;
+      text-decoration: none; color: inherit;
+      display: flex; flex-direction: column;
       transition: transform 0.22s cubic-bezier(0.22,1,0.36,1),
                   box-shadow 0.22s cubic-bezier(0.22,1,0.36,1),
-                  background 0.22s,
-                  border-color 0.22s;
+                  background 0.22s, border-color 0.22s;
       animation: cardIn 0.45s ease both;
-      position: relative;
-      overflow: hidden;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+      position: relative; overflow: hidden;
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
     }
-
-    /* Gradient top-border glow on hover */
     .tool-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 10%; right: 10%;
-      height: 1px;
+      content: ''; position: absolute;
+      top: 0; left: 10%; right: 10%; height: 1px;
       background: linear-gradient(90deg, transparent, var(--c1), transparent);
-      opacity: 0;
-      transition: opacity 0.3s;
+      opacity: 0; transition: opacity 0.3s;
     }
-
-    /* Accent glow blob */
     .tool-card::after {
-      content: '';
-      position: absolute;
+      content: ''; position: absolute;
       width: 200px; height: 200px;
       background: radial-gradient(circle, var(--c1) 0%, transparent 70%);
-      opacity: 0;
-      top: -60px; right: -60px;
-      border-radius: 50%;
-      transition: opacity 0.3s;
-      pointer-events: none;
+      opacity: 0; top: -60px; right: -60px;
+      border-radius: 50%; transition: opacity 0.3s; pointer-events: none;
     }
-
     .tool-card:hover {
       transform: translateY(-5px);
       background: rgba(255,255,255,0.10);
@@ -186,87 +113,39 @@
     }
     .tool-card:hover::before { opacity: 1; }
     .tool-card:hover::after  { opacity: 0.07; }
-
     .card-content { position: relative; z-index: 1; display: flex; flex-direction: column; height: 100%; }
-
-    .card-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-bottom: 1.1rem;
-    }
-
+    .card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.1rem; }
     .card-icon {
-      width: 56px; height: 56px;
-      border-radius: 16px;
+      width: 56px; height: 56px; border-radius: 16px;
       background: linear-gradient(135deg, var(--c1), var(--c2));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 6px 20px var(--shadow);
-      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 6px 20px var(--shadow); flex-shrink: 0;
     }
     .card-icon svg { color: #fff; }
-
     .card-tag {
-      font-size: 0.62rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--c1);
-      background: rgba(255,255,255,0.08);
-      padding: 4px 11px;
-      border-radius: 20px;
-      border: 1px solid rgba(255,255,255,0.12);
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--c1);
+      background: rgba(255,255,255,0.08); padding: 4px 11px;
+      border-radius: 20px; border: 1px solid rgba(255,255,255,0.12);
     }
-
-    .card-title {
-      font-size: 1rem;
-      font-weight: 700;
-      color: #f0f6ff;
-      margin-bottom: 0.55rem;
-      line-height: 1.3;
-    }
-
-    .card-desc {
-      font-size: 0.79rem;
-      color: rgba(255,255,255,0.45);
-      line-height: 1.65;
-      flex: 1;
-    }
-
+    .card-title { font-size: 1rem; font-weight: 700; color: #f0f6ff; margin-bottom: 0.55rem; line-height: 1.3; }
+    .card-desc { font-size: 0.79rem; color: rgba(255,255,255,0.45); line-height: 1.65; flex: 1; }
     .card-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 1.3rem;
-      padding-top: 1rem;
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 1.3rem; padding-top: 1rem;
       border-top: 1px solid rgba(255,255,255,0.07);
     }
-
-    .card-footer-label {
-      font-size: 0.67rem;
-      color: rgba(255,255,255,0.25);
-      font-weight: 500;
-    }
-
+    .card-footer-label { font-size: 0.67rem; color: rgba(255,255,255,0.25); font-weight: 500; }
     .card-arrow {
-      width: 30px; height: 30px;
-      border-radius: 50%;
+      width: 30px; height: 30px; border-radius: 50%;
       background: rgba(255,255,255,0.07);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       transition: background 0.2s, transform 0.2s;
     }
-    .tool-card:hover .card-arrow {
-      background: var(--c1);
-      transform: translateX(2px);
-    }
+    .tool-card:hover .card-arrow { background: var(--c1); transform: translateX(2px); }
     .card-arrow svg { color: rgba(255,255,255,0.4); transition: color 0.2s; }
     .tool-card:hover .card-arrow svg { color: #fff; }
 
-    /* Stagger */
     .tool-card:nth-child(1) { animation-delay: 0.04s; }
     .tool-card:nth-child(2) { animation-delay: 0.09s; }
     .tool-card:nth-child(3) { animation-delay: 0.14s; }
@@ -279,22 +158,229 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ── FOOTER ── */
     footer {
-      text-align: center;
-      padding: 1.8rem;
-      font-size: 0.63rem;
-      letter-spacing: 0.12em;
-      color: rgba(255,255,255,0.18);
-      text-transform: uppercase;
+      text-align: center; padding: 1.8rem;
+      font-size: 0.63rem; letter-spacing: 0.12em;
+      color: rgba(255,255,255,0.18); text-transform: uppercase;
       border-top: 1px solid rgba(255,255,255,0.06);
     }
 
     @media (max-width: 640px) {
       .tools-grid { grid-template-columns: 1fr; }
       main, .hero-band { padding-left: 1.2rem; padding-right: 1.2rem; }
-      .badge { display: none; }
       header { padding: 0 1rem; }
+    }
+
+    /* ══════════════════════════════════════
+       ASISTENTE FLOTANTE
+    ══════════════════════════════════════ */
+    #chat-bubble {
+      position: fixed; bottom: 28px; right: 28px; z-index: 9999;
+    }
+
+    /* Botón circular */
+    #chat-toggle {
+      width: 62px; height: 62px; border-radius: 50%;
+      background: linear-gradient(135deg, #1a5ba8, #0d3870);
+      border: none; cursor: pointer;
+      box-shadow: 0 6px 28px rgba(13,56,112,0.55);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+    }
+    #chat-toggle:hover {
+      transform: scale(1.08);
+      box-shadow: 0 10px 36px rgba(13,56,112,0.65);
+    }
+    #chat-toggle svg { color: #fff; transition: opacity 0.2s; }
+    #chat-toggle .icon-close { position: absolute; opacity: 0; }
+    #chat-toggle .icon-open  { opacity: 1; }
+    #chat-toggle.open .icon-close { opacity: 1; }
+    #chat-toggle.open .icon-open  { opacity: 0; }
+
+    /* Pulso animado */
+    #chat-toggle::before {
+      content: '';
+      position: absolute; inset: -4px;
+      border-radius: 50%;
+      background: rgba(59,130,246,0.25);
+      animation: pulse 2.5s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.6; }
+      50%       { transform: scale(1.18); opacity: 0; }
+    }
+
+    /* Tooltip label */
+    #chat-label {
+      position: absolute; right: 72px; top: 50%;
+      transform: translateY(-50%);
+      background: rgba(7,26,56,0.92);
+      color: #fff; font-size: 0.72rem; font-weight: 600;
+      white-space: nowrap; padding: 6px 12px;
+      border-radius: 8px; border: 1px solid rgba(255,255,255,0.12);
+      pointer-events: none;
+      opacity: 1; transition: opacity 0.3s;
+    }
+    #chat-label::after {
+      content: '';
+      position: absolute; top: 50%; right: -6px;
+      transform: translateY(-50%);
+      border: 6px solid transparent;
+      border-left-color: rgba(7,26,56,0.92);
+      border-right: 0;
+    }
+    #chat-bubble.chat-open #chat-label { opacity: 0; pointer-events: none; }
+
+    /* Panel del chat */
+    #chat-panel {
+      position: absolute; bottom: 76px; right: 0;
+      width: 380px; max-height: 520px;
+      background: linear-gradient(160deg, #0e2a50 0%, #071830 100%);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+      display: flex; flex-direction: column;
+      overflow: hidden;
+      transform: scale(0.85) translateY(20px);
+      transform-origin: bottom right;
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 0.28s cubic-bezier(0.22,1,0.36,1), opacity 0.22s;
+    }
+    #chat-panel.open {
+      transform: scale(1) translateY(0);
+      opacity: 1; pointer-events: all;
+    }
+
+    /* Header del chat */
+    .chat-header {
+      padding: 1rem 1.2rem 0.9rem;
+      background: rgba(255,255,255,0.05);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .chat-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: linear-gradient(135deg, #1a5ba8, #0d3870);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 2px 10px rgba(13,56,112,0.5);
+    }
+    .chat-header-info .name { font-size: 0.88rem; font-weight: 700; color: #fff; }
+    .chat-header-info .status {
+      font-size: 0.65rem; color: #4ade80;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .chat-header-info .status::before {
+      content: ''; width: 6px; height: 6px;
+      background: #4ade80; border-radius: 50%;
+      display: inline-block;
+      animation: blink 2s ease-in-out infinite;
+    }
+    @keyframes blink {
+      0%,100% { opacity: 1; } 50% { opacity: 0.3; }
+    }
+
+    /* Mensajes */
+    #chat-messages {
+      flex: 1; overflow-y: auto; padding: 1rem;
+      display: flex; flex-direction: column; gap: 0.75rem;
+      scroll-behavior: smooth;
+    }
+    #chat-messages::-webkit-scrollbar { width: 4px; }
+    #chat-messages::-webkit-scrollbar-track { background: transparent; }
+    #chat-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+
+    .msg { display: flex; gap: 0.5rem; align-items: flex-end; }
+    .msg.bot { justify-content: flex-start; }
+    .msg.user { justify-content: flex-end; }
+
+    .msg-avatar {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: linear-gradient(135deg, #1a5ba8, #0d3870);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-bottom: 2px;
+    }
+
+    .msg-bubble {
+      max-width: 80%; padding: 0.7rem 0.95rem;
+      border-radius: 16px; font-size: 0.8rem; line-height: 1.55;
+    }
+    .msg.bot .msg-bubble {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.10);
+      color: #d0e8ff; border-bottom-left-radius: 4px;
+    }
+    .msg.user .msg-bubble {
+      background: linear-gradient(135deg, #1a5ba8, #0d3870);
+      color: #fff; border-bottom-right-radius: 4px;
+      box-shadow: 0 3px 12px rgba(13,56,112,0.4);
+    }
+
+    /* Cita normativa */
+    .norm-cite {
+      display: inline-block; margin-top: 0.4rem;
+      font-size: 0.68rem; font-weight: 600;
+      background: rgba(59,130,246,0.15);
+      border: 1px solid rgba(59,130,246,0.3);
+      color: #93c5fd; padding: 2px 8px; border-radius: 6px;
+    }
+
+    /* Typing indicator */
+    .typing-dots { display: flex; gap: 4px; padding: 2px 4px; }
+    .typing-dots span {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: rgba(255,255,255,0.4);
+      animation: dot 1.2s ease-in-out infinite;
+    }
+    .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes dot {
+      0%,60%,100% { transform: translateY(0); opacity: 0.4; }
+      30% { transform: translateY(-6px); opacity: 1; }
+    }
+
+    /* Input */
+    .chat-input-area {
+      padding: 0.8rem 1rem;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      display: flex; gap: 0.5rem; align-items: flex-end;
+    }
+    #chat-input {
+      flex: 1; background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px; color: #fff;
+      font-family: 'Inter', sans-serif; font-size: 0.8rem;
+      padding: 0.65rem 0.9rem; resize: none; outline: none;
+      max-height: 90px; line-height: 1.4;
+      transition: border-color 0.2s;
+    }
+    #chat-input::placeholder { color: rgba(255,255,255,0.3); }
+    #chat-input:focus { border-color: rgba(59,130,246,0.5); }
+    #chat-send {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: linear-gradient(135deg, #1a5ba8, #0d3870);
+      border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.15s, box-shadow 0.15s;
+      flex-shrink: 0;
+      box-shadow: 0 2px 10px rgba(13,56,112,0.4);
+    }
+    #chat-send:hover { transform: scale(1.08); box-shadow: 0 4px 14px rgba(13,56,112,0.55); }
+    #chat-send svg { color: #fff; }
+
+    /* Nota de carga de normativa */
+    .upload-note {
+      padding: 0.6rem 1rem;
+      background: rgba(245,158,11,0.08);
+      border-top: 1px solid rgba(245,158,11,0.15);
+      font-size: 0.65rem; color: rgba(245,158,11,0.7);
+      text-align: center; line-height: 1.4;
+    }
+
+    @media (max-width: 480px) {
+      #chat-panel { width: calc(100vw - 40px); right: -10px; }
     }
   </style>
 </head>
@@ -311,23 +397,19 @@
         <div class="sub">Gerencia de Transporte · ERSeP</div>
       </div>
     </div>
-    <div class="header-right">
-      <span class="badge">RG 41/26 · Vigente</span>
-      <a href="index.html" class="btn-back">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-          <polyline points="16 17 21 12 16 7"/>
-          <line x1="21" y1="12" x2="9" y2="12"/>
-        </svg>
-        Salir
-      </a>
-    </div>
+    <a href="index.html" class="btn-back">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+        <polyline points="16 17 21 12 16 7"/>
+        <line x1="21" y1="12" x2="9" y2="12"/>
+      </svg>
+      Salir
+    </a>
   </header>
 
   <!-- HERO -->
   <div class="hero-band">
     <h2>Herramientas de Trabajo</h2>
-    <p>Seleccioná una sección para comenzar · Sistema Intranet · Cuadro Tarifario RG 41/26</p>
   </div>
 
   <!-- MAIN -->
@@ -340,12 +422,10 @@
         <div class="card-content">
           <div class="card-top">
             <div class="card-icon">
-              <!-- Calculator / formula icon -->
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="4" y="2" width="16" height="20" rx="2"/>
                 <path d="M8 6h8M8 10h8M8 14h4"/>
-                <circle cx="15" cy="17" r="2"/>
-                <path d="M17 15l1.5-1.5"/>
+                <circle cx="15" cy="17" r="2"/><path d="M17 15l1.5-1.5"/>
               </svg>
             </div>
             <span class="card-tag">Costos y Tarifas</span>
@@ -354,9 +434,7 @@
           <div class="card-desc">Cálculo tarifario mediante Estructura de Costos OS N°1 y Fórmula Polinómica del Dec. 254. Determina tarifas técnicas y máximas por línea y tramo en el transporte interurbano provincial.</div>
           <div class="card-footer">
             <span class="card-footer-label">OS N°1 · Dec. 254 · Polinómica</span>
-            <div class="card-arrow">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-            </div>
+            <div class="card-arrow"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
           </div>
         </div>
       </a>
@@ -367,14 +445,12 @@
         <div class="card-content">
           <div class="card-top">
             <div class="card-icon">
-              <!-- AI / bot icon -->
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M12 2a2 2 0 0 1 2 2v1h2a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V8a3 3 0 0 1 3-3h2V4a2 2 0 0 1 2-2z"/>
                 <circle cx="9" cy="12" r="1" fill="currentColor" stroke="none"/>
                 <circle cx="15" cy="12" r="1" fill="currentColor" stroke="none"/>
                 <path d="M9 16c.83.65 2.17 1 3 1s2.17-.35 3-1"/>
-                <line x1="8" y1="5" x2="8" y2="2"/>
-                <line x1="16" y1="5" x2="16" y2="2"/>
+                <line x1="8" y1="5" x2="8" y2="2"/><line x1="16" y1="5" x2="16" y2="2"/>
               </svg>
             </div>
             <span class="card-tag">Asistente IA</span>
@@ -383,9 +459,7 @@
           <div class="card-desc">Asistente de inteligencia artificial entrenado sobre la Resolución General 41/26. Responde consultas sobre cuadros tarifarios, tramos, empresas habilitadas y normativa vigente en lenguaje natural.</div>
           <div class="card-footer">
             <span class="card-footer-label">IA · RG 41/26 · Consultas automáticas</span>
-            <div class="card-arrow">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-            </div>
+            <div class="card-arrow"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
           </div>
         </div>
       </a>
@@ -396,7 +470,6 @@
         <div class="card-content">
           <div class="card-top">
             <div class="card-icon">
-              <!-- Radar / monitoring icon -->
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="2"/>
                 <path d="M12 2a10 10 0 0 1 10 10"/>
@@ -408,23 +481,20 @@
             <span class="card-tag">Monitoreo</span>
           </div>
           <div class="card-title">Tablero de Control Tarifario</div>
-          <div class="card-desc">Monitoreo en tiempo real de las tarifas efectivamente cobradas por las empresas. Detecta desvíos respecto al cuadro tarifario vigente, emite alertas por incumplimientos y genera reportes de fiscalización.</div>
+          <div class="card-desc">Monitoreo en tiempo real de las tarifas efectivamente cobradas por las empresas. Detecta desvíos respecto al cuadro vigente, emite alertas por incumplimientos y genera reportes de fiscalización.</div>
           <div class="card-footer">
             <span class="card-footer-label">Tiempo real · Alertas · Fiscalización</span>
-            <div class="card-arrow">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-            </div>
+            <div class="card-arrow"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
           </div>
         </div>
       </a>
 
-      <!-- 4. Tablero de Evolución General del Sistema -->
+      <!-- 4. Tablero de Evolución General -->
       <a href="TABLERO_FACTURACION_KM_PAX_2026.html" class="tool-card"
          style="--c1:#10b981; --c2:#059669; --shadow:rgba(16,185,129,0.28);">
         <div class="card-content">
           <div class="card-top">
             <div class="card-icon">
-              <!-- Trend / evolution chart icon -->
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
                 <polyline points="16 7 22 7 22 13"/>
@@ -436,10 +506,8 @@
           <div class="card-title">Tablero de Evolución General del Sistema</div>
           <div class="card-desc">Análisis histórico y evolutivo del sistema de transporte interurbano. Seguimiento de facturación, kilómetros recorridos, pasajeros transportados y variación tarifaria a lo largo del ejercicio 2026.</div>
           <div class="card-footer">
-            <span class="card-footer-label">Facturación · Km · PAX · Evolución 2026</span>
-            <div class="card-arrow">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-            </div>
+            <span class="card-footer-label">Facturación · Km · PAX · 2026</span>
+            <div class="card-arrow"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
           </div>
         </div>
       </a>
@@ -450,37 +518,31 @@
         <div class="card-content">
           <div class="card-top">
             <div class="card-icon">
-              <!-- Bus / passengers icon -->
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="2" y="5" width="20" height="13" rx="2"/>
-                <path d="M2 10h20"/>
-                <path d="M7 18v2M17 18v2"/>
+                <path d="M2 10h20M7 18v2M17 18v2"/>
                 <circle cx="7" cy="14" r="1" fill="currentColor" stroke="none"/>
                 <circle cx="12" cy="14" r="1" fill="currentColor" stroke="none"/>
                 <circle cx="17" cy="14" r="1" fill="currentColor" stroke="none"/>
-                <path d="M2 10V7a2 2 0 0 1 2-2"/>
               </svg>
             </div>
             <span class="card-tag">Calculadora</span>
           </div>
           <div class="card-title">Calculadora de Pasajeros</div>
-          <div class="card-desc">Estimación de demanda y flujo de pasajeros por línea, ramal y tramo. Herramienta de apoyo para análisis tarifario, rentabilidad y cálculo de compensaciones según categoría de servicio.</div>
+          <div class="card-desc">Estimación de demanda y flujo de pasajeros por línea, ramal y tramo. Apoyo para análisis tarifario, rentabilidad y cálculo de compensaciones según categoría de servicio.</div>
           <div class="card-footer">
-            <span class="card-footer-label">Demanda · Líneas · Tramos · Compensaciones</span>
-            <div class="card-arrow">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-            </div>
+            <span class="card-footer-label">Demanda · Líneas · Compensaciones</span>
+            <div class="card-arrow"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
           </div>
         </div>
       </a>
 
-      <!-- 6. Empresas del Sistema de Transporte (DDJJ) -->
+      <!-- 6. Empresas del Sistema -->
       <a href="ERSeP_DDJJ_App.html" class="tool-card"
          style="--c1:#ef4444; --c2:#dc2626; --shadow:rgba(239,68,68,0.28);">
         <div class="card-content">
           <div class="card-top">
             <div class="card-icon">
-              <!-- Company / building icon -->
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M3 21h18"/>
                 <rect x="5" y="10" width="6" height="11"/>
@@ -494,12 +556,10 @@
             <span class="card-tag">DDJJ · Empresas</span>
           </div>
           <div class="card-title">Empresas del Sistema de Transporte</div>
-          <div class="card-desc">Gestión de Declaraciones Juradas de las empresas concesionarias. Carga, seguimiento y validación de información operativa y financiera. Registro de líneas habilitadas, flota y datos societarios.</div>
+          <div class="card-desc">Gestión de Declaraciones Juradas de empresas concesionarias. Carga, seguimiento y validación de información operativa y financiera. Registro de líneas habilitadas, flota y datos societarios.</div>
           <div class="card-footer">
             <span class="card-footer-label">DDJJ · Concesionarias · Habilitaciones</span>
-            <div class="card-arrow">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-            </div>
+            <div class="card-arrow"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
           </div>
         </div>
       </a>
@@ -510,6 +570,212 @@
   <footer>
     ERSeP &nbsp;·&nbsp; Ente Regulador de los Servicios Públicos &nbsp;·&nbsp; Provincia de Córdoba &nbsp;·&nbsp; Sistema Interno — Área Tarifas · 2026
   </footer>
+
+  <!-- ══════════════════════════════════════
+       ASISTENTE FLOTANTE DE NORMATIVA
+  ══════════════════════════════════════ -->
+  <div id="chat-bubble">
+    <span id="chat-label">Consultor de Normativa</span>
+    <button id="chat-toggle" onclick="toggleChat()" aria-label="Abrir asistente de normativa">
+      <!-- Ícono libro/normativa -->
+      <svg class="icon-open" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+      </svg>
+      <svg class="icon-close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+
+    <div id="chat-panel">
+      <div class="chat-header">
+        <div class="chat-avatar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+          </svg>
+        </div>
+        <div class="chat-header-info">
+          <div class="name">Consultor de Normativa ERSeP</div>
+          <div class="status">Base de conocimiento activa</div>
+        </div>
+      </div>
+
+      <div id="chat-messages">
+        <div class="msg bot">
+          <div class="msg-avatar">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+            </svg>
+          </div>
+          <div class="msg-bubble">
+            ¡Hola! Soy el <strong>Consultor de Normativa ERSeP</strong>. Puedo responderte consultas sobre resoluciones, decretos y normativa interna del área tarifas citando la fuente exacta.<br><br>
+            Escribí tu consulta y te respondo basándome exclusivamente en la base de conocimiento vigente.
+            <br><span class="norm-cite">⚠ Base de conocimiento en configuración</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-input-area">
+        <textarea id="chat-input" rows="1"
+          placeholder="Consultá sobre normativa, resoluciones, decretos..."
+          onkeydown="handleKey(event)"
+          oninput="autoResize(this)"></textarea>
+        <button id="chat-send" onclick="sendMessage()" aria-label="Enviar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"/>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+        </button>
+      </div>
+      <div class="upload-note">
+        📋 Normativa pendiente de carga · Contactar al administrador del sistema
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ── Base de conocimiento normativa (se expande con los archivos reales) ──
+    const KNOWLEDGE_BASE = [
+      {
+        keywords: ["rg 41", "resolución 41", "resolución general 41", "rg41"],
+        respuesta: "La <strong>Resolución General N° 41/26</strong> establece el Cuadro Tarifario Vigente para el transporte público interurbano de la Provincia de Córdoba. Fija las tarifas máximas por tramo kilométrico autorizadas a las empresas concesionarias.",
+        cita: "RG ERSeP N° 41/26"
+      },
+      {
+        keywords: ["decreto 254", "dec 254", "polinómica", "formula polinomica", "fórmula polinómica"],
+        respuesta: "El <strong>Decreto N° 254</strong> establece la Fórmula Polinómica de ajuste tarifario para el transporte interurbano provincial. Define los componentes, índices y ponderaciones que integran el cálculo de variación de costos.",
+        cita: "Decreto Provincial N° 254"
+      },
+      {
+        keywords: ["os n1", "os n°1", "estructura de costos", "estructura costos"],
+        respuesta: "La <strong>Ordenanza de Servicio N° 1 (OS N°1)</strong> define la estructura de costos del transporte interurbano. Establece los ítems de costo, sus participaciones relativas y la metodología de cálculo tarifario base.",
+        cita: "OS N° 1 — Estructura de Costos"
+      },
+      {
+        keywords: ["ddjj", "declaracion jurada", "declaración jurada"],
+        respuesta: "Las <strong>Declaraciones Juradas (DDJJ)</strong> son presentadas periódicamente por las empresas concesionarias. Deben informar kilómetros recorridos, pasajeros transportados y recaudación. Su incumplimiento es pasible de sanción conforme al régimen regulatorio vigente.",
+        cita: "Marco Regulatorio ERSeP"
+      },
+      {
+        keywords: ["empresa", "empresas", "concesionaria", "concesionarias", "habilitada"],
+        respuesta: "Las empresas concesionarias del sistema de transporte interurbano provincial están habilitadas por el ERSeP. Para operar deben mantener al día: título habilitante, póliza de seguro, habilitación vehicular, y presentación de DDJJ. Cualquier modificación debe ser comunicada y aprobada.",
+        cita: "Ley Provincial de Transporte · ERSeP"
+      },
+      {
+        keywords: ["tarifa", "tarifas", "cuadro tarifario"],
+        respuesta: "El <strong>Cuadro Tarifario Vigente</strong> está establecido por la RG N° 41/26. Las tarifas se actualizan mediante la aplicación de la fórmula polinómica del Dec. 254 cuando los índices de costos superan el umbral de variación establecido. Las empresas no pueden cobrar tarifas superiores a las autorizadas.",
+        cita: "RG ERSeP N° 41/26 · Dec. 254"
+      },
+      {
+        keywords: ["desvío", "desvio", "incumplimiento", "sanción", "sancion", "exceso tarifario"],
+        respuesta: "Los <strong>desvíos tarifarios</strong> detectados por el sistema de monitoreo son comunicados a la empresa infractora mediante acta de constatación. Según la magnitud y reincidencia, se aplican apercibimientos, multas o suspensión del servicio, conforme al régimen sancionatorio del ERSeP.",
+        cita: "Régimen Sancionatorio ERSeP"
+      },
+      {
+        keywords: ["tramo", "tramos", "kilometro", "kilómetro", "distancia"],
+        respuesta: "Las tarifas se calculan por <strong>tramo kilométrico</strong>. Cada origen-destino tiene asignado un tramo que determina la tarifa máxima autorizada según el cuadro tarifario. El cálculo considera la distancia oficial habilitada por la autoridad de aplicación.",
+        cita: "RG ERSeP N° 41/26 — Anexo Tarifario"
+      }
+    ];
+
+    function toggleChat() {
+      const bubble = document.getElementById('chat-bubble');
+      const panel  = document.getElementById('chat-panel');
+      const btn    = document.getElementById('chat-toggle');
+      const isOpen = panel.classList.contains('open');
+      panel.classList.toggle('open', !isOpen);
+      btn.classList.toggle('open', !isOpen);
+      bubble.classList.toggle('chat-open', !isOpen);
+      if (!isOpen) {
+        setTimeout(() => document.getElementById('chat-input').focus(), 300);
+      }
+    }
+
+    function autoResize(el) {
+      el.style.height = 'auto';
+      el.style.height = Math.min(el.scrollHeight, 90) + 'px';
+    }
+
+    function handleKey(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    }
+
+    function addMsg(text, type) {
+      const msgs = document.getElementById('chat-messages');
+      const div = document.createElement('div');
+      div.className = `msg ${type}`;
+      if (type === 'bot') {
+        div.innerHTML = `
+          <div class="msg-avatar">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+            </svg>
+          </div>
+          <div class="msg-bubble">${text}</div>`;
+      } else {
+        div.innerHTML = `<div class="msg-bubble">${text}</div>`;
+      }
+      msgs.appendChild(div);
+      msgs.scrollTop = msgs.scrollHeight;
+      return div;
+    }
+
+    function showTyping() {
+      const msgs = document.getElementById('chat-messages');
+      const div = document.createElement('div');
+      div.className = 'msg bot'; div.id = 'typing-indicator';
+      div.innerHTML = `
+        <div class="msg-avatar">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+          </svg>
+        </div>
+        <div class="msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>`;
+      msgs.appendChild(div);
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function removeTyping() {
+      const t = document.getElementById('typing-indicator');
+      if (t) t.remove();
+    }
+
+    function searchKnowledge(query) {
+      const q = query.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+      for (const entry of KNOWLEDGE_BASE) {
+        if (entry.keywords.some(k => q.includes(k.normalize("NFD").replace(/[\u0300-\u036f]/g,"")))) {
+          return entry;
+        }
+      }
+      return null;
+    }
+
+    function sendMessage() {
+      const input = document.getElementById('chat-input');
+      const text  = input.value.trim();
+      if (!text) return;
+      addMsg(text, 'user');
+      input.value = ''; input.style.height = 'auto';
+      showTyping();
+      setTimeout(() => {
+        removeTyping();
+        const match = searchKnowledge(text);
+        if (match) {
+          addMsg(`${match.respuesta}<br><span class="norm-cite">📋 ${match.cita}</span>`, 'bot');
+        } else {
+          addMsg('No encontré información específica sobre esa consulta en la base de conocimiento actual. Una vez que se cargue la normativa completa podré responderte con mayor precisión.<br><span class="norm-cite">⚠ Base de conocimiento en configuración</span>', 'bot');
+        }
+      }, 900 + Math.random() * 400);
+    }
+  </script>
 
 </body>
 </html>
