@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ERSeP – Facturación · KM · Pasajeros | Sistema Interurbano Córdoba</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --azul-oscuro:#0f2456;--azul:#1a3a6b;--azul-med:#2563b0;--celeste:#3b82f6;
+  --verde:#059669;--rojo:#dc2626;--naranja:#ea580c;--amarillo:#d97706;
+  --violeta:#7c3aed;--teal:#0891b2;--bg:#f0f4f8;--card:#ffffff;
+  --borde:#e2e8f0;--texto:#1e293b;--gris:#64748b;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--texto);min-height:100vh}
+.header{background:linear-gradient(135deg,#071a3e 0%,#0f2456 40%,#1a3a8b 100%);position:sticky;top:0;z-index:200;box-shadow:0 4px 24px rgba(0,0,0,.35)}
+.header-inner{max-width:1700px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.logo{width:48px;height:48px;background:linear-gradient(135deg,#3b82f6,#60a5fa);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:20px;color:#fff;box-shadow:0 4px 12px rgba(59,130,246,.45);flex-shrink:0}
+.header-info h1{font-size:17px;font-weight:700;color:#fff;letter-spacing:.2px}
+.header-info p{font-size:11px;color:#93c5fd;margin-top:1px}
+.header-badges{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.hbadge{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.4px}
+.hbadge-azul{background:rgba(59,130,246,.2);border:1px solid rgba(59,130,246,.4);color:#93c5fd}
+.hbadge-verde{background:rgba(5,150,105,.25);border:1px solid rgba(5,150,105,.4);color:#6ee7b7}
+.header-date{color:#bfdbfe;font-size:11px;text-align:right;flex-shrink:0}
+.header-date strong{display:block;font-size:13px;color:#fff}
+.nav{background:rgba(0,0,0,.3);border-top:1px solid rgba(255,255,255,.07)}
+.nav-inner{max-width:1700px;margin:0 auto;padding:0 24px;display:flex;overflow-x:auto}
+.nav-tab{padding:9px 18px;color:#93c5fd;font-size:12.5px;font-weight:500;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:all .2s;display:flex;align-items:center;gap:6px}
+.nav-tab:hover{color:#fff;background:rgba(255,255,255,.06)}
+.nav-tab.active{color:#fff;border-bottom-color:#3b82f6;background:rgba(59,130,246,.12)}
+.main{max-width:1700px;margin:0 auto;padding:22px 24px}
+.panel{display:none}.panel.active{display:block}
+.sec-title{font-size:15px;font-weight:700;color:var(--azul);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.sec-title::before{content:'';display:inline-block;width:4px;height:18px;background:var(--celeste);border-radius:2px}
+
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:20px}
+.kpi{background:var(--card);border-radius:12px;padding:16px 18px;box-shadow:0 2px 10px rgba(0,0,0,.06);border:1px solid var(--borde);position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
+.kpi:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.1)}
+.kpi::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--celeste)}
+.kpi.az::after{background:var(--celeste)}.kpi.vd::after{background:var(--verde)}
+.kpi.rj::after{background:var(--rojo)}.kpi.am::after{background:var(--amarillo)}
+.kpi.vi::after{background:var(--violeta)}.kpi.te::after{background:var(--teal)}
+.kpi-ic{font-size:22px;margin-bottom:6px;display:block}
+.kpi-lbl{font-size:10.5px;color:var(--gris);text-transform:uppercase;letter-spacing:.5px;font-weight:500;margin-bottom:4px}
+.kpi-val{font-size:20px;font-weight:800;line-height:1.1;margin-bottom:4px;word-break:break-all;overflow:hidden;text-overflow:ellipsis}
+.kpi-sub{font-size:10.5px;color:var(--gris)}
+.kpi-trend{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:700;margin-top:6px}
+.tr-up{background:#dcfce7;color:#166534}.tr-dn{background:#fef2f2;color:#991b1b}.tr-ne{background:#f1f5f9;color:#475569}
+
+/* SELECTOR */
+.selector-bar{background:var(--card);border-radius:12px;padding:14px 18px;margin-bottom:16px;border:1px solid var(--borde);display:flex;align-items:center;gap:14px;flex-wrap:wrap;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.slab{font-size:12.5px;font-weight:600;color:var(--gris)}
+.ssel{padding:7px 12px;border:1px solid var(--borde);border-radius:8px;font-size:12.5px;color:var(--texto);background:#fff;cursor:pointer;outline:none}
+.ssel:focus{border-color:var(--celeste)}
+
+/* COMPARACION */
+.comp-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.comp-card{background:var(--card);border-radius:12px;padding:16px;border:1px solid var(--borde);box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.comp-title{font-size:13px;font-weight:700;color:var(--azul);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.comp-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f1f5f9}
+.comp-row:last-child{border-bottom:none}
+.comp-metric{font-size:11.5px;color:var(--gris)}
+.comp-vals{display:flex;gap:16px;align-items:center}
+.comp-val{font-size:12.5px;font-weight:700;color:var(--texto)}
+.comp-delta{font-size:11px;font-weight:700;padding:2px 7px;border-radius:10px}
+.d-up{background:#dcfce7;color:#166534}.d-dn{background:#fef2f2;color:#991b1b}.d-ne{background:#f1f5f9;color:#475569}
+
+/* CHARTS */
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.chart-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
+.chart-full{grid-column:1/-1}
+.ccard{background:var(--card);border-radius:12px;padding:18px;box-shadow:0 2px 10px rgba(0,0,0,.06);border:1px solid var(--borde)}
+.ctitle{font-size:13.5px;font-weight:700;color:var(--texto)}
+.csub{font-size:11.5px;color:var(--gris);margin-bottom:14px;margin-top:2px}
+.ch{position:relative}.ch-280{height:280px}.ch-320{height:320px}.ch-260{height:260px}.ch-360{height:360px}.ch-220{height:220px}
+
+/* FILTROS */
+.filtros{background:var(--card);border-radius:12px;padding:14px 18px;margin-bottom:16px;border:1px solid var(--borde);display:flex;align-items:center;gap:14px;flex-wrap:wrap;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.flab{font-size:12.5px;font-weight:600;color:var(--gris)}
+.fsel{padding:7px 12px;border:1px solid var(--borde);border-radius:8px;font-size:12.5px;color:var(--texto);background:#fff;cursor:pointer;outline:none}
+.fsel:focus{border-color:var(--celeste)}
+.fbtn{padding:7px 16px;background:var(--azul);color:#fff;border:none;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;transition:background .2s}
+.fbtn:hover{background:var(--azul-med)}
+
+/* TABLE */
+.tw{overflow-x:auto;border-radius:10px;border:1px solid var(--borde);margin-top:14px}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+thead th{background:var(--azul);color:#fff;padding:10px 13px;text-align:left;font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}
+tbody tr{border-bottom:1px solid var(--borde)}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:#f8fafc}
+tbody tr:nth-child(even){background:#f9fafb}
+tbody tr:nth-child(even):hover{background:#f0f4f8}
+td{padding:9px 13px;color:var(--gris);white-space:nowrap}
+td.emp{font-weight:600;color:var(--texto);white-space:normal;max-width:220px;min-width:160px}
+
+/* PROGRESO */
+.prg-wrap{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.prg-lbl{font-size:11.5px;color:var(--gris);width:200px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.prg-track{flex:1;height:8px;background:#e5e7eb;border-radius:4px;overflow:hidden}
+.prg-fill{height:100%;border-radius:4px;transition:width .7s}
+.prg-val{font-size:11.5px;font-weight:700;color:var(--texto);width:100px;text-align:right}
+
+.footer{background:var(--azul);color:#93c5fd;text-align:center;padding:14px;font-size:11.5px;margin-top:28px}
+.footer strong{color:#fff}
+
+@media(max-width:900px){
+  .chart-grid,.chart-grid-3,.comp-grid{grid-template-columns:1fr}
+  .main{padding:14px}
+  .header-badges{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div style="display:flex;align-items:center;gap:14px">
+      <div class="logo">E</div>
+      <div class="header-info">
+        <h1>ERSeP — Facturación · Kilómetros · Pasajeros</h1>
+        <p>Sistema de Transporte Interurbano de la Provincia de Córdoba</p>
+      </div>
+    </div>
+    <div class="header-badges">
+      <span class="hbadge hbadge-azul">2021–2026</span>
+      <span class="hbadge hbadge-verde">~45 Empresas</span>
+      <span class="hbadge hbadge-azul">Sistema Interurbano</span>
+    </div>
+    <div class="header-date">
+      <strong>Período 2021–2026</strong>
+      Actualizado: Marzo 2026
+    </div>
+  </div>
+  <div class="nav">
+    <div class="nav-inner">
+      <div class="nav-tab active" onclick="showP('resumen',this)">📊 Resumen Ejecutivo</div>
+      <div class="nav-tab" onclick="showP('facturacion',this)">💰 Facturación</div>
+      <div class="nav-tab" onclick="showP('km',this)">🛣️ Kilómetros</div>
+      <div class="nav-tab" onclick="showP('pasajeros',this)">👥 Pasajeros</div>
+      <div class="nav-tab" onclick="showP('empresas',this)">🏢 Por Empresa</div>
+      <div class="nav-tab" onclick="showP('subsidios',this)">🏛️ Subsidios</div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- PANEL 1 – RESUMEN EJECUTIVO -->
+<div class="panel active" id="panel-resumen">
+  <div class="sec-title">Indicadores Clave del Sistema · 2021–2026</div>
+
+  <!-- SELECTOR -->
+  <div class="selector-bar">
+    <span class="slab">🗓️ Seleccionar período:</span>
+    <span class="slab">Año:</span>
+    <select class="ssel" id="selAñoRes" onchange="updateResumen()"></select>
+    <span class="slab">Mes:</span>
+    <select class="ssel" id="selMesRes" onchange="updateResumen()"></select>
+  </div>
+
+  <!-- KPIs dinámicos -->
+  <div class="kpi-grid" id="kpiGrid"></div>
+
+  <!-- Comparaciones -->
+  <div class="comp-grid" id="compGrid">
+    <div class="comp-card" id="compMesAnt">
+      <div class="comp-title">📅 Comparación con Mes Anterior</div>
+      <div id="compMesAntBody"></div>
+    </div>
+    <div class="comp-card" id="compMismoMes">
+      <div class="comp-title">📆 Mismo Mes en Años Anteriores</div>
+      <div id="compMismoMesBody"></div>
+    </div>
+  </div>
+
+  <!-- Gráficos -->
+  <div class="chart-grid">
+    <div class="ccard chart-full">
+      <div class="ctitle">Evolución del Sistema Interurbano · 2021–2026</div>
+      <div class="csub">Recaudación ($M) · KM y Pasajeros (M) por mes</div>
+      <div class="ch ch-320"><canvas id="cEvol"></canvas></div>
+    </div>
+  </div>
+  <div class="chart-grid">
+    <div class="ccard">
+      <div class="ctitle">Recaudación Anual por Año</div>
+      <div class="csub">En miles de millones de pesos corrientes</div>
+      <div class="ch ch-260"><canvas id="cRecAnual"></canvas></div>
+    </div>
+    <div class="ccard">
+      <div class="ctitle">KM y Pasajeros por Año</div>
+      <div class="csub">Millones · Sistema Interurbano Córdoba</div>
+      <div class="ch ch-260"><canvas id="cKmPaxAnual"></canvas></div>
+    </div>
+  </div>
+  <div class="chart-grid">
+    <div class="ccard">
+      <div class="ctitle">IPK — Índice Pasajero/Kilómetro</div>
+      <div class="csub">Eficiencia: pasajeros por km recorrido</div>
+      <div class="ch ch-260"><canvas id="cIPK"></canvas></div>
+    </div>
+    <div class="ccard">
+      <div class="ctitle">Facturación por KM — Evolución</div>
+      <div class="csub">Pesos por kilómetro recorrido</div>
+      <div class="ch ch-260"><canvas id="cFactKm"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- PANEL 2 – FACTURACIÓN -->
+<div class="panel" id="panel-facturacion">
+  <div class="sec-title">Análisis de Facturación del Sistema</div>
+  <div class="kpi-grid">
+    <div class="kpi az"><span class="kpi-ic">💰</span><div class="kpi-lbl">Total Facturado 2023</div><div class="kpi-val">$19.792.634.197</div><div class="kpi-sub">12 meses · datos reales</div></div>
+    <div class="kpi vd"><span class="kpi-ic">💰</span><div class="kpi-lbl">Total Facturado 2022</div><div class="kpi-val">$10.129.715.413</div><div class="kpi-sub">crecimiento +129%</div></div>
+    <div class="kpi vi"><span class="kpi-ic">💰</span><div class="kpi-lbl">Total Facturado 2024</div><div class="kpi-val">$108.771.190.252</div><div class="kpi-sub">12 meses · datos reales</div></div>
+    <div class="kpi te"><span class="kpi-ic">💰</span><div class="kpi-lbl">Total Facturado 2025</div><div class="kpi-val">$175.985.587.214</div><div class="kpi-sub">12 meses · datos reales</div></div>
+    <div class="kpi am"><span class="kpi-ic">📈</span><div class="kpi-lbl">Total Facturado 2026</div><div class="kpi-val">$25.793.093.285</div><div class="kpi-sub">2 meses · datos reales</div></div>
+    <div class="kpi rj"><span class="kpi-ic">📊</span><div class="kpi-lbl">Fact/KM Dic 2023</div><div class="kpi-val">$443</div><div class="kpi-sub">vs $228 Ene 2023</div></div>
+  </div>
+  <div class="chart-grid">
+    <div class="ccard chart-full">
+      <div class="ctitle">Top 15 Empresas por Facturación Acumulada 2023</div>
+      <div class="csub">En millones de pesos · datos reales Secretaría de Transporte</div>
+      <div class="ch ch-360"><canvas id="cTopFact"></canvas></div>
+    </div>
+  </div>
+  <div class="chart-grid">
+    <div class="ccard">
+      <div class="ctitle">Facturación por Año · Top 6 Empresas</div>
+      <div class="csub">2021–2023 en millones de pesos</div>
+      <div class="ch ch-280"><canvas id="cFactMens"></canvas></div>
+    </div>
+    <div class="ccard">
+      <div class="ctitle">Participación de Mercado 2023</div>
+      <div class="csub">% del total facturado por empresa (top 10 + resto)</div>
+      <div class="ch ch-280"><canvas id="cPartic"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- PANEL 3 – KILÓMETROS -->
+<div class="panel" id="panel-km">
+  <div class="sec-title">Análisis de Kilómetros Recorridos</div>
+  <div class="kpi-grid">
+    <div class="kpi az"><span class="kpi-ic">🛣️</span><div class="kpi-lbl">KM Récord Mensual</div><div class="kpi-val">8.289.088</div><div class="kpi-sub">Octubre 2023</div></div>
+    <div class="kpi vd"><span class="kpi-ic">📅</span><div class="kpi-lbl">Promedio Mensual 2023</div><div class="kpi-val">7.695.162</div><div class="kpi-sub">km/mes</div></div>
+    <div class="kpi vi"><span class="kpi-ic">📅</span><div class="kpi-lbl">Promedio Mensual 2024</div><div class="kpi-val">6.640.069</div><div class="kpi-sub">km/mes · -14% vs 2023</div></div>
+    <div class="kpi te"><span class="kpi-ic">📈</span><div class="kpi-lbl">Fact/KM Máximo</div><div class="kpi-val">$2.405</div><div class="kpi-sub">Octubre 2025</div></div>
+    <div class="kpi am"><span class="kpi-ic">🔻</span><div class="kpi-lbl">KM Mínimo Mensual</div><div class="kpi-val">2.616.105</div><div class="kpi-sub">Junio 2021</div></div>
+    <div class="kpi rj"><span class="kpi-ic">📉</span><div class="kpi-lbl">Fact/KM Mínimo</div><div class="kpi-val">$53,73</div><div class="kpi-sub">Mayo 2021</div></div>
+  </div>
+  <div class="chart-grid">
+    <div class="ccard chart-full">
+      <div class="ctitle">KM Recorridos — Evolución Mensual 2021–2026</div>
+      <div class="csub">Millones de kilómetros · sistema interurbano completo</div>
+      <div class="ch ch-320"><canvas id="cKmMens"></canvas></div>
+    </div>
+  </div>
+  <div class="chart-grid-3">
+    <div class="ccard">
+      <div class="ctitle">KM por Año</div>
+      <div class="csub">Total anual en millones</div>
+      <div class="ch ch-260"><canvas id="cKmAnual"></canvas></div>
+    </div>
+    <div class="ccard">
+      <div class="ctitle">Estacionalidad KM</div>
+      <div class="csub">Promedio mensual 2022–2024</div>
+      <div class="ch ch-260"><canvas id="cKmEstac"></canvas></div>
+    </div>
+    <div class="ccard">
+      <div class="ctitle">Facturación por KM · Tendencia</div>
+      <div class="csub">Crecimiento en términos nominales</div>
+      <div class="ch ch-260"><canvas id="cFactKm2"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- PANEL 4 – PASAJEROS -->
+<div class="panel" id="panel-pasajeros">
+  <div class="sec-title">Análisis de Pasajeros Transportados</div>
+  <div class="kpi-grid">
+    <div class="kpi vi"><span class="kpi-ic">👥</span><div class="kpi-lbl">Récord Mensual Pasajeros</div><div class="kpi-val">5.125.512</div><div class="kpi-sub">Agosto 2023</div></div>
+    <div class="kpi vd"><span class="kpi-ic">📅</span><div class="kpi-lbl">Promedio Mensual 2023</div><div class="kpi-val">4.649.817</div><div class="kpi-sub">pasajeros/mes</div></div>
+    <div class="kpi rj"><span class="kpi-ic">📅</span><div class="kpi-lbl">Promedio Mensual 2024</div><div class="kpi-val">3.238.183</div><div class="kpi-sub">-30% vs 2023</div></div>
+    <div class="kpi te"><span class="kpi-ic">📈</span><div class="kpi-lbl">Tarifa Prom. Mar 2026</div><div class="kpi-val">Ing/Pax $5.170</div><div class="kpi-sub">pesos por viaje</div></div>
+    <div class="kpi am"><span class="kpi-ic">🎫</span><div class="kpi-lbl">IPK Máximo</div><div class="kpi-val">0,642</div><div class="kpi-sub">Noviembre 2022</div></div>
+    <div class="kpi az"><span class="kpi-ic">📊</span><div class="kpi-lbl">IPK Promedio 2024</div><div class="kpi-val">0,489</div><div class="kpi-sub">pasajeros por km</div></div>
+  </div>
+  <div class="chart-grid">
+    <div class="ccard chart-full">
+      <div class="ctitle">Pasajeros Transportados — Evolución Mensual 2021–2026</div>
+      <div class="csub">Millones de pasajeros · sistema interurbano Córdoba</div>
+      <div class="ch ch-320"><canvas id="cPaxMens"></canvas></div>
+    </div>
+  </div>
+  <div class="chart-grid">
+    <div class="ccard">
+      <div class="ctitle">Pasajeros por Año</div>
+      <div class="csub">Total anual en millones</div>
+      <div class="ch ch-280"><canvas id="cPaxAnual"></canvas></div>
+    </div>
+    <div class="ccard">
+      <div class="ctitle">IPK — Eficiencia por Año</div>
+      <div class="csub">Pasajeros por km recorrido · evolución</div>
+      <div class="ch ch-280"><canvas id="cIPK2"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- PANEL 5 – POR EMPRESA -->
+<div class="panel" id="panel-empresas">
+  <div class="sec-title">Análisis por Empresa</div>
+  <div class="filtros">
+    <span class="flab">🏢 Empresa:</span>
+    <select class="fsel" id="selEmpresa" onchange="updateEmpresa()" style="min-width:280px"></select>
+    <span class="flab" style="margin-left:10px">Año:</span>
+    <select class="fsel" id="selAñoEmp" onchange="updateEmpresa()">
+      <option value="all">Todos (2023-2026)</option>
+      <option value="2023">2023</option>
+      <option value="2024">2024</option>
+      <option value="2025">2025</option>
+      <option value="2026">2026</option>
+    </select>
+  </div>
+  <div id="empDetalle"></div>
+  <div class="ccard" style="margin-top:16px">
+    <div class="ctitle">Ranking de Facturación por Empresa · 2025</div>
+    <div class="csub">Participación en el total del sistema 2025 · datos reales Secretaría de Transporte</div>
+    <div style="margin-top:14px" id="rankFact"></div>
+  </div>
+</div>
+
+<!-- PANEL 6 – SUBSIDIOS -->
+<div class="panel" id="panel-subsidios">
+  <div class="sec-title">Análisis de Subsidios al Sistema</div>
+  <div class="kpi-grid">
+    <div class="kpi rj"><span class="kpi-ic">🏛️</span><div class="kpi-lbl">Subsidios Totales 2023</div><div class="kpi-val">$16.699.048.122</div><div class="kpi-sub">provincial + nacional</div></div>
+    <div class="kpi am"><span class="kpi-ic">🏛️</span><div class="kpi-lbl">Subsidios Totales 2022</div><div class="kpi-val">$6.417.335.395</div><div class="kpi-sub">+162% vs 2021</div></div>
+    <div class="kpi az"><span class="kpi-ic">🏛️</span><div class="kpi-lbl">Subsidios Totales 2021</div><div class="kpi-val">$2.919.341.032</div><div class="kpi-sub">10 meses</div></div>
+    <div class="kpi vd"><span class="kpi-ic">📉</span><div class="kpi-lbl">Sub como % del Ingreso 2022</div><div class="kpi-val">~60%</div><div class="kpi-sub">alta dependencia</div></div>
+    <div class="kpi te"><span class="kpi-ic">📉</span><div class="kpi-lbl">Sub como % del Ingreso 2024</div><div class="kpi-val">~2%</div><div class="kpi-sub">fuerte reducción</div></div>
+    <div class="kpi vi"><span class="kpi-ic">📉</span><div class="kpi-lbl">Subsidios 2025</div><div class="kpi-val">$2.397.079.111</div><div class="kpi-sub">solo Ene-Feb (estimado)</div></div>
+  </div>
+  <div class="chart-grid">
+    <div class="ccard chart-full">
+      <div class="ctitle">Subsidios vs Recaudación — Evolución Mensual</div>
+      <div class="csub">En millones de pesos · sistema interurbano</div>
+      <div class="ch ch-360"><canvas id="cSubRec"></canvas></div>
+    </div>
+  </div>
+  <div class="chart-grid">
+    <div class="ccard">
+      <div class="ctitle">Subsidios Anuales</div>
+      <div class="csub">Total anual en miles de millones de pesos</div>
+      <div class="ch ch-280"><canvas id="cSubAnual"></canvas></div>
+    </div>
+    <div class="ccard">
+      <div class="ctitle">Composición del Ingreso Total</div>
+      <div class="csub">Recaudación vs Subsidios · evolución proporcional</div>
+      <div class="ch ch-280"><canvas id="cComp"></canvas></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<div class="footer">
+  <strong>ERSeP — Ente Regulador de Servicios Públicos · Provincia de Córdoba</strong><br>
+  Gerencia de Transporte · Fuente: Secretaría de Transporte · Datos 2021–2026 · Sistema Interurbano
+</div>
+
+<script>
+// ============================================================
+// DATOS CORRECTOS
+// ============================================================
+const monthly = [{"año":2021,"mes":"Marzo","mo":3,"km":4707026,"pax":1875472,"ipk":0.3984,"fact_km":58.03,"recaud":273138911,"subsidios":190486149,"total_ing":463625060,"ing_pax":247.2,"tarifa":145.64},{"año":2021,"mes":"Abril","mo":4,"km":4626788,"pax":1919518,"ipk":0.4149,"fact_km":56.57,"recaud":261739159,"subsidios":186991446,"total_ing":448730606,"ing_pax":233.77,"tarifa":136.36},{"año":2021,"mes":"Mayo","mo":5,"km":3864710,"pax":1601769,"ipk":0.4145,"fact_km":53.73,"recaud":207666040,"subsidios":186784142,"total_ing":394450183,"ing_pax":246.26,"tarifa":129.65},{"año":2021,"mes":"Junio","mo":6,"km":2616104,"pax":1087818,"ipk":0.4158,"fact_km":60.35,"recaud":157882957,"subsidios":186887794,"total_ing":344770752,"ing_pax":316.94,"tarifa":145.14},{"año":2021,"mes":"Julio","mo":7,"km":3330428,"pax":1633568,"ipk":0.4905,"fact_km":88.56,"recaud":294936262,"subsidios":357278293,"total_ing":652214555,"ing_pax":399.26,"tarifa":180.55},{"año":2021,"mes":"Agosto","mo":8,"km":4298478,"pax":2250733,"ipk":0.5236,"fact_km":84.49,"recaud":363199439,"subsidios":357278293,"total_ing":767689732,"ing_pax":341.08,"tarifa":161.37},{"año":2021,"mes":"Septiembre","mo":9,"km":4781642,"pax":2655351,"ipk":0.5553,"fact_km":88.58,"recaud":423536410,"subsidios":357278293,"total_ing":827102703,"ing_pax":311.49,"tarifa":159.5},{"año":2021,"mes":"Octubre","mo":10,"km":5087187,"pax":2996179,"ipk":0.589,"fact_km":94.03,"recaud":478339737,"subsidios":357278293,"total_ing":881312030,"ing_pax":294.15,"tarifa":159.65},{"año":2021,"mes":"Noviembre","mo":11,"km":5443749,"pax":3231644,"ipk":0.5936,"fact_km":95.19,"recaud":518195367,"subsidios":357278293,"total_ing":921893661,"ing_pax":285.27,"tarifa":160.35},{"año":2021,"mes":"Diciembre","mo":12,"km":5704794,"pax":2940322,"ipk":0.5154,"fact_km":93.69,"recaud":534472155,"subsidios":357278293,"total_ing":934078449,"ing_pax":317.68,"tarifa":181.77},{"año":2022,"mes":"Enero","mo":1,"km":5863164,"pax":2659387,"ipk":0.4536,"fact_km":91.0,"recaud":533550512,"subsidios":478372088,"total_ing":1027681600,"ing_pax":386.44,"tarifa":200.63},{"año":2022,"mes":"Febrero","mo":2,"km":5391451,"pax":2981063,"ipk":0.5529,"fact_km":107.66,"recaud":580418140,"subsidios":440479293,"total_ing":1020897433,"ing_pax":342.46,"tarifa":194.7},{"año":2022,"mes":"Marzo","mo":3,"km":6665016,"pax":3948830,"ipk":0.5925,"fact_km":96.61,"recaud":643882831,"subsidios":431069982,"total_ing":1074952813,"ing_pax":272.22,"tarifa":163.06},{"año":2022,"mes":"Abril","mo":4,"km":6800434,"pax":4158133,"ipk":0.6115,"fact_km":99.29,"recaud":675212693,"subsidios":427225956,"total_ing":1102438649,"ing_pax":265.13,"tarifa":162.38},{"año":2022,"mes":"Mayo","mo":5,"km":7069866,"pax":4300901,"ipk":0.6083,"fact_km":95.18,"recaud":672877918,"subsidios":443035808,"total_ing":1115913727,"ing_pax":259.46,"tarifa":156.45},{"año":2022,"mes":"Junio","mo":6,"km":7101154,"pax":4339160,"ipk":0.611,"fact_km":96.39,"recaud":684463262,"subsidios":542949869,"total_ing":1227413132,"ing_pax":282.87,"tarifa":157.74},{"año":2022,"mes":"Julio","mo":7,"km":7087796,"pax":4060371,"ipk":0.5729,"fact_km":120.51,"recaud":854132681,"subsidios":557376194,"total_ing":1411508876,"ing_pax":347.63,"tarifa":210.36},{"año":2022,"mes":"Agosto","mo":8,"km":7596460,"pax":4762467,"ipk":0.6269,"fact_km":126.81,"recaud":963319252,"subsidios":554611688,"total_ing":1517930941,"ing_pax":318.73,"tarifa":202.27},{"año":2022,"mes":"Septiembre","mo":9,"km":7397960,"pax":4671933,"ipk":0.6315,"fact_km":141.27,"recaud":1045143082,"subsidios":552945818,"total_ing":1598088900,"ing_pax":342.06,"tarifa":223.71},{"año":2022,"mes":"Octubre","mo":10,"km":7545368,"pax":4833861,"ipk":0.6406,"fact_km":149.59,"recaud":1128740020,"subsidios":595495745,"total_ing":1724235765,"ing_pax":356.7,"tarifa":233.51},{"año":2022,"mes":"Noviembre","mo":11,"km":7393498,"pax":4747086,"ipk":0.6421,"fact_km":145.02,"recaud":1072225704,"subsidios":697534924,"total_ing":1769760628,"ing_pax":372.81,"tarifa":225.87},{"año":2022,"mes":"Diciembre","mo":12,"km":7120522,"pax":3986010,"ipk":0.5598,"fact_km":179.17,"recaud":1275749313,"subsidios":696238024,"total_ing":1971987338,"ing_pax":494.73,"tarifa":320.06},{"año":2023,"mes":"Enero","mo":1,"km":7349536,"pax":4087092,"ipk":0.5561,"fact_km":228.39,"recaud":1678571048,"subsidios":989627305,"total_ing":2668198354,"ing_pax":652.84,"tarifa":410.7},{"año":2023,"mes":"Febrero","mo":2,"km":6483107,"pax":3848303,"ipk":0.5936,"fact_km":241.92,"recaud":1568396016,"subsidios":956407274,"total_ing":2524803291,"ing_pax":656.08,"tarifa":407.56},{"año":2023,"mes":"Marzo","mo":3,"km":7820001,"pax":4807279,"ipk":0.6147,"fact_km":194.92,"recaud":1524274470,"subsidios":1068475622,"total_ing":2592750092,"ing_pax":539.34,"tarifa":317.08},{"año":2023,"mes":"Abril","mo":4,"km":7583163,"pax":4837059,"ipk":0.6379,"fact_km":187.17,"recaud":1419367378,"subsidios":1078339650,"total_ing":2497707028,"ing_pax":516.37,"tarifa":293.44},{"año":2023,"mes":"Mayo","mo":5,"km":7960799,"pax":5090137,"ipk":0.6394,"fact_km":178.54,"recaud":1421330425,"subsidios":1014829948,"total_ing":2436160374,"ing_pax":478.6,"tarifa":279.23},{"año":2023,"mes":"Junio","mo":6,"km":7843036,"pax":4982405,"ipk":0.6353,"fact_km":179.98,"recaud":1411620594,"subsidios":1003975148,"total_ing":2415595742,"ing_pax":484.83,"tarifa":283.32},{"año":2023,"mes":"Julio","mo":7,"km":7843036,"pax":4550794,"ipk":0.5802,"fact_km":208.41,"recaud":1634583010,"subsidios":1271991354,"total_ing":2906574364,"ing_pax":638.7,"tarifa":359.19},{"año":2023,"mes":"Agosto","mo":8,"km":8198225,"pax":5125512,"ipk":0.6252,"fact_km":245.65,"recaud":2013893062,"subsidios":1192620216,"total_ing":3206513279,"ing_pax":625.6,"tarifa":392.92},{"año":2023,"mes":"Septiembre","mo":9,"km":7938131,"pax":4761687,"ipk":0.5998,"fact_km":248.99,"recaud":1976517728,"subsidios":1808150556,"total_ing":3784668284,"ing_pax":794.82,"tarifa":415.09},{"año":2023,"mes":"Octubre","mo":10,"km":8289088,"pax":5060211,"ipk":0.6105,"fact_km":291.48,"recaud":2416087488,"subsidios":1934120184,"total_ing":4350207673,"ing_pax":859.69,"tarifa":477.47},{"año":2023,"mes":"Noviembre","mo":11,"km":7921212,"pax":4797716,"ipk":0.6057,"fact_km":351.68,"recaud":2785735673,"subsidios":2101145607,"total_ing":4886881281,"ing_pax":1018.58,"tarifa":580.64},{"año":2023,"mes":"Diciembre","mo":12,"km":7163544,"pax":3848605,"ipk":0.5372,"fact_km":442.98,"recaud":3173296442,"subsidios":2280365195,"total_ing":5453661637,"ing_pax":1417.05,"tarifa":824.53},{"año":2024,"mes":"Enero","mo":1,"km":7279783,"pax":3668442,"ipk":0.5039,"fact_km":526.23,"recaud":3830855141,"subsidios":1197079110,"total_ing":5027934251,"ing_pax":1370.59,"tarifa":1044.27},{"año":2024,"mes":"Febrero","mo":2,"km":6688638,"pax":3106043,"ipk":0.4644,"fact_km":858.01,"recaud":5738938036,"subsidios":1200000000,"total_ing":6938938036,"ing_pax":2234.01,"tarifa":1847.67},{"año":2024,"mes":"Marzo","mo":3,"km":7583163,"pax":3457109,"ipk":0.4559,"fact_km":821.76,"recaud":6231541616,"subsidios":0,"total_ing":6231541616,"ing_pax":1802.53,"tarifa":1802.53},{"año":2024,"mes":"Abril","mo":4,"km":5994988,"pax":2995165,"ipk":0.4996,"fact_km":1151.5,"recaud":6903230530,"subsidios":0,"total_ing":6903230530,"ing_pax":2304.79,"tarifa":2304.79},{"año":2024,"mes":"Mayo","mo":5,"km":6767543,"pax":3568924,"ipk":0.5274,"fact_km":1239.36,"recaud":8387405631,"subsidios":0,"total_ing":8387405631,"ing_pax":2350.12,"tarifa":2350.12},{"año":2024,"mes":"Junio","mo":6,"km":6469226,"pax":3269520,"ipk":0.5054,"fact_km":1210.29,"recaud":7829663720,"subsidios":0,"total_ing":7829663720,"ing_pax":2394.74,"tarifa":2394.74},{"año":2024,"mes":"Julio","mo":7,"km":6100307,"pax":2703242,"ipk":0.4431,"fact_km":1350.35,"recaud":8237573736,"subsidios":0,"total_ing":8237573736,"ing_pax":3047.29,"tarifa":3047.29},{"año":2024,"mes":"Agosto","mo":8,"km":7033779,"pax":3635426,"ipk":0.5169,"fact_km":1417.75,"recaud":9972166093,"subsidios":0,"total_ing":9972166093,"ing_pax":2743.05,"tarifa":2743.05},{"año":2024,"mes":"Septiembre","mo":9,"km":6810460,"pax":3603511,"ipk":0.5291,"fact_km":1657.1,"recaud":11285597059,"subsidios":0,"total_ing":11285597059,"ing_pax":3131.83,"tarifa":3131.83},{"año":2024,"mes":"Octubre","mo":10,"km":6848483,"pax":3590150,"ipk":0.5242,"fact_km":1764.28,"recaud":12082640183,"subsidios":0,"total_ing":12082640183,"ing_pax":3365.5,"tarifa":3365.5},{"año":2024,"mes":"Noviembre","mo":11,"km":6666753,"pax":3425782,"ipk":0.5139,"fact_km":1950.63,"recaud":13004388727,"subsidios":0,"total_ing":13004388727,"ing_pax":3796.04,"tarifa":3796.04},{"año":2024,"mes":"Diciembre","mo":12,"km":6452004,"pax":2793879,"ipk":0.433,"fact_km":1908.66,"recaud":12314654046,"subsidios":0,"total_ing":12314654046,"ing_pax":4407.73,"tarifa":4407.73},{"año":2025,"mes":"Enero","mo":1,"km":6446728,"pax":2466439,"ipk":0.3826,"fact_km":1810.87,"recaud":11674171488,"subsidios":1197079110,"total_ing":12871250599,"ing_pax":5218.56,"tarifa":4733.21},{"año":2025,"mes":"Febrero","mo":2,"km":6036413,"pax":2521776,"ipk":0.4178,"fact_km":1930.12,"recaud":11650990166,"subsidios":1200000000,"total_ing":12850990166,"ing_pax":5096.01,"tarifa":4620.15},{"año":2025,"mes":"Marzo","mo":3,"km":6676797,"pax":3107517,"ipk":0.4654,"fact_km":2030.98,"recaud":13560445497,"subsidios":0,"total_ing":13560445497,"ing_pax":4363.76,"tarifa":4363.76},{"año":2025,"mes":"Abril","mo":4,"km":6644438,"pax":3457788,"ipk":0.5204,"fact_km":2316.93,"recaud":15394711188,"subsidios":0,"total_ing":15394711188,"ing_pax":4452.18,"tarifa":4452.18},{"año":2025,"mes":"Mayo","mo":5,"km":6842839,"pax":3428039,"ipk":0.501,"fact_km":2249.75,"recaud":15394711188,"subsidios":0,"total_ing":15394711188,"ing_pax":4490.82,"tarifa":4490.82},{"año":2025,"mes":"Junio","mo":6,"km":6642548,"pax":3180084,"ipk":0.4787,"fact_km":2265.06,"recaud":15045790915,"subsidios":0,"total_ing":15045790915,"ing_pax":4731.26,"tarifa":4731.26},{"año":2025,"mes":"Julio","mo":7,"km":6728416,"pax":2811919,"ipk":0.4179,"fact_km":2010.58,"recaud":13528027978,"subsidios":0,"total_ing":13528027978,"ing_pax":4810.96,"tarifa":4810.96},{"año":2025,"mes":"Agosto","mo":8,"km":6923568,"pax":3404347,"ipk":0.4917,"fact_km":2335.55,"recaud":16170366438,"subsidios":0,"total_ing":16170366438,"ing_pax":4749.92,"tarifa":4749.92},{"año":2025,"mes":"Septiembre","mo":9,"km":7036004,"pax":3590614,"ipk":0.5103,"fact_km":2389.06,"recaud":16809407131,"subsidios":0,"total_ing":16809407131,"ing_pax":4681.49,"tarifa":4681.49},{"año":2025,"mes":"Octubre","mo":10,"km":7244566,"pax":3684952,"ipk":0.5087,"fact_km":2404.58,"recaud":17420139887,"subsidios":0,"total_ing":17420139887,"ing_pax":4727.37,"tarifa":4727.37},{"año":2025,"mes":"Noviembre","mo":11,"km":6665508,"pax":3120745,"ipk":0.4682,"fact_km":2262.4,"recaud":15080022373,"subsidios":0,"total_ing":15080022373,"ing_pax":4832.19,"tarifa":4832.19},{"año":2025,"mes":"Diciembre","mo":12,"km":6572079,"pax":2745805,"ipk":0.4178,"fact_km":2146.93,"recaud":14109777712,"subsidios":0,"total_ing":14109777712,"ing_pax":5138.67,"tarifa":5138.67},{"año":2026,"mes":"Enero","mo":1,"km":6478833,"pax":2276916,"ipk":0.3514,"fact_km":2079.22,"recaud":13470913505,"subsidios":0,"total_ing":13470913505,"ing_pax":5916.3,"tarifa":5916.3},{"año":2026,"mes":"Febrero","mo":2,"km":5468499,"pax":2072605,"ipk":0.379,"fact_km":2253.3,"recaud":12322179797,"subsidios":0,"total_ing":12322179797,"ing_pax":5945.26,"tarifa":5945.26},{"año":2026,"mes":"Marzo","mo":3,"km":6837294,"pax":3072059,"ipk":0.4493,"fact_km":2322.84,"recaud":15881944617,"subsidios":0,"total_ing":15881944617,"ing_pax":5169.8,"tarifa":5169.8}];
+const empresasFact = [{"empresa":"EMPRESA CORDOBA S.R.L.","total2023":3157754917,"total2024":3375437913,"total2025":5988569057,"total2026":818557899},{"empresa":"EMPRESA SARMIENTO S.R.L.","total2023":2431126859,"total2024":11597379138,"total2025":18489713398,"total2026":2514292357},{"empresa":"EXPRESO DIFERENCIAL CORDOBA RIO CUARTO S.R.L.","total2023":2064448107,"total2024":14910918971,"total2025":24335628348,"total2026":3674648372},{"empresa":"COTA LA CALERA  LTDA.","total2023":1461864971,"total2024":8469427009,"total2025":12899068317,"total2026":1825317395},{"empresa":"SIERRAS DE CALAMUCHITA S.R.L.","total2023":1373316548,"total2024":6724414105,"total2025":11046664554,"total2026":1740157826},{"empresa":"ERSA URBANO S.A","total2023":1223440758,"total2024":5270503342,"total2025":299175066,"total2026":0},{"empresa":"INTERCORDOBA S.A.","total2023":978653360,"total2024":5676548103,"total2025":10625946093,"total2026":1088714386},{"empresa":"COATA S.A.","total2023":668186427,"total2024":3454376988,"total2025":5293121766,"total2026":1004401553},{"empresa":"EMPRESA EL TURISTA S.R.L.","total2023":632846409,"total2024":1572713532,"total2025":2301675576,"total2026":428372673},{"empresa":"PANAHOLMA S.R.L.","total2023":592379758,"total2024":2774365941,"total2025":4506870109,"total2026":1049745664},{"empresa":"LATITUD CERO S.A.","total2023":566458842,"total2024":2182053886,"total2025":3544389994,"total2026":446718310},{"empresa":"LUMASA VIAJES S.R.L.","total2023":452976355,"total2024":2580698111,"total2025":4756038041,"total2026":842530089},{"empresa":"MALVINAS ARGENTINAS S.R.L.","total2023":426448251,"total2024":3413288282,"total2025":5802390601,"total2026":711231869},{"empresa":"MAR CHIQUITA S.R.L.","total2023":380633683,"total2024":2182986534,"total2025":3611260086,"total2026":486101953},{"empresa":"SOCSA S.R.L.","total2023":373245448,"total2024":1844981136,"total2025":3252847757,"total2026":296475360},{"empresa":"EMPRENDIMIENTOS S.R.L. (FONO BUS)","total2023":332556643,"total2024":17726896697,"total2025":29990027750,"total2026":4740304166},{"empresa":"EMPRESA TRANSPORTE MORTEROS S.R.L.","total2023":303893692,"total2024":2027529888,"total2025":3350782698,"total2026":442691356},{"empresa":"EL PORVENIR S.R.L.","total2023":262569797,"total2024":1453971617,"total2025":2748628242,"total2026":328836004},{"empresa":"CAR-COR S.R.L.","total2023":226810542,"total2024":1452213732,"total2025":2167247885,"total2026":430606679},{"empresa":"SIERRA BUS S.R.L.","total2023":213589412,"total2024":846594841,"total2025":1159276397,"total2026":298128172},{"empresa":"DIFERENCIAL TRANSIERRAS S.R.L.","total2023":210161193,"total2024":680351091,"total2025":1086812939,"total2026":181366253},{"empresa":"COLONIA TIROLESA S.R.L.","total2023":198256334,"total2024":1228298591,"total2025":1853316525,"total2026":199657155},{"empresa":"S.A. TRANSPORTE CIUDAD DE RIO CUARTO","total2023":180722809,"total2024":1153728291,"total2025":1866727177,"total2026":188542060},{"empresa":"EXPRESO VILLA DEL ROSARIO S.A.","total2023":167640434,"total2024":1248307464,"total2025":2207393322,"total2026":249749169},{"empresa":"PAJARO BLANCO S.R.L.","total2023":155812616,"total2024":738123287,"total2025":1180319010,"total2026":229684314},{"empresa":"LA SERRANITA S.R.L.","total2023":127466324,"total2024":701272918,"total2025":993197007,"total2026":66038427},{"empresa":"TRANSPORTE DEAN FUNES S.R.L.","total2023":103657661,"total2024":557850783,"total2025":928349541,"total2026":135472673},{"empresa":"EDER SERVICIO DIFERENCIAL S.R.L.","total2023":100448040,"total2024":661029152,"total2025":1261709453,"total2026":201649050},{"empresa":"LA DILIGENCIA VIP S.R.L.","total2023":88778863,"total2024":405333711,"total2025":636417436,"total2026":51045710},{"empresa":"EXCURSIONES SIERRAS DE CALAMUCHITA S.R.L.","total2023":77467291,"total2024":473673965,"total2025":821868232,"total2026":101997422},{"empresa":"EL TATU CARRETERO S.R.L.","total2023":59395980,"total2024":183746860,"total2025":491311934,"total2026":89907057},{"empresa":"CANELLO HNOS S.R.L.","total2023":38551377,"total2024":366474728,"total2025":599167361,"total2026":38576423},{"empresa":"MA-COR S.R.L.","total2023":30314555,"total2024":130643532,"total2025":13171542,"total2026":0},{"empresa":"CAR-BUS S.R.L.","total2023":25065322,"total2024":133409919,"total2025":200714912,"total2026":28786512},{"empresa":"EXPRESO ACHIRAS S.R.L.","total2023":21101924,"total2024":152895137,"total2025":254585368,"total2026":31742455},{"empresa":"EL QUEBRACHAL S.R.L.","total2023":16589518,"total2024":38707119,"total2025":4873776294,"total2026":765100680},{"empresa":"ZETA BUS S.R.L.","total2023":15406977,"total2024":101385918,"total2025":157029451,"total2026":17721598},{"empresa":"LA ESTRELLA S.R.L.","total2023":14307493,"total2024":45645421,"total2025":108817468,"total2026":6030413},{"empresa":"EL MILAGRO S.R.L.","total2023":14152562,"total2024":95611872,"total2025":148212685,"total2026":27023095},{"empresa":"TRANSPORTE JAMES CRAIK S.R.L.","total2023":11850657,"total2024":61943567,"total2025":0,"total2026":0},{"empresa":"ALEJANDRO S.R.L","total2023":10621615,"total2024":75457160,"total2025":133367822,"total2026":15170736},{"empresa":"RIO BER S.R.L.","total2023":1663873,"total2024":0,"total2025":0,"total2026":0},{"empresa":"AUTOBUSES SANTA FE S.R.L.","total2023":0,"total2024":0,"total2025":0,"total2026":0}];
+
+const MESES_LABEL = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const MESES_SHORT = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+const AÑOS = [2021,2022,2023,2024,2025,2026];
+const PALETA = ['#1d4ed8','#2563eb','#3b82f6','#60a5fa','#93c5fd','#0891b2','#059669','#7c3aed','#dc2626','#d97706','#ea580c','#0f766e','#4338ca','#be185d','#065f46','#78350f','#1f2937'];
+const C = {az:'#3b82f6',vd:'#059669',rj:'#dc2626',am:'#d97706',vi:'#7c3aed',te:'#0891b2'};
+
+// Formatters
+const fmtPeso = n => {
+  if(n===0) return '$0';
+  if(Math.abs(n)>=1e12) return '$'+(n/1e12).toFixed(2)+'B (billón)';
+  if(Math.abs(n)>=1e9) return '$'+(n/1e9).toFixed(2)+'B';
+  if(Math.abs(n)>=1e6) return '$'+(n/1e6).toFixed(2)+'M';
+  if(Math.abs(n)>=1e3) return '$'+n.toLocaleString('es-AR',{maximumFractionDigits:0});
+  return '$'+n.toFixed(2);
+};
+const fmtPesoFull = n => '$'+Math.round(n).toLocaleString('es-AR');
+const fmtNum = n => Math.round(n).toLocaleString('es-AR');
+const fmtM = n => (n/1e6).toFixed(3)+'M';
+const fmtPct = (a,b) => b&&b!==0 ? (((a-b)/Math.abs(b))*100).toFixed(1)+'%' : 'N/D';
+
+// ============================================================
+// NAV
+// ============================================================
+function showP(id, el){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  if(el) el.classList.add('active');
+}
+
+// ============================================================
+// RESUMEN - SELECTOR
+// ============================================================
+function buildSelectors(){
+  const años = [...new Set(monthly.map(m=>m.año))].sort((a,b)=>b-a);
+  const selA = document.getElementById('selAñoRes');
+  años.forEach(a=>{selA.innerHTML+=`<option value="${a}">${a}</option>`;});
+  selA.value = '2026';
+  fillMeses(2026);
+  document.getElementById('selMesRes').value = '3'; // Marzo
+}
+
+function fillMeses(año){
+  const meses = monthly.filter(m=>m.año===parseInt(año)).map(m=>({mo:m.mo,mes:m.mes})).sort((a,b)=>a.mo-b.mo);
+  const sel = document.getElementById('selMesRes');
+  sel.innerHTML = '';
+  meses.forEach(m=>{sel.innerHTML+=`<option value="${m.mo}">${m.mes}</option>`;});
+  if(meses.length) sel.value = meses[meses.length-1].mo;
+}
+
+document.getElementById('selAñoRes').addEventListener('change',function(){fillMeses(this.value);updateResumen();});
+
+function getRow(año, mo){
+  return monthly.find(m=>m.año===parseInt(año)&&m.mo===parseInt(mo));
+}
+
+function updateResumen(){
+  const año = parseInt(document.getElementById('selAñoRes').value);
+  const mo = parseInt(document.getElementById('selMesRes').value);
+  const row = getRow(año, mo);
+  if(!row) return;
+
+  // KPIs
+  const kpiGrid = document.getElementById('kpiGrid');
+  const _tarifaVal = row.tarifa > 0 ? row.tarifa : (row.ing_pax > 0 ? row.ing_pax : (row.pax > 0 ? row.recaud / row.pax : 0));
+  const ingPaxDisp = fmtPesoFull(_tarifaVal > 0 ? _tarifaVal : row.recaud / (row.pax||1));
+  const tarifa = _tarifaVal > 0 ? fmtPesoFull(_tarifaVal) : 'N/D';
+  kpiGrid.innerHTML = `
+    <div class="kpi az">
+      <span class="kpi-ic">💰</span>
+      <div class="kpi-lbl">Facturación ${row.mes} ${año}</div>
+      <div class="kpi-val" style="font-size:16px">${fmtPesoFull(row.recaud)}</div>
+      <div class="kpi-sub">pesos corrientes</div>
+    </div>
+    <div class="kpi vd">
+      <span class="kpi-ic">🛣️</span>
+      <div class="kpi-lbl">KM ${row.mes} ${año}</div>
+      <div class="kpi-val" style="font-size:16px">${fmtNum(row.km)}</div>
+      <div class="kpi-sub">kilómetros recorridos</div>
+    </div>
+    <div class="kpi vi">
+      <span class="kpi-ic">👥</span>
+      <div class="kpi-lbl">Pasajeros ${row.mes} ${año}</div>
+      <div class="kpi-val" style="font-size:16px">${fmtNum(row.pax)}</div>
+      <div class="kpi-sub">pasajeros transportados</div>
+    </div>
+    <div class="kpi te">
+      <span class="kpi-ic">📈</span>
+      <div class="kpi-lbl">Fact/KM ${row.mes} ${año}</div>
+      <div class="kpi-val" style="font-size:16px">${fmtPesoFull(row.fact_km)}</div>
+      <div class="kpi-sub">pesos por kilómetro</div>
+    </div>
+    <div class="kpi am">
+      <span class="kpi-ic">🎫</span>
+      <div class="kpi-lbl">Tarifa Promedio / Ing. Pax ${row.mes}</div>
+      <div class="kpi-val" style="font-size:16px">${tarifa}</div>
+      <div class="kpi-sub">pesos por pasajero</div>
+    </div>
+    <div class="kpi rj">
+      <span class="kpi-ic">🔄</span>
+      <div class="kpi-lbl">IPK ${row.mes} ${año}</div>
+      <div class="kpi-val" style="font-size:16px">${row.ipk.toFixed(4)}</div>
+      <div class="kpi-sub">pasajeros / km</div>
+    </div>`;
+
+  // Comp mes anterior
+  const prevMo = mo === 1 ? 12 : mo-1;
+  const prevAño = mo === 1 ? año-1 : año;
+  const prevRow = getRow(prevAño, prevMo);
+  const compMesAnt = document.getElementById('compMesAntBody');
+  if(prevRow){
+    const metrics = [
+      ['Facturación', fmtPesoFull(row.recaud), fmtPesoFull(prevRow.recaud), row.recaud, prevRow.recaud],
+      ['KM Recorridos', fmtNum(row.km), fmtNum(prevRow.km), row.km, prevRow.km],
+      ['Pasajeros', fmtNum(row.pax), fmtNum(prevRow.pax), row.pax, prevRow.pax],
+      ['Fact/KM ($)', fmtPesoFull(row.fact_km), fmtPesoFull(prevRow.fact_km), row.fact_km, prevRow.fact_km],
+      ['IPK', row.ipk.toFixed(4), prevRow.ipk.toFixed(4), row.ipk, prevRow.ipk],
+    ];
+    compMesAnt.innerHTML = `<div style="font-size:11px;color:var(--gris);margin-bottom:8px">${row.mes} ${año} vs ${prevRow.mes} ${prevAño}</div>`;
+    metrics.forEach(([lbl,v1,v2,n1,n2])=>{
+      const pct = n2&&n2!==0?(((n1-n2)/Math.abs(n2))*100):0;
+      const cls = pct>0?'d-up':pct<0?'d-dn':'d-ne';
+      const sig = pct>0?'↑':'↓';
+      compMesAnt.innerHTML+=`<div class="comp-row"><span class="comp-metric">${lbl}</span><div class="comp-vals"><span class="comp-val">${v1}</span><span class="comp-delta ${cls}">${sig} ${Math.abs(pct).toFixed(1)}%</span></div></div>`;
+    });
+  } else { compMesAnt.innerHTML = '<div style="color:var(--gris);font-size:12px">Sin datos del mes anterior</div>'; }
+
+  // Comp mismo mes años anteriores
+  const compMismoMes = document.getElementById('compMismoMesBody');
+  const prevYears = AÑOS.filter(a=>a<año).reverse().slice(0,4);
+  compMismoMes.innerHTML = `<div style="font-size:11px;color:var(--gris);margin-bottom:8px">${MESES_LABEL[mo-1]} comparado con años anteriores</div>`;
+  if(prevYears.length){
+    // Header
+    compMismoMes.innerHTML += `<div style="display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:var(--azul);padding:4px 0;border-bottom:2px solid var(--borde)"><span>Año</span><span>Recaud.</span><span>KM</span><span>Fact/KM</span></div>`;
+    // Current year
+    compMismoMes.innerHTML += `<div style="display:flex;justify-content:space-between;font-size:11.5px;font-weight:700;color:var(--texto);padding:5px 0;border-bottom:1px solid var(--borde);background:#eff6ff;border-radius:4px;padding:5px 6px"><span>${año} ★</span><span>${fmtPeso(row.recaud)}</span><span>${fmtM(row.km)}</span><span>${fmtPesoFull(row.fact_km)}</span></div>`;
+    prevYears.forEach(a=>{
+      const pr = getRow(a, mo);
+      if(pr){
+        const pct = (((row.recaud-pr.recaud)/Math.abs(pr.recaud))*100).toFixed(0);
+        const cls = pct>0?'d-up':pct<0?'d-dn':'d-ne';
+        compMismoMes.innerHTML+=`<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--gris);padding:5px 6px;border-bottom:1px solid #f1f5f9"><span>${a}</span><span>${fmtPeso(pr.recaud)} <span class="comp-delta ${cls}" style="font-size:9px">${pct>0?'+':''}${pct}%</span></span><span>${fmtM(pr.km)}</span><span>$${pr.fact_km.toFixed(0)}</span></div>`;
+      }
+    });
+  }
+}
+
+// ============================================================
+// CHARTS
+// ============================================================
+const chartInstances = {};
+function mkChart(id, config){
+  if(chartInstances[id]) chartInstances[id].destroy();
+  chartInstances[id] = new Chart(document.getElementById(id), config);
+  return chartInstances[id];
+}
+
+const labels = monthly.filter(m=>m.km>0).map(m=>MESES_SHORT[m.mo-1]+' '+m.año);
+const validM = monthly.filter(m=>m.km>0);
+
+window.addEventListener('DOMContentLoaded',()=>{
+  buildSelectors();
+  updateResumen();
+
+  // ---- PANEL RESUMEN ----
+  mkChart('cEvol',{
+    type:'line',
+    data:{labels,datasets:[
+      {label:'Recaudación ($M)',data:validM.map(m=>m.recaud/1e6),borderColor:C.az,backgroundColor:'rgba(59,130,246,0.08)',borderWidth:2,pointRadius:1.5,fill:true,yAxisID:'y1'},
+      {label:'KM Recorridos (M)',data:validM.map(m=>m.km/1e6),borderColor:C.vd,borderWidth:2,pointRadius:1.5,fill:false,yAxisID:'y2'},
+      {label:'Pasajeros (M)',data:validM.map(m=>m.pax/1e6),borderColor:C.vi,borderWidth:2,pointRadius:1.5,fill:false,yAxisID:'y2'},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{position:'top',labels:{font:{size:11}}}},
+      scales:{x:{grid:{color:'#f1f5f9'},ticks:{maxTicksLimit:20,font:{size:9}}},
+        y1:{position:'left',grid:{color:'#f1f5f9'},ticks:{callback:v=>'$'+v.toFixed(0)+'M',font:{size:10}},title:{display:true,text:'Recaud. ($M)'}},
+        y2:{position:'right',grid:{display:false},ticks:{callback:v=>v.toFixed(1)+'M',font:{size:10}},title:{display:true,text:'KM / PAX (M)'}}
+      }}
+  });
+
+  const recAnual = AÑOS.map(a=>validM.filter(m=>m.año===a).reduce((s,m)=>s+m.recaud,0)/1e9);
+  mkChart('cRecAnual',{type:'bar',data:{labels:AÑOS.map(a=>a+((a===2025||a===2026)?' (p)':'')),datasets:[{label:'Recaudación ($B)',data:recAnual,backgroundColor:['#bfdbfe','#93c5fd','#60a5fa','#3b82f6','#1d4ed8','#0c4a6e'],borderRadius:8,borderSkipped:false}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' $'+ctx.parsed.y.toFixed(2)+'B'}}},
+      scales:{y:{grid:{color:'#f1f5f9'},ticks:{callback:v=>'$'+v.toFixed(0)+'B',font:{size:10}}},x:{grid:{display:false}}}}});
+
+  const kmA = AÑOS.map(a=>validM.filter(m=>m.año===a).reduce((s,m)=>s+m.km,0)/1e6);
+  const pxA = AÑOS.map(a=>validM.filter(m=>m.año===a).reduce((s,m)=>s+m.pax,0)/1e6);
+  mkChart('cKmPaxAnual',{type:'bar',data:{labels:AÑOS.map(a=>a+((a===2025||a===2026)?' (p)':'')),datasets:[{label:'KM (M)',data:kmA,backgroundColor:'#86efac',borderRadius:6},{label:'PAX (M)',data:pxA,backgroundColor:'#818cf8',borderRadius:6}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{font:{size:11}}}},
+      scales:{y:{grid:{color:'#f1f5f9'},ticks:{callback:v=>v.toFixed(0)+'M',font:{size:10}}},x:{grid:{display:false}}}}});
+
+  mkChart('cIPK',{type:'line',data:{labels,datasets:[{label:'IPK',data:validM.map(m=>m.ipk),borderColor:C.vi,backgroundColor:'rgba(124,58,237,0.08)',borderWidth:2,pointRadius:1.5,fill:true,tension:0.3}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'#f1f5f9'},ticks:{maxTicksLimit:18,font:{size:9}}},y:{grid:{color:'#f1f5f9'},ticks:{font:{size:10}},min:0,max:0.75}}}});
+
+  mkChart('cFactKm',{type:'line',data:{labels,datasets:[{label:'Fact/KM ($)',data:validM.map(m=>m.fact_km),borderColor:C.te,backgroundColor:'rgba(8,145,178,0.08)',borderWidth:2,pointRadius:1.5,fill:true,tension:0.3}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'#f1f5f9'},ticks:{maxTicksLimit:18,font:{size:9}}},y:{grid:{color:'#f1f5f9'},ticks:{callback:v=>'$'+v.toLocaleString('es-AR',{maximumFractionDigits:0}),font:{size:10}}}}}});
+
+  // ---- PANEL FACTURACIÓN ----
+  const top15 = [...empresasFact].sort((a,b)=>b.total2025-a.total2025).slice(0,15);
+  mkChart('cTopFact',{type:'bar',data:{labels:top15.map(e=>e.empresa.length>30?e.empresa.substring(0,30)+'…':e.empresa),datasets:[{label:'Facturación 2025 ($M)',data:top15.map(e=>e.total2025/1e6),backgroundColor:top15.map((_,i)=>PALETA[i%PALETA.length]),borderRadius:6}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' $'+ctx.parsed.x.toLocaleString('es-AR',{maximumFractionDigits:1})+'M'}}},
+      scales:{x:{grid:{color:'#f1f5f9'},ticks:{callback:v=>'$'+v.toLocaleString('es-AR',{maximumFractionDigits:0})+'M',font:{size:10}}},y:{grid:{display:false},ticks:{font:{size:10}}}}}});
+
+  const top6 = [...empresasFact].sort((a,b)=>b.total2025-a.total2025).slice(0,6);
+  mkChart('cFactMens',{type:'bar',data:{labels:['2023','2024','2025'],datasets:top6.map((e,i)=>({label:e.empresa.split(' ').slice(0,2).join(' '),data:[e.total2023/1e6,e.total2024/1e6,e.total2025/1e6],backgroundColor:PALETA[i],borderRadius:4}))},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{font:{size:10}}}},scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,grid:{color:'#f1f5f9'},ticks:{callback:v=>'$'+v.toLocaleString('es-AR',{maximumFractionDigits:0})+'M',font:{size:10}}}}}});
+
+  const totalSys2025 = empresasFact.reduce((s,e)=>s+e.total2025,0);
+  const top10 = [...empresasFact].sort((a,b)=>b.total2025-a.total2025).slice(0,10);
+  const resto = totalSys2025 - top10.reduce((s,e)=>s+e.total2025,0);
+  mkChart('cPartic',{type:'doughnut',data:{labels:[...top10.map(e=>e.empresa.split(' ').slice(0,2).join(' ')), 'Resto'],datasets:[{data:[...top10.map(e=>e.total2025), Math.max(0,resto)],backgroundColor:[...PALETA.slice(0,10),'#e5e7eb'],borderWidth:3,borderColor:'#fff',hoverOffset:6}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{position:'bottom',labels:{font:{size:9},padding:8}},tooltip:{callbacks:{label:ctx=>' '+ctx.label+': '+((ctx.parsed/totalSys2023*100).toFixed(1))+'%'}}}}});
+
+  // ---- PANEL KM ----
+  mkChart('cKmMens',{type:'bar',data:{labels,datasets:[{label:'KM Recorridos',data:validM.map(m=>m.km/1e6),backgroundColor:validM.map(m=>m.año===2021?'#bfdbfe':m.año===2022?'#93c5fd':m.año===2023?'#3b82f6':m.año===2024?'#2563eb':m.año===2025?'#1d4ed8':'#0c4a6e'),borderRadius:3}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{maxTicksLimit:20,font:{size:9}}},y:{grid:{color:'#f1f5f9'},ticks:{callback:v=>v.toFixed(1)+'M',font:{size:10}}}}}});
+
+  mkChart('cKmAnual',{type:'bar',data:{labels:AÑOS.map(a=>a+((a===2025||a===2026)?' (p)':'')),datasets:[{label:'KM (M)',data:kmA,backgroundColor:['#bfdbfe','#93c5fd','#60a5fa','#3b82f6','#1d4ed8','#0c4a6e'],borderRadius:8}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:'#f1f5f9'},ticks:{callback:v=>v.toFixed(0)+'M',font:{size:10}}},x:{grid:{display:false}}}}});
+
+  const kmEstac=Array(12).fill(0),kmEstacN=Array(12).fill(0);
+  validM.filter(m=>m.año>=2022&&m.año<=2024).forEach(m=>{kmEstac[m.mo-1]+=m.km/1e6;kmEstacN[m.mo-1]++;});
+  mkChart('cKmEstac',{type:'bar',data:{labels:MESES_SHORT,datasets:[{label:'KM Prom (M)',data:kmEstac.map((v,i)=>kmEstacN[i]>0?+(v/kmEstacN[i]).toFixed(2):0),backgroundColor:MESES_SHORT.map((_,i)=>`hsl(${200+i*5},70%,${50+i*2}%)`),borderRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:'#f1f5f9'},ticks:{callback:v=>v+'M',font:{size:10}}},x:{grid:{display:false}}}}});
+
+  mkChart('cFactKm2',{type:'line',data:{labels,datasets:[{label:'Fact/KM ($)',data:validM.map(m=>m.fact_km),borderColor:C.am,backgroundColor:'rgba(217,119,6,.08)',borderWidth:2,pointRadius:1.5,fill:true,tension:0.3}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{maxTicksLimit:16,font:{size:9}}},y:{grid:{color:'#f1f5f9'},ticks:{callback:v=>'$'+v.toLocaleString('es-AR',{maximumFractionDigits:0}),font:{size:10}}}}}});
+
+  // ---- PANEL PASAJEROS ----
+  mkChart('cPaxMens',{type:'line',data:{labels,datasets:[{label:'Pasajeros (M)',data:validM.map(m=>m.pax/1e6),borderColor:C.vi,backgroundColor:'rgba(124,58,237,.09)',borderWidth:2.5,pointRadius:2,fill:true,tension:0.3}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'#f1f5f9'},ticks:{maxTicksLimit:20,font:{size:9}}},y:{grid:{color:'#f1f5f9'},ticks:{callback:v=>v.toFixed(1)+'M',font:{size:10}}}}}});
+
+  mkChart('cPaxAnual',{type:'bar',data:{labels:AÑOS.map(a=>a+((a===2025||a===2026)?' (p)':'')),datasets:[{label:'PAX (M)',data:pxA,backgroundColor:['#e9d5ff','#c4b5fd','#a78bfa','#7c3aed','#5b21b6','#3b0764'],borderRadius:8}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:'#f1f5f9'},ticks:{callback:v=>v.toFixed(0)+'M',font:{size:10}}},x:{grid:{display:false}}}}});
+
+  mkChart('cIPK2',{type:'line',data:{labels,datasets:[{label:'IPK',data:validM.map(m=>m.ipk),borderColor:C.vi,backgroundColor:'rgba(124,58,237,.08)',borderWidth:2,pointRadius:1.5,fill:true,tension:0.3}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{maxTicksLimit:18,font:{size:9}}},y:{grid:{color:'#f1f5f9'},ticks:{font:{size:10}},min:0,max:0.75}}}});
+
+  // ---- PANEL SUBSIDIOS ----
+  mkChart('cSubRec',{type:'bar',data:{labels,datasets:[
+    {label:'Recaudación ($M)',data:validM.map(m=>m.recaud/1e6),backgroundColor:'rgba(59,130,246,.7)',borderRadius:3,stack:'a'},
+    {label:'Subsidios ($M)',data:validM.map(m=>m.subsidios/1e6),backgroundColor:'rgba(220,38,38,.65)',borderRadius:3,stack:'a'},
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{font:{size:11}}}},scales:{x:{stacked:true,ticks:{maxTicksLimit:20,font:{size:9}}},y:{stacked:true,grid:{color:'#f1f5f9'},ticks:{callback:v=>'$'+v.toFixed(0)+'M',font:{size:10}}}}}});
+
+  const subA=AÑOS.map(a=>validM.filter(m=>m.año===a).reduce((s,m)=>s+m.subsidios,0)/1e9);
+  mkChart('cSubAnual',{type:'bar',data:{labels:AÑOS.map(a=>a+((a===2025||a===2026)?' (p)':'')),datasets:[{label:'Subsidios ($B)',data:subA,backgroundColor:['#fecaca','#f87171','#ef4444','#dc2626','#b91c1c','#7f1d1d'],borderRadius:8}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' $'+ctx.parsed.y.toFixed(2)+'B'}}},
+      scales:{y:{grid:{color:'#f1f5f9'},ticks:{callback:v=>'$'+v.toFixed(0)+'B',font:{size:10}}},x:{grid:{display:false}}}}});
+
+  const recA2=AÑOS.map(a=>validM.filter(m=>m.año===a).reduce((s,m)=>s+m.recaud,0)/1e9);
+  mkChart('cComp',{type:'bar',data:{labels:AÑOS.map(a=>a+((a===2025||a===2026)?' (p)':'')),datasets:[{label:'Recaudación',data:recA2,backgroundColor:'rgba(59,130,246,.8)',borderRadius:4,stack:'s'},{label:'Subsidios',data:subA,backgroundColor:'rgba(220,38,38,.75)',borderRadius:4,stack:'s'}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{font:{size:11}}}},scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,grid:{color:'#f1f5f9'},ticks:{callback:v=>'$'+v.toFixed(0)+'B',font:{size:10}}}}}});
+
+  // ---- EMPRESA SELECTOR ----
+  const selE = document.getElementById('selEmpresa');
+  empresasFact.sort((a,b)=>b.total2023-a.total2023).forEach(e=>{
+    selE.innerHTML+=`<option value="${e.empresa}">${e.empresa}</option>`;
+  });
+  updateEmpresa();
+  buildRankFact();
+});
+
+// ============================================================
+// POR EMPRESA
+// ============================================================
+let empChart = null;
+function updateEmpresa(){
+  const nombre = document.getElementById('selEmpresa').value;
+  const año = document.getElementById('selAñoEmp').value;
+  const e = empresasFact.find(x=>x.empresa===nombre);
+  if(!e) return;
+  const años = año==='all'?[2023,2024,2025,2026]:[parseInt(año)];
+  const data2 = años.map(a=>e['total'+a]/1e6);
+  const totalSist2025 = empresasFact.reduce((s,x)=>s+x.total2025,0);
+  const totalSist2026 = empresasFact.reduce((s,x)=>s+x.total2026,0);
+  const refYear = año==='all'?2025:parseInt(año);
+  const refTotal = empresasFact.reduce((s,x)=>s+x['total'+refYear],0);
+  const html = `
+    <div class="kpi-grid">
+      <div class="kpi az">
+        <div class="kpi-lbl">Facturación 2023</div>
+        <div class="kpi-val" style="font-size:16px">${fmtPesoFull(e.total2023)}</div>
+      </div>
+      <div class="kpi vd">
+        <div class="kpi-lbl">Facturación 2024</div>
+        <div class="kpi-val" style="font-size:16px">${fmtPesoFull(e.total2024)}</div>
+      </div>
+      <div class="kpi vi">
+        <div class="kpi-lbl">Facturación 2025</div>
+        <div class="kpi-val" style="font-size:16px">${fmtPesoFull(e.total2025)}</div>
+      </div>
+      <div class="kpi am">
+        <div class="kpi-lbl">Facturación 2026 (parcial)</div>
+        <div class="kpi-val" style="font-size:16px">${fmtPesoFull(e.total2026)}</div>
+      </div>
+      <div class="kpi te">
+        <div class="kpi-lbl">% del Sistema ${refYear}</div>
+        <div class="kpi-val" style="font-size:18px">${refTotal>0?((e['total'+refYear]/refTotal)*100).toFixed(2):'0.00'}%</div>
+      </div>
+    </div>
+    <div class="ccard">
+      <div class="ctitle">Facturación — ${nombre}</div>
+      <div class="csub">${año==='all'?'2023–2026':año} · en millones de pesos</div>
+      <div class="ch ch-260"><canvas id="cEmpChart"></canvas></div>
+    </div>`;
+  document.getElementById('empDetalle').innerHTML = html;
+  if(empChart) empChart.destroy();
+  empChart = new Chart(document.getElementById('cEmpChart'),{
+    type:'bar',
+    data:{labels:años.map(String),datasets:[{label:'Facturación ($M)',data:data2,backgroundColor:['#bfdbfe','#93c5fd','#3b82f6','#1d4ed8'].slice(0,años.length),borderRadius:8}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' $'+ctx.parsed.y.toLocaleString('es-AR',{maximumFractionDigits:1})+'M'}}},
+      scales:{y:{grid:{color:'#f1f5f9'},ticks:{callback:v=>'$'+v.toLocaleString('es-AR',{maximumFractionDigits:0})+'M',font:{size:10}}},x:{grid:{display:false}}}}
+  });
+}
+
+function buildRankFact(){
+  const total = empresasFact.reduce((s,e)=>s+e.total2025,0);
+  const sorted = [...empresasFact].sort((a,b)=>b.total2025-a.total2025);
+  const div = document.getElementById('rankFact');
+  div.innerHTML = '';
+  sorted.forEach(e=>{
+    const pct = (e.total2025/total*100);
+    div.innerHTML+=`<div class="prg-wrap">
+      <span class="prg-lbl" title="${e.empresa}">${e.empresa}</span>
+      <div class="prg-track"><div class="prg-fill" style="width:100%;background:var(--celeste)"></div></div>
+      <span class="prg-val">${fmtPeso(e.total2025)} (${pct.toFixed(1)}%)</span>
+    </div>`;
+  });
+  const maxVal = sorted[0].total2025;
+  div.querySelectorAll('.prg-fill').forEach((el,i)=>{
+    el.style.width = (sorted[i].total2025/maxVal*100).toFixed(1)+'%';
+  });
+}
+</script>
+</body>
+</html>
