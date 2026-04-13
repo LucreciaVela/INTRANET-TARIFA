@@ -10,7 +10,10 @@
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      min-height: 100vh;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: row;
       background: linear-gradient(160deg, #0e3060 0%, #0d2a50 35%, #071a38 70%, #040f22 100%);
       color: #e2e8f0;
     }
@@ -172,6 +175,115 @@
     }
 
     /* ══════════════════════════════════════
+       SHELL — Layout persistente sidebar + contenido
+    ══════════════════════════════════════ */
+    #shell-nav {
+      width: 0; min-width: 0;
+      height: 100vh; overflow: hidden;
+      background: rgba(5,13,32,0.97);
+      border-right: 1px solid rgba(255,255,255,0.08);
+      display: flex; flex-direction: column;
+      flex-shrink: 0;
+      box-shadow: 2px 0 24px rgba(0,0,0,0.5);
+      z-index: 10;
+      transition: width 0.3s cubic-bezier(0.22,1,0.36,1),
+                  min-width 0.3s cubic-bezier(0.22,1,0.36,1);
+    }
+    body.app-mode #shell-nav {
+      width: 250px; min-width: 250px; overflow-y: auto;
+    }
+    #shell-nav::-webkit-scrollbar { width: 3px; }
+    #shell-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+    #shell-content {
+      flex: 1; min-width: 0; height: 100vh;
+      overflow: hidden; display: flex; flex-direction: column;
+    }
+    #home-view { flex: 1; overflow-y: auto; }
+    #app-iframe {
+      display: none; flex: 1; border: none;
+      width: 100%; background: #f0f4f8;
+    }
+    #app-iframe.visible { display: block; }
+
+    /* Shell nav: cabecera */
+    .sn-head {
+      padding: 1.1rem 1rem 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex; align-items: center; gap: 0.65rem; flex-shrink: 0;
+    }
+    .sn-brand-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: linear-gradient(135deg, #1a5ba8, #0d3870);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.78rem; font-weight: 800; color: #fff;
+      box-shadow: 0 2px 8px rgba(13,56,112,0.45); flex-shrink: 0;
+    }
+    .sn-brand-text .t1 { font-size: 0.8rem; font-weight: 700; color: #fff; }
+    .sn-brand-text .t2 { font-size: 0.52rem; letter-spacing: 0.09em; color: #7ab3e0; text-transform: uppercase; margin-top: 2px; }
+
+    /* Shell nav: labels de sección */
+    .sn-section-lbl {
+      font-size: 0.56rem; font-weight: 700; letter-spacing: 0.12em;
+      color: rgba(255,255,255,0.22); text-transform: uppercase;
+      padding: 0.8rem 1rem 0.25rem;
+    }
+
+    /* Shell nav: lista de items */
+    .sn-items { padding: 0.15rem 0.45rem; }
+
+    /* Shell nav: item individual */
+    .sn-item {
+      display: flex; align-items: center; gap: 0.55rem;
+      padding: 0.55rem 0.6rem; border-radius: 9px;
+      text-decoration: none; cursor: pointer;
+      color: rgba(255,255,255,0.5);
+      font-size: 0.74rem; font-weight: 500; line-height: 1.3;
+      border: 1px solid transparent;
+      transition: background 0.15s, color 0.15s;
+      margin-bottom: 1px; user-select: none;
+    }
+    .sn-item:hover { background: rgba(255,255,255,0.08); color: #fff; }
+    .sn-item.active {
+      background: rgba(255,255,255,0.11); color: #fff; font-weight: 600;
+      border-color: rgba(255,255,255,0.12);
+    }
+    .sn-dot {
+      width: 28px; height: 28px; border-radius: 7px;
+      background: rgba(255,255,255,0.07);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: background 0.15s;
+    }
+    .sn-item.active .sn-dot {
+      background: linear-gradient(135deg, var(--c1,#3b82f6), var(--c2,#1d6fe8));
+      box-shadow: 0 2px 8px var(--cs, rgba(59,130,246,0.3));
+    }
+    .sn-item:hover .sn-dot { background: rgba(255,255,255,0.11); }
+
+    /* Shell nav: pie */
+    .sn-foot {
+      padding: 0.8rem 1rem; margin-top: auto;
+      border-top: 1px solid rgba(255,255,255,0.07); flex-shrink: 0;
+    }
+    .sn-exit-link {
+      display: flex; align-items: center; gap: 6px;
+      color: rgba(255,255,255,0.32); font-size: 0.7rem; font-weight: 500;
+      text-decoration: none; padding: 5px 2px; transition: color 0.2s;
+    }
+    .sn-exit-link:hover { color: rgba(255,255,255,0.65); }
+    .sn-foot-label {
+      font-size: 0.55rem; letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.16); text-transform: uppercase; margin-top: 0.3rem;
+    }
+
+    @media (max-width: 768px) {
+      #shell-nav { width: 200px; min-width: 200px; }
+      .sn-item { font-size: 0.7rem; }
+    }
+    @media (max-width: 540px) {
+      #shell-nav { display: none; }
+    }
+
+        /* ══════════════════════════════════════
        ASISTENTE FLOTANTE
     ══════════════════════════════════════ */
     #chat-bubble {
@@ -327,6 +439,13 @@
       color: #93c5fd; padding: 2px 8px; border-radius: 6px;
     }
 
+    .clarify-opt {
+      display: inline-block; margin: 3px 0;
+      color: #93c5fd; text-decoration: underline dotted;
+      font-size: 0.82rem; cursor: pointer;
+    }
+    .clarify-opt:hover { color: #bfdbfe; }
+
     /* Typing indicator */
     .typing-dots { display: flex; gap: 4px; padding: 2px 4px; }
     .typing-dots span {
@@ -385,6 +504,78 @@
   </style>
 </head>
 <body>
+
+  <!-- ══════════════════════════════════════
+       SHELL NAV PERSISTENTE
+  ══════════════════════════════════════ -->
+  <aside id="shell-nav">
+    <div class="sn-head">
+      <div class="sn-brand-icon">E</div>
+      <div class="sn-brand-text">
+        <div class="t1">ERSeP</div>
+        <div class="t2">Gerencia de Transporte</div>
+      </div>
+    </div>
+    <div class="sn-section-lbl">Panel</div>
+    <div class="sn-items">
+      <a class="sn-item active" id="sn-home" href="#" style="--c1:#64748b;--c2:#475569;--cs:rgba(100,116,139,0.3);">
+        <div class="sn-dot">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        </div>
+        Panel Principal
+      </a>
+    </div>
+    <div class="sn-section-lbl">Herramientas</div>
+    <div class="sn-items">
+      <a class="sn-item" data-app-id="sistema" data-href="sistema_tarifario_ersep.html" href="#" style="--c1:#3b82f6;--c2:#1d6fe8;--cs:rgba(59,130,246,0.3);">
+        <div class="sn-dot">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        Sistema de Cálculo de Costos y Tarifas
+      </a>
+      <a class="sn-item" data-app-id="tarifabot" data-href="TarifaBot_ERSeP_RG41_2026%20(3).html" href="#" style="--c1:#8b5cf6;--c2:#7c3aed;--cs:rgba(139,92,246,0.28);">
+        <div class="sn-dot">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        TarifaBot · Consultor RG 41/26
+      </a>
+      <a class="sn-item" data-app-id="tablero-control" data-href="TABLERO_ERSEP_TRANSPORTE.html" href="#" style="--c1:#06b6d4;--c2:#0891b2;--cs:rgba(6,182,212,0.28);">
+        <div class="sn-dot">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        </div>
+        Tablero de Control Tarifario
+      </a>
+      <a class="sn-item" data-app-id="tablero-evol" data-href="TABLERO_FACTURACION_KM_PAX_2026.html" href="#" style="--c1:#10b981;--c2:#059669;--cs:rgba(16,185,129,0.28);">
+        <div class="sn-dot">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        </div>
+        Tablero de Evolución General del Sistema
+      </a>
+      <a class="sn-item" data-app-id="calculadora" data-href="ersep_calculadora%20pasajeros.html" href="#" style="--c1:#f59e0b;--c2:#d97706;--cs:rgba(245,158,11,0.28);">
+        <div class="sn-dot">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg>
+        </div>
+        Calculadora de Pasajeros
+      </a>
+      <a class="sn-item" data-app-id="ddjj" data-href="ERSeP_DDJJ_App.html" href="#" style="--c1:#ef4444;--c2:#dc2626;--cs:rgba(239,68,68,0.28);">
+        <div class="sn-dot">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        Empresas del Sistema de Transporte
+      </a>
+    </div>
+    <div class="sn-foot">
+      <a href="index.html" class="sn-exit-link">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Salir del sistema
+      </a>
+      <div class="sn-foot-label">Área Tarifas · 2026</div>
+    </div>
+  </aside>
+
+  <!-- ══ SHELL CONTENIDO ══ -->
+  <div id="shell-content">
+  <div id="home-view">
 
   <!-- HEADER -->
   <header>
@@ -571,6 +762,11 @@
     ERSeP &nbsp;·&nbsp; Ente Regulador de los Servicios Públicos &nbsp;·&nbsp; Provincia de Córdoba &nbsp;·&nbsp; Sistema Interno — Área Tarifas · 2026
   </footer>
 
+  </div><!-- #home-view -->
+  <iframe id="app-iframe" src="" title="Herramienta ERSeP" allowfullscreen></iframe>
+  </div><!-- #shell-content -->
+
+
   <!-- ══════════════════════════════════════
        ASISTENTE FLOTANTE DE NORMATIVA
   ══════════════════════════════════════ -->
@@ -598,7 +794,7 @@
         </div>
         <div class="chat-header-info">
           <div class="name">Consultor de Normativa ERSeP</div>
-          <div class="status">Decreto 254/03 · RG 41/26 · Activo</div>
+          <div class="status">Activo</div>
         </div>
       </div>
 
@@ -612,8 +808,7 @@
           </div>
           <div class="msg-bubble">
             ¡Hola! Soy el <strong>Consultor de Normativa ERSeP</strong>. Puedo responderte consultas sobre resoluciones, decretos y normativa interna del área tarifas citando la fuente exacta.<br><br>
-            Escribí tu consulta y te respondo basándome exclusivamente en la base de conocimiento vigente.
-            <br><span class="norm-cite">📋 Decreto N° 254/03 · RG N° 41/26 · ERSeP</span>
+            Escribí tu consulta y te respondo citando la norma exacta.
           </div>
         </div>
       </div>
@@ -630,9 +825,6 @@
           </svg>
         </button>
       </div>
-      <div class="upload-note">
-        📋 Base activa: Decreto 254/03 · Cargando más normativa próximamente
-      </div>
     </div>
   </div>
 
@@ -648,28 +840,28 @@
       "dto 254",
       "decreto 254/03",
       "reglamento ley 8669",
-      "ley 8669"
+      "ley 8669 reglamento"
     ],
     "titulo": "Decreto N° 254/03 — Reglamentario Ley N° 8669",
-    "respuesta": "El <strong>Decreto N° 254/03</strong> (B.O. 02-03/04/2003) reglamenta la Ley N° 8669 y su modificatoria N° 9034, que regula la Explotación del Servicio Público de Transporte en la Provincia de Córdoba. Consta de 57 artículos y 4 Anexos: Anexo A (Habilitación de vehículos), Anexo B (Pliego de condiciones para concesiones), Anexo C (Régimen de Penalidades) y Anexo D (Metodología para determinación de bases tarifarias). Fue modificado por los Decretos N° 42/08, N° 1940/09 y N° 44/15.",
+    "respuesta": "El <strong>Decreto N° 254/03</strong> (B.O. 02-03/04/2003) reglamenta la Ley N° 8669 y su modificatoria N° 9034, que regula la Explotación del Servicio Público de Transporte en la Provincia de Córdoba. Consta de 57 artículos y 4 Anexos:<br>• <strong>Anexo A</strong>: Habilitación de vehículos<br>• <strong>Anexo B</strong>: Pliego de condiciones para concesiones<br>• <strong>Anexo C</strong>: Régimen de Penalidades<br>• <strong>Anexo D</strong>: Metodología para determinación de bases tarifarias<br>Fue modificado por los Decretos N° 42/08, N° 1940/09 y N° 44/15.",
     "cita": "Decreto N° 254/03 — Reglamentario Ley N° 8669 y N° 9034"
   },
   {
-    "id": "dto254_tarifas_metodologia",
+    "id": "dto254_metodologia",
     "keywords": [
       "metodologia tarifaria",
       "bases tarifarias",
-      "costo medio",
       "formula tarifaria",
       "calculo tarifa",
       "cálculo tarifa",
-      "tarifa base",
-      "tarifa basica",
-      "tarifa básica"
+      "anexo d decreto",
+      "tarifa basica kilometrica",
+      "tbk",
+      "tarifa básica kilométrica"
     ],
     "titulo": "Metodología Tarifaria — Anexo D Decreto 254/03",
-    "respuesta": "El <strong>Anexo D del Decreto N° 254/03</strong> establece la Metodología para la determinación de bases tarifarias del autotransporte público de pasajeros. Las bases tarifarias consideran: los costos medios presupuestarios de las permisionarias, la cantidad de usuarios que abonan el boleto y las características de la vía. Las empresas se clasifican en: <br>• <strong>Metropolitanas</strong>: servicios en radio de hasta 60 km de la Ciudad de Córdoba.<br>• <strong>Rurales</strong>: servicios que superan los 60 km.<br>Los costos se dividen en cuatro categorías: A) Costos de personal, B) Costos variables del vehículo, C) Costos fijos del vehículo, D) Costos empresarios e impositivos.",
-    "cita": "Anexo D — Decreto N° 254/03 (mod. por Dec. N° 44/15)"
+    "respuesta": "El <strong>Anexo D del Decreto N° 254/03</strong> establece la metodología para determinar las bases tarifarias del autotransporte público. Los costos se estructuran en 4 componentes con los siguientes <strong>ponderadores vigentes (Mesa 16 — Dic. 2025)</strong>:<br>• <strong>A. Costos de Personal</strong>: $1.451,99 → 54,76%<br>• <strong>B. Costos Variables del Vehículo</strong>: $432,56 → 16,31%<br>• <strong>C. Costos Fijos del Vehículo</strong>: $439,59 → 16,58%<br>• <strong>D. Costos Empresarios e Impositivos</strong>: $327,53 → 12,35%<br><strong>Costo Medio Presupuestado: $2.651,67 — TBK resultante: $91,5188 sin IVA ($101,1282 c/IVA)</strong>",
+    "cita": "Anexo D — Decreto N° 254/03 · Informe Mesa Tarifaria N° 16 (Marzo 2026)"
   },
   {
     "id": "dto254_costos_personal",
@@ -681,14 +873,51 @@
       "dotacion",
       "dotación",
       "personal conduccion",
-      "personal conducción"
+      "sbcu",
+      "aoit"
     ],
-    "titulo": "Costos de Personal — Anexo D Decreto 254/03",
-    "respuesta": "Los <strong>Costos Asociados al Personal</strong> (Componente A del Anexo D) comprenden: A.1 Horas hombre del personal de conducción, A.2 Horas extra, A.3 Personal de taller y administración, A.4 Cargas sociales, A.5 Seguro del personal, A.6 Viáticos, A.7 Indumentaria.<br>La dotación es de <strong>2,5 conductores/vehículo</strong> para empresas metropolitanas y <strong>3 conductores/vehículo</strong> para rurales. Las horas netas trabajadas son 192 hs/mes. El coeficiente de incidencia por días no trabajados es IL = 1,195 (47 días/año de vacaciones, feriados y enfermedad).",
-    "cita": "Anexo D, Punto I-A — Decreto N° 254/03"
+    "titulo": "Costos de Personal — Mesa 16 (Diciembre 2025)",
+    "respuesta": "Los <strong>Costos Asociados al Personal</strong> vigentes (Mesa 16, Dic. 2025) son:<br>• <strong>A.1</strong> Horas hombre conducción: Cp1 = $601,65 (+ $98,42 no remunerativos)<br>• <strong>A.2</strong> Horas extra: $20,43<br>• <strong>A.3</strong> Personal taller y administración: $267,50<br>• <strong>A.4</strong> Cargas sociales: $314,58<br>• <strong>A.5</strong> Seguro personal: $35,37<br>• <strong>A.6</strong> Viáticos: $111,97<br>• <strong>A.7</strong> Indumentaria: $2,08<br><strong>Total personal: $1.451,99/km</strong><br>Sueldo básico convenio (SBcu) dic. 2025: $1.428.395 + adicional no rem. $351.668. Horas: SH = $8.183,51/h. Flota: 689 unidades activas (Micronauta).",
+    "cita": "Informe Técnico Mesa Tarifaria N° 16 — Gerencia Transporte · Subdirección Costos y Tarifas (Marzo 2026)"
   },
   {
-    "id": "dto254_penalidades_general",
+    "id": "dto254_costos_vehiculo",
+    "keywords": [
+      "costos vehiculo",
+      "combustible",
+      "gasoil",
+      "neumaticos",
+      "neumáticos",
+      "lubricantes",
+      "amortizacion",
+      "amortización",
+      "reparaciones",
+      "seguro vehiculo",
+      "costos variables",
+      "costos fijos"
+    ],
+    "titulo": "Costos del Vehículo — Mesa 16 (Diciembre 2025)",
+    "respuesta": "<strong>Costos Variables del Vehículo</strong> (Mesa 16, Dic. 2025):<br>• B.1 Combustible (Gasoil $1.138,60/L): $330,97<br>• B.2 Lubricantes: $14,24<br>• B.3 Neumáticos: $76,11 | B.4 Reparación neumáticos: $7,61 | B.5 Lavado y engrase: $3,62<br><strong>Total variable: $432,56/km</strong><br><strong>Costos Fijos del Vehículo</strong>:<br>• C.1 Amortización (8%): $172,83 | C.2 Intereses capital (10%): $77,77 | C.3 Reparaciones/repuestos: $172,83 | C.4 Seguro: $16,16<br><strong>Total fijo: $439,59/km</strong><br>Valores vehículos 0km: Chico $176.241.933 / Mediano $255.808.926 / Grande $406.280.585",
+    "cita": "Informe Técnico Mesa Tarifaria N° 16 (Marzo 2026) · Anexo D Decreto 254/03"
+  },
+  {
+    "id": "dto254_nppe",
+    "keywords": [
+      "nppe",
+      "pasajeros pagos",
+      "pasajeros equivalentes",
+      "numero pasajeros",
+      "cantidad pasajeros",
+      "recorrido total",
+      "rtm",
+      "rbm"
+    ],
+    "titulo": "NPPE y Cálculo Final de TBK — Mesa 16",
+    "respuesta": "La <strong>Tarifa Básica Kilométrica (TBK)</strong> se calcula: <em>TBK = Costo Medio / NPPE</em><br><strong>Valores Mesa 16 (Dic. 2025)</strong>:<br>• Costo Medio Presupuestado: $2.651,67<br>• RBM (Recaudación Base Mensual, pico esterilizado): $16.517.009.565,89<br>• RTM (Recorrido Total Mensual, Dic. 2025): 6.572.079 km<br>• TBK de referencia (Mesa 13): $86,74 con IVA<br>• <strong>NPPE = $16.517.009.565,89 / (6.572.079 × $86,74) = 28,9741</strong><br>• <strong>TBK resultante = $2.651,67 / 28,9741 = $91,5188 sin IVA</strong>",
+    "cita": "Informe Técnico Mesa Tarifaria N° 16 (Marzo 2026)"
+  },
+  {
+    "id": "dto254_penalidades",
     "keywords": [
       "penalidades",
       "sanciones",
@@ -696,172 +925,192 @@
       "multa",
       "apercibimiento",
       "suspension",
-      "suspensión",
-      "caducidad",
-      "unidades de multa"
+      "régimen sancionatorio",
+      "regimen sancionatorio",
+      "sancion empresa",
+      "sanción empresa",
+      "desobediencia",
+      "incumplimiento norma",
+      "incumplimiento ley",
+      "autoridad de aplicacion",
+      "autoridad de aplicación",
+      "desobedecer",
+      "no cumple",
+      "incumple",
+      "unidades de multa",
+      "u.m.",
+      "grupo a",
+      "grupo b",
+      "abandono servicio",
+      "alteracion recorrido",
+      "alteración recorrido",
+      "cobro indebido",
+      "violacion tarifaria",
+      "violación tarifaria",
+      "falta de boleto",
+      "no emite boleto",
+      "datos falsos",
+      "transferencia sin autorizar",
+      "falta de seguro",
+      "sancion transporte",
+      "sanción transporte",
+      "cuanto es la multa",
+      "cuánto es la multa",
+      "qué sanción",
+      "que sancion"
     ],
     "titulo": "Régimen de Penalidades — Anexo C Decreto 254/03",
-    "respuesta": "El <strong>Anexo C del Decreto N° 254/03</strong> establece que los concesionarios, permisionarios o autorizados serán sancionados con: <strong>apercibimiento, multa, suspensión, caducidad o inhabilitación</strong> cuando se constaten infracciones. Las sanciones se expresan en <strong>Unidades de Multa (U.M.)</strong>. Las infracciones se clasifican en: <br>A) Al Régimen de Concesiones/Permisos<br>B) A la Modalidad de Explotación<br>C) A las Condiciones Técnicas de los Vehículos<br>D) A las Obligaciones del Personal<br>E) Al Régimen Tarifario",
+    "respuesta": "El <strong>Anexo C del Decreto N° 254/03</strong> clasifica las infracciones en grupos:<br><strong>Grupo A — Régimen de Concesiones</strong>: A.1 No inicio/abandono (40 U.M.) · A.2 Falta de seguro (40 U.M.) · A.3 No comunicar modificaciones (10 U.M.) · A.4 Transferencia sin autorización (70 U.M.) · A.5 Datos falsos (30 U.M.)<br><strong>Grupo B — Modalidad de Explotación</strong>: B.1 Servicios fuera de modalidad (10 U.M.) · B.2 Alteración de recorrido (40 U.M.) · <strong>B.3 Violación del régimen tarifario (40 U.M.)</strong> · B.4 Falta de emisión de boletos (30 U.M.) · B.5 No restitución de importes (10 U.M.)",
     "cita": "Anexo C — Decreto N° 254/03"
   },
   {
-    "id": "dto254_penalidades_tarifario",
-    "keywords": [
-      "violacion tarifaria",
-      "violación tarifaria",
-      "cobro excesivo",
-      "exceso tarifa",
-      "infraccion tarifaria",
-      "infracción tarifaria",
-      "b3",
-      "regimen tarifario"
-    ],
-    "titulo": "Infracción Tarifaria — Penalidad B.3",
-    "respuesta": "La infracción <strong>B.3 del Anexo C</strong> del Decreto 254/03 establece: '<em>Violación del régimen tarifario autorizado</em>'. La sanción aplicable es multa con máximo de <strong>40 Unidades de Multa (40 U.M.)</strong>. Adicionalmente, la infracción B.4 sanciona la falta de emisión de boletos o pasajes sin adecuarse en forma y contenido (falta de mención del tipo de servicio, origen-destino, fecha, hora y tarifa cobrada), con multa máxima de 30 U.M.",
-    "cita": "Anexo C, Art. 1° B.3 y B.4 — Decreto N° 254/03"
-  },
-  {
-    "id": "dto254_penalidades_concesion",
-    "keywords": [
-      "transferencia concesion",
-      "cesion servicio",
-      "datos falsos",
-      "falta seguro",
-      "inicio servicio"
-    ],
-    "titulo": "Infracciones al Régimen de Concesiones — Anexo C",
-    "respuesta": "Las infracciones al Régimen de Concesiones (Grupo A, Anexo C Dec. 254/03) incluyen:<br>• <strong>A.1</strong> Falta de iniciación del servicio o abandono: hasta 40 U.M.<br>• <strong>A.2</strong> Falta de cobertura de seguros exigidos: hasta 40 U.M.<br>• <strong>A.3</strong> Falta de comunicación de modificaciones: hasta 10 U.M.<br>• <strong>A.4</strong> Transferencia o cesión sin autorización: hasta <strong>70 U.M.</strong> (la más grave de este grupo)<br>• <strong>A.5</strong> Presentación de datos falsos o con errores inexcusables: hasta 30 U.M.",
-    "cita": "Anexo C, Art. 1° A.1 a A.5 — Decreto N° 254/03"
-  },
-  {
-    "id": "dto254_habilitacion_vehiculos",
-    "keywords": [
-      "habilitacion vehiculo",
-      "habilitación vehículo",
-      "requisitos vehiculo",
-      "renovacion habilitacion",
-      "renovación habilitación",
-      "anexo a"
-    ],
-    "titulo": "Habilitación de Vehículos — Anexo A Decreto 254/03",
-    "respuesta": "El <strong>Anexo A del Decreto N° 254/03</strong> (modificado por Dec. N° 44/15 en su Cap. IV, Art. 34° Inc. 2) regula los requisitos para la habilitación de vehículos destinados al autotransporte de pasajeros. Los vehículos deben cumplir con condiciones técnicas y de seguridad establecidas conforme a la Ley N° 8560 (Tránsito y Seguridad Vial). Las empresas deben mantener la habilitación vigente y comunicar cualquier modificación en su parque móvil.",
-    "cita": "Anexo A — Decreto N° 254/03 (mod. Dec. N° 44/15)"
-  },
-  {
-    "id": "dto254_concesion_pliego",
-    "keywords": [
-      "pliego condiciones",
-      "concesion servicio",
-      "concesión servicio",
-      "adjudicacion",
-      "adjudicación",
-      "licitacion",
-      "licitación",
-      "posicion dominante",
-      "posición dominante"
-    ],
-    "titulo": "Pliego de Condiciones para Concesiones — Anexo B",
-    "respuesta": "El <strong>Anexo B del Decreto N° 254/03</strong> regula el Pliego de Condiciones Generales para otorgar la concesión del servicio público de autotransporte de pasajeros. Los concesionarios deben ser personas jurídicas regularmente constituidas. El Art. 8° establece que el otorgamiento de concesiones debe evitar conferir <strong>posición dominante en el mercado</strong>. Las sociedades deben tener un término de duración no inferior al plazo de la concesión.",
-    "cita": "Anexo B y Art. 8° — Decreto N° 254/03"
-  },
-  {
-    "id": "dto254_servicios_clasificacion",
-    "keywords": [
-      "servicio regular",
-      "servicio ejecutivo",
-      "servicio especial",
-      "servicio escolar",
-      "servicio obrero",
-      "tipos de servicio",
-      "clases de servicio",
-      "modalidad servicio"
-    ],
-    "titulo": "Clasificación de Servicios de Transporte — Decreto 254/03",
-    "respuesta": "El Decreto N° 254/03 clasifica los servicios de autotransporte de pasajeros en:<br>• <strong>Regular</strong>: corredores determinados, recorridos, paradas, horarios y frecuencias autorizadas. Solo personas jurídicas.<br>• <strong>Ejecutivo</strong>: condiciones especiales de confort. Solo personas jurídicas.<br>• <strong>Especial</strong>: puede ser persona física o jurídica.<br>• <strong>Obrero y Escolar</strong>: personas físicas o jurídicas.<br>• <strong>Turismo</strong>: personas físicas o jurídicas.<br>• <strong>Remises</strong>: personas físicas o jurídicas.<br>Los servicios regulares y ejecutivos tienen requisitos técnicos más estrictos.",
-    "cita": "Art. 7° y 9° — Decreto N° 254/03"
-  },
-  {
-    "id": "dto254_empresas_metropolitanas_rurales",
+    "id": "dto254_empresas_cat",
     "keywords": [
       "empresa metropolitana",
       "empresa rural",
       "60 km",
       "radio metropolitano",
-      "rural",
       "categorias empresa",
-      "categorías empresa"
+      "participacion empresas",
+      "ponderacion",
+      "0.4344",
+      "0.5656"
     ],
     "titulo": "Categorías de Empresas: Metropolitanas y Rurales",
-    "respuesta": "El <strong>Anexo D del Decreto N° 254/03</strong> establece dos categorías de empresas a efectos del cálculo tarifario:<br>• <strong>Empresas Metropolitanas</strong>: prestan servicios en un radio aproximado de <strong>60 km</strong> de la Ciudad de Córdoba. Dotación: 2,5 conductores/vehículo.<br>• <strong>Empresas Rurales</strong>: realizan servicios que superan los 60 km. Dotación: 3 conductores/vehículo.<br>Los parámetros de cálculo de costos (kilometraje, dotación, coeficientes ITD) difieren según la categoría.",
-    "cita": "Anexo D, Parámetros Generales — Decreto N° 254/03"
+    "respuesta": "El Decreto 254/03 y la Mesa 16 establecen dos categorías:<br>• <strong>Metropolitanas</strong>: radio ≈ 60 km de Córdoba capital. Participación: <strong>43,44%</strong>. Km mensual medio: 9.485,41 km. Dotación: 2,5 conductores/vehículo. ITD = 1,067.<br>• <strong>Rurales</strong>: más de 60 km. Participación: <strong>56,56%</strong>. Km mensual medio: 10.261,16 km. Dotación: 3 conductores/vehículo. ITD = 1,143.<br>Total flota activa (Dic. 2025): <strong>689 unidades</strong> con ≥ 2.500 km recorridos (fuente: Sistema Micronauta).",
+    "cita": "Anexo D Decreto 254/03 · Mesa 16 (Informe Técnico N° 98/2026 Subdirección Costos y Tarifas)"
   },
   {
-    "id": "rg41_general",
+    "id": "dto254_vehiculos_clasif",
+    "keywords": [
+      "automovil",
+      "microomnibus",
+      "omnibus",
+      "clasificacion vehiculo",
+      "3500 kg",
+      "5000 kg",
+      "asientos",
+      "tipo vehiculo"
+    ],
+    "titulo": "Clasificación de Vehículos — Anexo A Decreto 254/03",
+    "respuesta": "El <strong>Anexo A del Decreto N° 254/03</strong> clasifica los vehículos en:<br>• <strong>Automóvil</strong>: hasta 8 asientos y hasta 3.500 kg.<br>• <strong>Microómnibus</strong>: más de 8 asientos y hasta 5.000 kg.<br>• <strong>Ómnibus</strong>: más de 8 asientos y más de 5.000 kg.<br>Requieren licencia de configuración o certificados de fabricación. La habilitación fue modificada por el Decreto N° 44/15 (B.O. 11/02/2015) en el Cap. IV, Art. 34° Inc. 2.",
+    "cita": "Anexo A — Decreto N° 254/03 (mod. Dec. N° 44/15)"
+  },
+  {
+    "id": "rg1_2024",
+    "keywords": [
+      "rg 1/2024",
+      "resolucion 1 2024",
+      "mecanismo especial",
+      "mecanismo de ajuste",
+      "rem",
+      "ipc bcra",
+      "actualizacion tarifaria",
+      "ajuste tarifario"
+    ],
+    "titulo": "RG ERSeP N° 1/2024 — Mecanismo Especial de Actualización Tarifaria",
+    "respuesta": "La <strong>Resolución General ERSeP N° 1/2024</strong> (B.O. 18/01/2024) aprueba el mecanismo especial para la determinación tarifaria. Aspectos clave:<br>• La aplicación debe ser <strong>requerida por la prestadora</strong> del servicio.<br>• El tope máximo de actualización es el índice <strong>REM o IPC</strong> publicados por el BCRA para el período considerado.<br>• En 2025 se aplicó en 2 oportunidades: RG N° 60/2025 (<strong>+5,46%</strong>) y RG N° XX/2025 (<strong>+9,51%</strong>), totalizando un incremento acumulado de <strong>15,49%</strong> en el período Dic.2024-Dic.2025.",
+    "cita": "RG ERSeP N° 1/2024 · Informe Mesa Tarifaria N° 16 (Marzo 2026)"
+  },
+  {
+    "id": "rg60_2025",
+    "keywords": [
+      "rg 60",
+      "rg 60/2025",
+      "resolucion 60",
+      "mesa 14",
+      "5.46",
+      "546",
+      "incremento mayo 2025"
+    ],
+    "titulo": "RG ERSeP N° 60/2025 — Incremento Tarifario Mayo 2025 (Mesa 14)",
+    "respuesta": "La <strong>RG ERSeP N° 60/2025</strong> (05/05/2025) aprobó un incremento de los costos medios del <strong>5,46%</strong> correspondiente a la Mesa 14 (costos Enero-Marzo 2025). La estructura de costos de referencia fue: Personal $1.296,22 (53,26%), Costos Variables $416,82 (17,13%), Costos Fijos $419,15 (17,22%), Costos Empresarios $301,38 (12,38%). Costo total Mesa 14: $2.566,39.",
+    "cita": "RG ERSeP N° 60/2025 · Informe Mesa Tarifaria N° 16 (Marzo 2026)"
+  },
+  {
+    "id": "tbk_vigente",
+    "keywords": [
+      "tbk vigente",
+      "tarifa kilometrica",
+      "tbk actual",
+      "tarifa base kilométrica",
+      "tarifa base kilometrica",
+      "cuanto es la tbk",
+      "cuánto es la tbk",
+      "valor tbk",
+      "tbk 2026",
+      "tbk 100",
+      "100.18",
+      "100,18",
+      "91.51",
+      "91,51",
+      "mesa 16 tbk",
+      "tbk mesa 16"
+    ],
+    "titulo": "TBK Vigente — Valores de Referencia 2025-2026",
+    "respuesta": "<strong>Tarifa Básica Kilométrica (TBK) vigente — 2026:</strong><br><br>• <strong>TBK vigente (RG 41/2025):</strong> $90,6614 sin IVA / <strong>$100,1808 c/IVA</strong><br>• <strong>TBK técnica Mesa 16 (Decreto 254/03):</strong> $91,5188 sin IVA / $101,1282 c/IVA<br>• <strong>Diferencia:</strong> +$0,8574 sin IVA (+0,95%) — pendiente de nueva resolución<br><br><em>IVA aplicado al transporte interurbano: <strong>10,5%</strong> (no 21%)</em>",
+    "cita": "RG ERSeP N° 41/2025 · Informe Técnico Mesa Tarifaria N° 16 (Marzo 2026)"
+  },
+  {
+    "id": "res2476",
+    "keywords": [
+      "resolucion 2476",
+      "resolución 2476",
+      "res 2476",
+      "convocatoria 2476"
+    ],
+    "titulo": "Resolución N° 2476 — Convocatoria Audiencia Pública (instrucción específica 2024)",
+    "respuesta": "La <strong>Resolución N° 2476</strong> (B.O. 05/02/2024) instruyó puntualmente —en ese período— a los Gerentes del ERSeP a convocar una audiencia pública para cada servicio regulado, con el objeto de evaluar la aplicación de la <strong>RG N° 1/2024</strong> sobre los cuadros tarifarios. Esta instrucción fue específica para ese año y no establece una obligación periódica permanente. La regulación general de las <strong>audiencias públicas</strong> en el ERSeP se rige por la normativa marco aplicable a los servicios públicos regulados de la Provincia de Córdoba (consultar la norma específica vigente).",
+    "cita": "Resolución ERSeP N° 2476 (05/02/2024) — instrucción puntual año 2024"
+  },
+  {
+    "id": "rg41_26",
     "keywords": [
       "rg 41",
-      "resolución 41",
-      "rg41",
       "rg 41/26",
+      "resolución 41",
       "cuadro tarifario vigente",
-      "cuadro tarifario 2026"
+      "cuadro tarifario 2026",
+      "rg41"
     ],
-    "titulo": "Resolución General N° 41/26 — Cuadro Tarifario Vigente",
-    "respuesta": "La <strong>Resolución General N° 41/26</strong> del ERSeP establece el Cuadro Tarifario Vigente para el transporte público interurbano de la Provincia de Córdoba. Fija las tarifas máximas autorizadas por tramo kilométrico para las empresas concesionarias. Las empresas no pueden cobrar tarifas superiores a las establecidas en este cuadro. Cualquier desvío es pasible de sanción conforme al Régimen de Penalidades del Anexo C del Decreto N° 254/03.",
+    "titulo": "RG ERSeP N° 41/26 — Cuadro Tarifario Vigente",
+    "respuesta": "La <strong>Resolución General N° 41/26</strong> del ERSeP establece el Cuadro Tarifario Vigente para el transporte público interurbano de la Provincia de Córdoba. Fija las tarifas máximas autorizadas por tramo kilométrico para las empresas concesionarias. Las empresas no pueden cobrar tarifas superiores a las establecidas. Cualquier desvío es pasible de sanción (infracción B.3 del Anexo C del Decreto N° 254/03: hasta 40 U.M.).",
     "cita": "RG ERSeP N° 41/26"
   },
   {
-    "id": "ddjj_obligacion",
+    "id": "rg12_2023",
     "keywords": [
-      "ddjj",
-      "declaracion jurada",
-      "declaración jurada",
-      "obligacion ddjj",
-      "presentacion ddjj",
-      "vencimiento ddjj"
+      "rg 12",
+      "rg 12/2023",
+      "resolución 12",
+      "resolución general 12",
+      "demora servicio",
+      "demora colectivo",
+      "reintegro pasaje",
+      "devolución pasaje",
+      "compensación demora",
+      "restitución pasaje",
+      "servicio no salió",
+      "no salió el colectivo",
+      "colectivo no salió",
+      "30 minutos",
+      "50 por ciento demora",
+      "100 por ciento demora",
+      "reembolso",
+      "devolucion",
+      "devolución",
+      "pasaje devolucion",
+      "incumplimiento horario",
+      "no llego",
+      "no llegó",
+      "atraso",
+      "derecho reintegro",
+      "boletería reintegro",
+      "manual usuario"
     ],
-    "titulo": "Declaraciones Juradas — Obligación de las Empresas",
-    "respuesta": "Las <strong>Declaraciones Juradas (DDJJ)</strong> son presentadas periódicamente por las empresas concesionarias ante el ERSeP. Deben informar: kilómetros recorridos, pasajeros transportados y recaudación por período. La falta de presentación o la presentación con datos falsos es pasible de sanción conforme al Régimen de Penalidades (infracción A.5: hasta 30 U.M. por datos falsos o con errores inexcusables).",
-    "cita": "Marco Regulatorio ERSeP · Anexo C Art. 1° A.5 — Decreto N° 254/03"
-  },
-  {
-    "id": "terminales_andenes",
-    "keywords": [
-      "terminal",
-      "terminales",
-      "anden",
-      "andén",
-      "andenes",
-      "parador",
-      "boleterías",
-      "canon"
-    ],
-    "titulo": "Estaciones Terminales y Paradores — Art. 4° Decreto 254/03",
-    "respuesta": "El <strong>Art. 4° del Decreto N° 254/03</strong> establece que la Dirección de Transporte creará el Registro de Estaciones Terminales y Paradores. Los valores de canon de boleterías, depósitos y espacios ocupados deben ser autorizados por la Dirección de Transporte y no pueden superar los valores establecidos en la Terminal de Ómnibus de la Ciudad de Córdoba por metro cuadrado. <strong>El uso de andenes y plataformas es gratuito para las empresas provinciales.</strong>",
-    "cita": "Art. 4° — Decreto N° 254/03"
-  },
-  {
-    "id": "decreto44_15",
-    "keywords": [
-      "decreto 44/15",
-      "dec 44",
-      "44/15",
-      "modificacion 2015"
-    ],
-    "titulo": "Decreto N° 44/15 — Modificación Decreto 254/03",
-    "respuesta": "El <strong>Decreto N° 44/15</strong> (B.O. 11/02/2015) modificó el Decreto N° 254/03 en dos aspectos: 1) El Anexo A, Capítulo IV, Art. 34° Inc. 2 (requisitos de habilitación de vehículos) y 2) El Anexo D, Punto III (metodología tarifaria — parámetros generales). Esta modificación actualizó los parámetros de cálculo de la fórmula polinómica tarifaria.",
-    "cita": "Decreto N° 44/15 (B.O. 11/02/2015)"
-  },
-  {
-    "id": "decreto1940_09",
-    "keywords": [
-      "decreto 1940",
-      "1940/09",
-      "modificacion 2009",
-      "decreto 919"
-    ],
-    "titulo": "Decretos N° 1940/09 y N° 919/11 — Modificaciones Tarifarias",
-    "respuesta": "<strong>Decreto N° 1940/09</strong> (B.O. 01/02/2010): Modificó el Anexo D del Dec. 254/03 en los Parámetros Generales Punto I (punto B), Punto II y Punto III, e incorporó una cláusula transitoria.<br><strong>Decreto N° 42/08</strong> (B.O. 22/01/2008): Modificó el Anexo D Parámetros Generales Punto I, punto A.<br><strong>Decreto N° 919/11</strong> (B.O. 29/06/2011): Autorizó aplicar un incremento a la tarifa básica kilométrica a las prestatarias del servicio público de transporte de pasajeros de la Provincia de Córdoba.",
-    "cita": "Dec. N° 42/08 · Dec. N° 1940/09 · Dec. N° 919/11"
+    "titulo": "Compensación por Demoras e Incumplimientos — RG N° 12/2023",
+    "respuesta": "La <strong>Resolución General N° 12/2023</strong> (B.O. 30/03/2023) establece los derechos de los usuarios ante demoras e incumplimientos del servicio de transporte interurbano:<br><br><strong>🕐 Art. 1° — Servicio NO iniciado (demora ≥ 30 minutos):</strong><br>Si el servicio no partió habiendo transcurrido <strong>30 minutos</strong> del horario fijado, el usuario puede elegir:<br>• <strong>a)</strong> Restitución inmediata de lo pagado (por boletería o medio habilitado, en la misma forma de pago).<br>• <strong>b)</strong> Aceptar otra prestación equivalente o superior.<br><br><strong>⏱️ Art. 2° — Demoras durante el viaje:</strong><br>• Demora <strong>> 50%</strong> del tiempo previsto del viaje → <strong>50% de reintegro</strong>.<br>• Demora <strong>> 100%</strong> del tiempo previsto del viaje → <strong>100% de reintegro</strong>.<br>El reintegro debe ser <strong>inmediato</strong> vía mismo medio de pago. La empresa puede invocar caso fortuito/fuerza mayor notificando al ERSeP dentro de los <strong>3 días hábiles</strong>.<br><br><strong>📋 Art. 3° — Información al usuario:</strong> las empresas deben exhibir en boleterías (físicas y virtuales) los derechos previstos en esta resolución.<br><br><strong>⚠️ Art. 4° — Sanciones adicionales:</strong> lo previsto no excluye las actuaciones sancionatorias (Anexo C, punto B.5 Decreto 254/03: hasta 10 U.M.) ni los reclamos por daños y perjuicios.",
+    "cita": "RG ERSeP N° 12/2023 (B.O. 30/03/2023) — reemplaza Art. 61 inc. b) RG N° 08/2004"
   },
   {
     "id": "ley8669",
@@ -872,8 +1121,841 @@
       "ley provincial transporte"
     ],
     "titulo": "Ley N° 8669 — Explotación del Servicio Público de Transporte",
-    "respuesta": "La <strong>Ley N° 8669</strong> (y su modificatoria N° 9034) regula la Explotación del Servicio Público de Transporte en la Provincia de Córdoba. Reemplazó a la anterior Ley N° 3963. Es la norma madre del sistema de transporte interurbano provincial. Su reglamentación está aprobada por el Decreto N° 254/03. El ERSeP actúa como Ente Regulador en el marco de esta ley.",
-    "cita": "Ley Provincial N° 8669 y modificatoria N° 9034"
+    "respuesta": "La <strong>Ley N° 8669</strong> (sancionada 25/03/1998) y su modificatoria N° 9034 regulan la Explotación del Servicio Público de Transporte en la Provincia de Córdoba. Estructura: Arts. 1-4 (ámbito y planificación), Arts. 5-9 (clasificación de servicios), Arts. 10-16 (requisitos técnicos), Arts. 21-27 (registro y concesiones), Arts. 28-29 (obligaciones y penalidades), Arts. 40-49 (vida útil y beneficios). Autoridad de aplicación: Dirección de Transporte. Control: ERSeP.",
+    "cita": "Ley Provincial N° 8669 (25/03/1998) y modificatoria N° 9034"
+  },
+  {
+    "id": "ley10433",
+    "keywords": [
+      "ley 10433",
+      "competencia tarifaria",
+      "competencia ersep",
+      "ersep exclusivo",
+      "tarifa ersep"
+    ],
+    "titulo": "Ley N° 10433 — Competencia Exclusiva ERSeP en Tarifas",
+    "respuesta": "La <strong>Ley N° 10433</strong> establece que el <strong>ERSeP es la autoridad exclusiva</strong> para determinar, revisar y ajustar tarifas del servicio público de transporte interurbano de pasajeros. Su aplicación es obligatoria a todos los contratos vigentes. Esta competencia es también reconocida en el Art. 24 de la Ley N° 8835.",
+    "cita": "Ley Provincial N° 10433 · Art. 24 Ley N° 8835"
+  },
+  {
+    "id": "ley9440_discapacidad",
+    "keywords": [
+      "ley 9440",
+      "pase libre",
+      "pase gratuito",
+      "discapacidad",
+      "acompañante",
+      "beneficio discapacidad"
+    ],
+    "titulo": "Ley N° 9440 — Pase Libre Único para Personas con Discapacidad",
+    "respuesta": "La <strong>Ley N° 9440</strong> establece el Pase Libre Único para personas con discapacidad en el sistema de transporte público provincial. Incluye al acompañante cuando sea necesario. Los trámites de obtención del pase son gratuitos. Las empresas prestatarias están obligadas a garantizar el servicio en condiciones adecuadas para personas con discapacidad.",
+    "cita": "Ley Provincial N° 9440"
+  },
+  {
+    "id": "ley9775_perros_guia",
+    "keywords": [
+      "ley 9775",
+      "perro guia",
+      "perro guía",
+      "perros guía",
+      "acceso perros",
+      "animal asistencia"
+    ],
+    "titulo": "Ley N° 9775 — Acceso con Perros Guía al Transporte",
+    "respuesta": "La <strong>Ley N° 9775</strong> garantiza el derecho de ingreso al transporte público con perros guía y de asistencia. Establece un Registro Provincial de animales de asistencia con requisitos sanitarios. El incumplimiento por parte de las empresas de transporte da lugar a sanciones. Las personas no videntes o con otras discapacidades no pueden ser impedidas de acceder al transporte con su animal guía.",
+    "cita": "Ley Provincial N° 9775"
+  },
+  {
+    "id": "ley8835_escolar_obrero",
+    "keywords": [
+      "ley 8835",
+      "transporte escolar",
+      "transporte obrero",
+      "art 24",
+      "art 25",
+      "servicio escolar",
+      "servicio obrero"
+    ],
+    "titulo": "Ley N° 8835 — Transporte Escolar y Obrero",
+    "respuesta": "La <strong>Ley N° 8835</strong> regula la habilitación del transporte escolar y obrero. Exige seguros obligatorios y controles técnicos. Los <strong>Arts. 24 y 25</strong> son especialmente relevantes en materia tarifaria: el Art. 24 confiere al ERSeP competencia para la fijación de tarifas, referenciado en la conclusión de la Mesa Tarifaria N° 16. Las empresas que presten servicios escolares u obreros deben cumplir los requisitos establecidos por esta ley.",
+    "cita": "Ley Provincial N° 8835 — Arts. 24 y 25"
+  },
+  {
+    "id": "ley9169_transito",
+    "keywords": [
+      "ley 9169",
+      "tránsito",
+      "transito",
+      "licencias conducir",
+      "seguridad vial",
+      "circulación vehicular"
+    ],
+    "titulo": "Ley N° 9169 — Tránsito Provincial",
+    "respuesta": "La <strong>Ley N° 9169</strong> regula la circulación vehicular en la Provincia de Córdoba. Establece normas sobre licencias de conducir, requisitos de seguridad vial y condiciones para la circulación. Es aplicable al transporte público interurbano en todo lo referido a las condiciones de circulación de los vehículos habilitados.",
+    "cita": "Ley Provincial N° 9169"
+  },
+  {
+    "id": "res54_2016",
+    "keywords": [
+      "requisitos mesa tarifaria",
+      "requisitos para la mesa",
+      "constitución mesa",
+      "constitucion mesa",
+      "conformacion mesa",
+      "conformación mesa",
+      "formacion mesa tarifaria",
+      "creacion mesa",
+      "creación mesa",
+      "res 56",
+      "resolución 56",
+      "resolucion 56",
+      "res 54",
+      "resolución 54",
+      "resolucion 54",
+      "res 54/2016",
+      "54/2016",
+      "mesa de estudio tarifario",
+      "mesa estudio tarifario",
+      "mesa estudio",
+      "base legal mesa",
+      "fundamento mesa",
+      "normativa mesa"
+    ],
+    "titulo": "Requisitos y Constitución de la Mesa Tarifaria — Resolución N° 56",
+    "respuesta": "La <strong>Mesa de Estudios de la Tarifa del Transporte Interurbano</strong> de la Provincia de Córdoba tiene su fundamento en la <strong>Resolución ERSeP N° 56</strong> (citada también como Res. 54/2016 en el Informe Mesa 16). Esta norma establece los <strong>requisitos y condiciones para la constitución y funcionamiento</strong> de la Mesa Tarifaria:<br><br>• Define la <strong>composición</strong>: ERSeP, Secretaría de Transporte, Fiscalía de Estado y cámaras empresariales del sector.<br>• Fija el <strong>procedimiento de convocatoria</strong> y las condiciones para su integración válida.<br>• Establece la <strong>metodología de trabajo</strong> y los criterios técnicos aplicables (Decreto 254/03, Anexo D).<br>• Determina el <strong>quórum y modalidad de votación</strong> para la aprobación de conclusiones.<br>• Indica que las conclusiones de la Mesa son el insumo técnico para que el ERSeP dicte la Resolución General de actualización tarifaria.<br><br>⚠️ <em>La Resolución N° 2476 (B.O. 05/02/2024) instruyó la convocatoria de una <strong>audiencia pública anual</strong> para evaluar la aplicación de la RG N° 1/2024 sobre los cuadros tarifarios, siendo el Informe Mesa 16 el documento técnico preparatorio de dicha audiencia.</em>",
+    "cita": "Resolución ERSeP N° 56 · Resolución ERSeP N° 2476 (05/02/2024)"
+  },
+  {
+    "id": "mesa16_conclusion",
+    "keywords": [
+      "mesa 16",
+      "mesa tarifaria 16",
+      "informe mesa 16",
+      "conclusión mesa",
+      "conclusion mesa",
+      "2026 tarifa",
+      "incremento 2026",
+      "0.95"
+    ],
+    "titulo": "Mesa Tarifaria N° 16 — Conclusiones (Marzo 2026)",
+    "respuesta": "El <strong>Informe Técnico de la Mesa Tarifaria N° 16</strong> (Gerencia Transporte e Informe N° IT Costos y Tarifas, Expediente N° 0521-089567/2026) concluye:<br>1. Los incrementos otorgados en 2025 por la RG N° 1/24 cumplen los requisitos normativos y no exceden el cálculo del Decreto 254/03.<br>2. La <strong>TBK vigente es $90,6614 sin IVA ($100,1808 c/IVA)</strong>.<br>3. El cálculo por Decreto 254/03 arroja $91,5188 sin IVA ($101,1282 c/IVA), con una diferencia del <strong>+0,95%</strong> que técnicamente se recomienda actualizar para garantizar la sostenibilidad financiera del sistema.<br>4. Se establecen nuevos ponderadores de costos para futuros ajustes por RG N° 1/24.",
+    "cita": "Informe Técnico Conjunto Mesa Tarifaria N° 16 — ERSeP (Marzo 2026)"
+  },
+  {
+    "id": "terminales",
+    "keywords": [
+      "terminal",
+      "terminales",
+      "anden",
+      "andén",
+      "andenes",
+      "parador",
+      "boleterías",
+      "canon terminal",
+      "uso andenes"
+    ],
+    "titulo": "Terminales y Paradores — Art. 4° Decreto 254/03",
+    "respuesta": "El <strong>Art. 4° del Decreto N° 254/03</strong> establece: la Dirección de Transporte crea el Registro de Estaciones Terminales y Paradores. El canon de boleterías y espacios no puede superar el valor por m² de la Terminal de Ómnibus de Córdoba Capital. <strong>El uso de andenes y plataformas es gratuito para las empresas provinciales.</strong> La Dirección de Transporte dicta el reglamento de funcionamiento para cada localidad según sus características.",
+    "cita": "Art. 4° — Decreto N° 254/03"
+  },
+  {
+    "id": "ddjj",
+    "keywords": [
+      "ddjj",
+      "declaracion jurada",
+      "declaración jurada",
+      "obligacion ddjj",
+      "presentación ddjj",
+      "km recorridos",
+      "pasajeros informados"
+    ],
+    "titulo": "Declaraciones Juradas — Obligaciones de las Empresas",
+    "respuesta": "Las empresas concesionarias deben presentar periódicamente sus <strong>Declaraciones Juradas (DDJJ)</strong> ante el ERSeP informando: kilómetros recorridos, pasajeros transportados y recaudación. La presentación de datos falsos o con errores inexcusables es sancionada con multa de hasta <strong>30 U.M.</strong> (infracción A.5, Anexo C, Decreto 254/03). La información de las DDJJ es utilizada por el Sistema Micronauta para el seguimiento del sistema.",
+    "cita": "Anexo C Art. 1° A.5 — Decreto N° 254/03 · Marco Regulatorio ERSeP"
+  },
+  {
+    "id": "principios_regulatorios",
+    "keywords": [
+      "principios regulatorios",
+      "calidad servicio",
+      "derecho usuario",
+      "reintegro",
+      "horarios",
+      "frecuencias"
+    ],
+    "titulo": "Principios Regulatorios del Servicio de Transporte",
+    "respuesta": "Los principios regulatorios del sistema de transporte interurbano de Córdoba establecen:<br>• Derecho de los usuarios a servicios de <strong>calidad adecuada</strong>.<br>• Relación tarifa-calidad: las tarifas autorizadas implican un nivel mínimo de servicio.<br>• <strong>Cumplimiento de horarios y frecuencias</strong> autorizadas.<br>• Derecho a reintegro por demoras (RG N° 12/2023).<br>• Prohibición de cobro de tarifas superiores a las autorizadas.<br>• Transparencia y publicidad de las condiciones del servicio.",
+    "cita": "Ley N° 8669 · RG ERSeP N° 12/2023 · Decreto N° 254/03"
+  },
+  {
+    "id": "dto254_servicios_temporada",
+    "keywords": [
+      "servicio temporada",
+      "temporada turistica",
+      "temporada turística",
+      "centros turisticos",
+      "centros turísticos",
+      "servicio estacional"
+    ],
+    "titulo": "Servicios de Temporada — Decreto 254/03",
+    "respuesta": "La autoridad de aplicación puede autorizar a prestatarias provinciales la implementación de <strong>servicios durante las temporadas turísticas</strong>, que unan localidades del interior con centros turísticos de la Provincia. Estos servicios tienen carácter estacional y requieren autorización específica de la Dirección de Transporte.",
+    "cita": "Decreto N° 254/03 — Prestación de Servicios y Diagramación"
+  },
+  {
+    "id": "dto254_horarios_frecuencias",
+    "keywords": [
+      "horarios",
+      "frecuencias",
+      "diagramacion",
+      "diagramación",
+      "modalidades",
+      "categorias servicio",
+      "relevamiento demanda"
+    ],
+    "titulo": "Horarios y Frecuencias — Decreto 254/03 (Inc. c)",
+    "respuesta": "El <strong>Inciso c del Decreto N° 254/03</strong> establece que las prestatarias deben cumplir las diagramaciones aprobadas por la autoridad de aplicación. Estas diagramaciones se confeccionan a partir de un <strong>relevamiento de la demanda</strong> o a solicitud fundada de la empresa. Contienen horarios, frecuencias, modalidades y categorías, y rigen con carácter permanente, salvo modificación por temporada o disposición de la autoridad.",
+    "cita": "Decreto N° 254/03 — Inc. c (Horarios y Frecuencias)"
+  },
+  {
+    "id": "dto254_seguros_rc",
+    "keywords": [
+      "seguro responsabilidad civil",
+      "seguro rc",
+      "poliza",
+      "póliza",
+      "cobertura seguro",
+      "certificado aseguradora",
+      "responsabilidad civil",
+      "inc d7",
+      "terceros transportados"
+    ],
+    "titulo": "Seguros de Responsabilidad Civil — Decreto 254/03 (Inc. d.7)",
+    "respuesta": "El <strong>Inciso d.7 del Decreto N° 254/03</strong> obliga a contratar seguro por responsabilidad civil con los límites autorizados por el organismo nacional competente. La cobertura debe mantenerse vigente durante toda la prestación y cubrir lesiones, daños o perjuicios a <strong>terceros transportados y no transportados</strong>, manteniendo indemne a la Provincia como poder concedente. <strong>Previo a librar el servicio</strong>, se debe presentar un certificado de la aseguradora firmado por persona autorizada, cuya firma deberá estar certificada por Escribano Público.",
+    "cita": "Decreto N° 254/03 — Inc. d.7 (Seguros de Responsabilidad Civil)"
+  },
+  {
+    "id": "dto254_control_velocidad",
+    "keywords": [
+      "control velocidad",
+      "exceso velocidad",
+      "velocidad maxima",
+      "velocidad máxima",
+      "señal acustica",
+      "señal acústica",
+      "75 db",
+      "2 minutos",
+      "limitador velocidad",
+      "velocímetro"
+    ],
+    "titulo": "Control de Velocidad — Equipamiento Obligatorio Decreto 254/03",
+    "respuesta": "Los vehículos del transporte interurbano deben poseer un <strong>equipo de control de velocidad interconectado</strong> que emita señal luminosa y acústica al superar la velocidad máxima autorizada:<br>• La señal <strong>luminosa</strong> se activa al superar la velocidad máxima reglamentaria.<br>• Si el exceso persiste por más de <strong>2 (dos) minutos</strong>, se activa la señal <strong>acústica</strong>, que no puede ser inferior a <strong>75 dB(A)</strong>.",
+    "cita": "Decreto N° 254/03 — Equipamiento del Vehículo: Control de Velocidad"
+  },
+  {
+    "id": "dto254_licitacion",
+    "keywords": [
+      "licitacion",
+      "licitación",
+      "seleccion ofertas",
+      "selección ofertas",
+      "observaciones ofertas",
+      "3 dias habiles",
+      "2 dias habiles",
+      "apertura ofertas",
+      "art 21"
+    ],
+    "titulo": "Procedimiento de Licitación — Art. 21 Decreto 254/03",
+    "respuesta": "El <strong>Art. 21 del Decreto N° 254/03</strong> regula el proceso de licitación: los asistentes al acto de apertura pueden formular observaciones que quedan en Acta. Durante los <strong>3 días hábiles</strong> posteriores al acto de apertura, las ofertas quedan a disposición de los proponentes en la Dirección de Transporte. Las observaciones deben efectuarse dentro de los <strong>2 días hábiles</strong> siguientes a ese plazo.",
+    "cita": "Art. 21 — Decreto N° 254/03 (Procedimiento de Licitación)"
+  },
+  {
+    "id": "dto254_indices_financieros",
+    "keywords": [
+      "indice solvencia",
+      "índice solvencia",
+      "liquidez",
+      "inmovilizacion",
+      "inmovilización",
+      "activo pasivo",
+      "evaluacion economica",
+      "evaluación económica",
+      "is",
+      "indices financieros",
+      "parque movil antigüedad"
+    ],
+    "titulo": "Índices de Evaluación Económico-Financiera — Decreto 254/03",
+    "respuesta": "El Decreto N° 254/03 establece los índices para evaluar oferentes en licitaciones:<br>• <strong>Índice de Solvencia (IS)</strong>: IS = Total Activo / Total Pasivo.<br>• <strong>Índice de Liquidez General (L)</strong>: L = (Activo Disponible + Realizable × 100) / Pasivo exigible a corto plazo. Mide fondos líquidos frente a deudas de corto plazo.<br>• <strong>Índice de Inmovilización (I)</strong>: I = (Inmovilizado Neto × 100) / Activo Total Neto. Refleja la relación capital inmovilizado/activo total.<br>• <strong>Antigüedad de Parque Móvil (AP)</strong>: edad promedio de la flota calculada por año de fabricación del chasis. Año en curso = 0 años.",
+    "cita": "Decreto N° 254/03 — Índices de Evaluación Económico-Financiera"
+  },
+  {
+    "id": "dto254_coeficiente_IL",
+    "keywords": [
+      "coeficiente il",
+      "il 1.195",
+      "dias no trabajados",
+      "vacaciones 23",
+      "feriados 10",
+      "enfermedad 14",
+      "47 dias",
+      "192 horas",
+      "horas trabajadas",
+      "31.3 horas",
+      "horas pagas no trabajadas"
+    ],
+    "titulo": "Coeficiente IL — Incidencia de Días No Trabajados (Anexo D Dec. 254/03)",
+    "respuesta": "El <strong>coeficiente IL</strong> del Anexo D del Decreto N° 254/03 refleja la incidencia de días pagados no trabajados:<br>• Vacaciones: <strong>23 días</strong><br>• Feriados: <strong>10 días</strong><br>• Enfermedad y varios: <strong>14 días</strong><br>• <strong>Total: 47 días/año</strong><br>• Horas pagas no trabajadas/mes: 8 hs × 47 días ÷ 12 meses = <strong>31,3 hs</strong><br>• Horas trabajadas/mes: 8 hs × 24 días = <strong>192 hs</strong><br>• <strong>IL = 192 / (192 - 31,3) = 1,195</strong><br>El coeficiente de 'toma y deja' es: metropolitanas ITD = 1,067 (0,5 h/turno) · rurales ITD = 1,143 (1 h/turno).",
+    "cita": "Anexo D, Punto I-A.1.a y A.1.b — Decreto N° 254/03"
+  },
+  {
+    "id": "mesa_tarifaria_integracion",
+    "keywords": [
+      "integrantes mesa",
+      "integración mesa",
+      "integracion mesa",
+      "miembros mesa",
+      "quienes integran",
+      "quiénes integran",
+      "fetap",
+      "asetac",
+      "camaras empresariales",
+      "cámaras empresariales",
+      "fiscalia de estado",
+      "fiscalía de estado",
+      "secretaria transporte",
+      "secretaría transporte",
+      "votacion mesa",
+      "votación mesa",
+      "composicion mesa",
+      "composición mesa",
+      "quorum",
+      "quórum",
+      "votacion",
+      "votación"
+    ],
+    "titulo": "Mesa de Estudios Tarifarios — Integración y Proceso (RG 54/2016)",
+    "respuesta": "La <strong>Mesa de Estudios de la Tarifa de Transporte</strong> (RG N° 54/2016) está integrada por:<br>• Representantes técnicos del <strong>ERSeP</strong><br>• <strong>Secretaría de Transporte</strong> de la Provincia<br>• <strong>Fiscalía de Estado</strong><br>• Representantes de las cámaras empresariales (<strong>FETAP y ASETAC</strong>)<br><br>El proceso incluye: recopilación de información base (balances, facturas de neumáticos, combustibles, salarios, seguros y unidades) → validación de costos medios → elaboración de informe técnico conjunto → votación de miembros → <strong>Audiencia Pública</strong> previa → resolución final del Directorio ERSeP.",
+    "cita": "Resolución General ERSeP N° 54/2016"
+  },
+  {
+    "id": "rg1_2024_excedente",
+    "keywords": [
+      "excedente audiencia",
+      "audiencia publica excedente",
+      "tope ipc",
+      "tope rem",
+      "exceso inflacion",
+      "mecanismo especial excedente",
+      "porcentaje excedente",
+      "audiencia publica obligatoria"
+    ],
+    "titulo": "RG N° 1/2024 — Procedimiento por Excedente sobre IPC/REM",
+    "respuesta": "El <strong>mecanismo especial (RG N° 1/2024)</strong> tiene un procedimiento dual:<br>• Si el aumento de costos del transporte <strong>no supera</strong> el IPC/REM: el ERSeP autoriza por <strong>resolución simple</strong>.<br>• Si el aumento de costos <strong>supera</strong> el tope IPC/REM: se autoriza hasta el tope por resolución simple, pero el <strong>porcentaje excedente debe tratarse indefectiblemente en una Audiencia Pública</strong>.<br>Este mecanismo fue creado para responder ágilmente a la coyuntura inflacionaria manteniendo previsibilidad y sostenibilidad.",
+    "cita": "RG ERSeP N° 1/2024 — Mecanismo Especial"
+  },
+  {
+    "id": "historial_tarifario_reciente",
+    "keywords": [
+      "historial tarifario",
+      "historial tarifa",
+      "evolucion tarifaria",
+      "evolución tarifaria",
+      "historia incrementos",
+      "historia aumentos",
+      "incrementos 2025",
+      "aumentos 2025",
+      "aumentos 2024",
+      "todas las resoluciones",
+      "lista resoluciones tarifarias",
+      "cuántas veces aumentó",
+      "cuantas veces aumento",
+      "historial aumentos",
+      "historial incrementos",
+      "rg 13/2025",
+      "rg 60/2025",
+      "rg 13 2025",
+      "rg 60 2025",
+      "aumentos recientes",
+      "ultimas resoluciones"
+    ],
+    "titulo": "Historial de Aumentos Tarifarios 2024–2026",
+    "respuesta": "Historial de resoluciones de aumento de la <strong>TBK — 2024 a 2026</strong>:<br><br><strong>2024:</strong><br>• <strong>RG 02/2024</strong>: +97,41% → TBK ≈ $29,0819 sin IVA<br>• <strong>RG 13/2024</strong>: +44,28% (incluye quita subsidios + fondo tecnol. 3%) → $41,9289 sin IVA<br>• <strong>RG 23/2024</strong>: +32,84% (quita subsidios) → $51,0448 sin IVA / $56,4039 c/IVA<br>• <strong>RG 61/2024</strong>: +11% → $56,6597 sin IVA<br>• <strong>RG 66/2024</strong>: +9,29% (Audiencia Pública) → $61,9252 sin IVA<br>• <strong>RG 116/2024</strong>: +18,23% (3 tramos) → $73,2386 sin IVA / $80,8984 c/IVA<br><br><strong>2025–2026:</strong><br>• <strong>RG 13/2025</strong> (14/02/2025): +7,22% → $78,5020 sin IVA / $86,7447 c/IVA<br>• <strong>RG 60/2025</strong> (13/05/2025): +5,46% (Mesa 14) → $82,7882 sin IVA / $91,4810 c/IVA<br>• <strong>RG 41/2025</strong> (29/12/2025, vigente 02/01/2026): +9,51% → <strong>$90,6614 sin IVA / $100,1808 c/IVA ✅</strong>",
+    "cita": "Gerencia de Transporte ERSeP · Subdirección Costos y Tarifas (2024–2026)"
+  },
+  {
+    "id": "historial_tarifario_historico",
+    "keywords": [
+      "historial completo",
+      "historia tarifaria",
+      "historia tarifa",
+      "decreto 1766",
+      "decreto 1106",
+      "rg 10/2017",
+      "rg 16/2018",
+      "rg 71/2018",
+      "rg 2/2024",
+      "rg 13/2024",
+      "rg 23/2024",
+      "subsidios",
+      "fondo tecnologico"
+    ],
+    "titulo": "Historial Tarifario Completo 2015-2025",
+    "respuesta": "Cronología de incrementos de la <strong>TBK del transporte interurbano de Córdoba</strong>:<br>• Dec.1766/2015: +21,20% | Dec.1106/2016: +36% (2 tramos) | RG 10/2017: +25,56% → $0,9501 c/IVA<br>• RG 16/2018: +24,62% | RG 71/2018: +30,66% → $1,547 c/IVA<br>• RG 03/2019: +15,25% | RG 37/2019: +30,28% → $2,3227 c/IVA<br>• RG 01/2021: +22,80% | RG 58/2021: +19,62% → $3,4117 c/IVA<br>• RG 49/2022: +25% | RG 56/2022: +15,99% | RG 114/2022: +23% | RG 121/2022: +16,73% → $7,1018 c/IVA<br>• RG 74/2023: +36,18% | RG 117/2023: +25% | RG 137/2023: +54,14% → $14,907 c/IVA<br>• RG 02/2024: +97,41% | RG 13/2024: +44,28% (incl. quita subsidios+fondo tec. 3%) | RG 23/2024: +32,84% (quita subsidios) → $56,4039 c/IVA<br>• RG 61/2024: +11% | RG 66/2024: +9,29% (Audiencia Pública) | RG 116/2024: +18,23% (3 tramos) → $80,8984 c/IVA<br>• RG 13/2025: +7,22% | RG 60/2025: +5,46% | RG 41/2025: +9,51% → <strong>$100,1808 c/IVA</strong>",
+    "cita": "Historial de Resoluciones Generales ERSeP 2015-2025"
+  },
+  {
+    "id": "iva_transporte",
+    "keywords": [
+      "iva",
+      "impuesto valor agregado",
+      "10.5",
+      "10,5%",
+      "iva transporte",
+      "tarifa con iva",
+      "tarifa sin iva"
+    ],
+    "titulo": "IVA en el Transporte Interurbano — 10,5%",
+    "respuesta": "El Impuesto al Valor Agregado (<strong>IVA</strong>) aplicado históricamente a la tarifa del transporte interurbano de pasajeros de la Provincia de Córdoba es del <strong>10,5%</strong>. Todas las resoluciones generales de cuadros tarifarios expresan la TBK en dos valores: sin IVA y con IVA (10,5%). Por ejemplo, la TBK vigente (RG 41/2025): $90,6614 sin IVA / $100,1808 con IVA.",
+    "cita": "Historial de RG ERSeP — IVA 10,5%"
+  },
+  {
+    "id": "rg41_2025_vigente",
+    "keywords": [
+      "ultima res de aumento",
+      "última res de aumento",
+      "ultimo aumento",
+      "último aumento",
+      "ultima resolucion de aumento",
+      "última resolución de aumento",
+      "ultimo incremento",
+      "último incremento",
+      "incremento reciente",
+      "aumento reciente",
+      "res de aumento",
+      "resolucion de aumento",
+      "cual fue la ultima",
+      "cuál fue la última",
+      "aumento tarifario 2026",
+      "incremento 2026",
+      "ultima tarifa",
+      "última tarifa",
+      "rg 41",
+      "rg 41/2025",
+      "rg41",
+      "res 41",
+      "resolución 41",
+      "resolucion 41",
+      "cuadro tarifario vigente",
+      "vigente enero 2026",
+      "vigente 2026",
+      "2 enero 2026",
+      "enero 2026",
+      "tarifa vigente",
+      "tarifa actual"
+    ],
+    "titulo": "Última Resolución de Aumento — RG N° 41/2025 (vigente)",
+    "respuesta": "La <strong>Resolución General ERSeP N° 41/2025</strong> es la <strong>última resolución de aumento tarifario</strong> dictada para el transporte interurbano de pasajeros de la Provincia de Córdoba.<br><br>📋 <strong>Datos de la RG N° 41/2025:</strong><br>• <strong>Fecha:</strong> 29 de diciembre de 2025<br>• <strong>Vigencia:</strong> desde el 2 de enero de 2026<br>• <strong>Incremento:</strong> +9,51%<br>• <strong>TBK resultante:</strong> $90,6614 sin IVA — $100,1808 con IVA (10,5%)<br>• <strong>Corresponde a:</strong> Mesa Tarifaria N° 15 (revisión costos Marzo–Octubre 2025)",
+    "cita": "RG ERSeP N° 41/2025 (29/12/2025, vigente desde 02/01/2026) — Última resolución de aumento"
+  },
+  {
+    "id": "programas_sociales",
+    "keywords": [
+      "boleto educativo",
+      "beg",
+      "bos",
+      "boleto obrero social",
+      "bam",
+      "boleto adulto mayor",
+      "gratuito",
+      "beneficio social",
+      "programa social",
+      "descuento boleto"
+    ],
+    "titulo": "Programas Sociales — BEG, BOS y BAM",
+    "respuesta": "Los siguientes programas de beneficio social se mantienen vigentes en todas las resoluciones tarifarias:<br>• <strong>BEG — Boleto Educativo Gratuito</strong>: para estudiantes.<br>• <strong>BOS — Boleto Obrero Social</strong>: para trabajadores.<br>• <strong>BAM — Boleto Adulto Mayor</strong>: para adultos mayores.<br>Estos beneficios son independientes de la tarifa general y no se ven afectados por los incrementos de la TBK. Las empresas están obligadas a respetar estos beneficios en todas las líneas habilitadas.",
+    "cita": "Resoluciones Generales ERSeP — Programas Sociales vigentes"
+  },
+  {
+    "id": "calculo_pasaje",
+    "keywords": [
+      "calculo pasaje",
+      "cálculo pasaje",
+      "valor pasaje",
+      "precio boleto",
+      "cuanto cuesta",
+      "cuánto cuesta",
+      "distancia recorrido",
+      "caminos llanos",
+      "pavimentados",
+      "tkb por km"
+    ],
+    "titulo": "Cómo se Calcula el Valor del Pasaje",
+    "respuesta": "El valor del pasaje se calcula multiplicando la <strong>distancia del recorrido</strong> por la <strong>Tarifa Básica Kilométrica (TBK)</strong> vigente, que corresponde a caminos llanos y pavimentados.<br><strong>Fórmula</strong>: Pasaje = Distancia (km) × TBK vigente<br>• TBK vigente (desde 02/01/2026): <strong>$90,6614 sin IVA / $100,1808 con IVA (10,5%)</strong><br>La TBK puede variar según el tipo de camino y categoría del servicio. El valor final debe coincidir con el cuadro tarifario aprobado por RG N° 41/2025.",
+    "cita": "RG ERSeP N° 41/2025 · Anexo D Decreto N° 254/03"
+  },
+  {
+    "id": "personal_conduccion_req",
+    "keywords": [
+      "libreta trabajo",
+      "licencia habilitante",
+      "uniforme conductor",
+      "vestimenta conductor",
+      "requisitos personal",
+      "libreta conductor",
+      "personal conduccion requisitos"
+    ],
+    "titulo": "Requisitos del Personal de Conducción",
+    "respuesta": "El personal de conducción del transporte interurbano debe cumplir:<br>• <strong>Libreta de trabajo</strong> con registro de horarios de salida y llegada.<br>• <strong>Licencia habilitante</strong> expedida por autoridad competente (según categoría del vehículo).<br>• <strong>Vestimenta o uniforme</strong> que asegure su correcta presencia durante la prestación del servicio.<br>El incumplimiento de estas condiciones es pasible de sanción conforme al Régimen de Penalidades del Anexo C del Decreto N° 254/03.",
+    "cita": "Decreto N° 254/03 — Requisitos del Personal de Conducción"
+  },
+  {
+    "id": "vehiculos_requisitos",
+    "keywords": [
+      "carroceria",
+      "carrocería",
+      "chasis",
+      "piso antideslizante",
+      "asientos numerados",
+      "ancho asiento",
+      "0.45",
+      "0.28",
+      "distancia asientos",
+      "interior omnibus",
+      "interior ómnibus",
+      "requisitos vehiculos"
+    ],
+    "titulo": "Requisitos Técnicos de Vehículos — Carrocería y Asientos",
+    "respuesta": "Los vehículos del transporte interurbano deben cumplir:<br>• <strong>Chasis</strong>: diseñado específicamente para transporte de pasajeros. <strong>Prohibido usar chasis de camiones</strong>.<br>• <strong>Pisos</strong>: superficies antideslizantes con zócalos curvos vinculados a los paneles laterales.<br>• <strong>Asientos</strong>: numerados correlativamente. Para servicios interurbanos regulares:<br>&nbsp;&nbsp;— Ancho útil mínimo por pasajero: <strong>0,45 m</strong><br>&nbsp;&nbsp;— Distancia mínima entre asientos consecutivos: <strong>0,28 m</strong> (medidos con el asiento delantero en reclinación máxima).",
+    "cita": "Decreto N° 254/03 — Anexo A (Requisitos Técnicos de Vehículos)"
+  },
+  {
+    "id": "tacografo",
+    "keywords": [
+      "tacografo",
+      "tacógrafo",
+      "dispositivo registro",
+      "registro velocidad",
+      "registro kilometros",
+      "caja resistente",
+      "impacto",
+      "velocidades registradas",
+      "tiempos detencion"
+    ],
+    "titulo": "Tacógrafos — Dispositivos de Registro Obligatorios",
+    "respuesta": "Los vehículos del transporte interurbano deben tener <strong>tacógrafos (dispositivos de registro) obligatorios</strong>. Deben registrar:<br>• Velocidades<br>• Kilómetros recorridos<br>• Tiempos de detención<br>Los equipos deben estar protegidos en <strong>cajas resistentes a impactos</strong>. Su información es utilizada para fiscalización y control del cumplimiento de las normas de conducción.",
+    "cita": "Decreto N° 254/03 — Dispositivos de Registro (Tacógrafos)"
+  },
+  {
+    "id": "seguro_rescision",
+    "keywords": [
+      "rescision seguro",
+      "rescisión seguro",
+      "preaviso 30 dias",
+      "preaviso aseguradora",
+      "cancelacion poliza",
+      "cancelación póliza",
+      "30 dias preaviso"
+    ],
+    "titulo": "Seguro — Rescisión y Preaviso de 30 Días",
+    "respuesta": "Si la aseguradora decide rescindir el contrato de seguro de una empresa de transporte, debe dar un <strong>preaviso de 30 días a la Dirección de Transporte</strong>. Las empresas deben presentar pólizas de:<br>• Seguro de <strong>responsabilidad civil</strong><br>• Seguro de <strong>accidentes personales</strong><br>La falta de cobertura de seguros exigidos por la Ley 8669 da lugar a multa de hasta <strong>40 U.M.</strong> (infracción A.2, Anexo C, Decreto 254/03).",
+    "cita": "Decreto N° 254/03 — Seguros · Anexo C A.2"
+  },
+  {
+    "id": "mascotas_transporte",
+    "keywords": [
+      "mascotas",
+      "mascota",
+      "perro",
+      "gato",
+      "animales",
+      "animales en transporte",
+      "llevar mascota",
+      "llevar perro",
+      "transporte animales"
+    ],
+    "titulo": "Animales en el Transporte — Perros Guía y Asistencia",
+    "respuesta": "La normativa provincial de transporte interurbano solo garantiza explícitamente el derecho de acceso para <strong>perros de asistencia y perros guía</strong> de personas con discapacidad, con preferencia en la reserva de los asientos más amplios (Ley N° 9775). No existe en la normativa vigente una disposición general que autorice el ingreso de mascotas convencionales al transporte interurbano de pasajeros. Para animales de compañía, se aplican las condiciones que establezca cada empresa prestataria en su reglamento interno.",
+    "cita": "Ley Provincial N° 9775 — Perros Guía y Asistencia"
+  },
+  {
+    "id": "pasajeros_parados",
+    "keywords": [
+      "pasajeros parados",
+      "viajar parado",
+      "viajar de pie",
+      "de pie",
+      "parado",
+      "capacidad de pie",
+      "pasajeros de pie",
+      "standing",
+      "cantidad pasajeros",
+      "ocupacion vehiculo",
+      "ocupación vehículo",
+      "superar capacidad",
+      "exceso pasajeros",
+      "servicio regular",
+      "servicio diferencial",
+      "diferencial parado",
+      "regular parado",
+      "capacidad maxima",
+      "capacidad máxima",
+      "lugares de pie"
+    ],
+    "titulo": "Pasajeros Parados — Servicio Regular vs. Diferencial",
+    "respuesta": "El Decreto N° 254/03 distingue según la <strong>categoría del servicio</strong>:<br><br>• <strong>Servicio Regular</strong>: se admiten pasajeros de pie hasta la capacidad habilitada del vehículo conforme a la licencia de configuración (Anexo A). La capacidad de pie está determinada por las dimensiones del vehículo. <strong>No puede superarse la capacidad total autorizada.</strong><br><br>• <strong>Servicio Diferencial</strong>: <strong>está prohibido transportar pasajeros de pie</strong>. Al ser un servicio de mayor categoría (asientos reservados, mayor comodidad), todos los pasajeros deben viajar sentados. Superar la capacidad de asientos o transportar pasajeros parados en servicio diferencial constituye infracción al régimen de explotación (Anexo C, Grupo B — hasta 40 U.M.).",
+    "cita": "Anexo A y Anexo C — Decreto N° 254/03 · Ley Provincial N° 8669"
+  },
+  {
+    "id": "dto254_empresas_otras_jurisdicciones",
+    "keywords": [
+      "empresas otras jurisdicciones",
+      "transporte nacional",
+      "empresa nacional",
+      "extraña jurisdicción",
+      "jurisdicción",
+      "representante legal",
+      "empresa de otra provincia",
+      "empresa interprovincial",
+      "90 dias",
+      "noventa dias",
+      "registro empresa"
+    ],
+    "titulo": "Empresas de Otras Jurisdicciones — Art. 2° Decreto 254/03",
+    "respuesta": "El <strong>Art. 2° del Decreto N° 254/03</strong> establece que las empresas de transporte <strong>nacionales o de extraña jurisdicción</strong> que atraviesen el territorio provincial deben, dentro de los <strong>90 días</strong> de dictado el decreto, presentar ante la Dirección de Transporte de la Provincia:<br>• La autorización o permiso correspondiente.<br>• Designación de <strong>representante legal</strong> en Córdoba.<br>• Fijación de <strong>domicilio especial</strong> en la provincia.<br>• Completar los formularios previstos.<br>El incumplimiento de estos requisitos genera sanciones conforme al Régimen de Penalidades (Anexo C).",
+    "cita": "Art. 2° — Decreto N° 254/03"
+  },
+  {
+    "id": "dto254_autorizacion_nuevos_servicios",
+    "keywords": [
+      "autorizar nuevo servicio",
+      "nuevo servicio",
+      "autorización servicio",
+      "nuevas líneas",
+      "nueva línea",
+      "demanda insatisfecha",
+      "oferta técnica",
+      "superposición servicios",
+      "crear línea",
+      "habilitar línea",
+      "solicitud nuevo servicio"
+    ],
+    "titulo": "Autorización de Nuevos Servicios — Art. 3° Decreto 254/03",
+    "respuesta": "El <strong>Art. 3° del Decreto N° 254/03</strong> establece que la Dirección de Transporte autorizará nuevos servicios previa evaluación de:<br>• <strong>a)</strong> Existencia de <strong>demanda insatisfecha</strong> que justifique el interés público.<br>• <strong>b)</strong> Oferta en condiciones técnicas y de seguridad <strong>equivalentes</strong> a las del transporte interurbano vigente.<br>La autoridad procurará evitar la <strong>superposición con servicios provinciales existentes</strong>.",
+    "cita": "Art. 3° — Decreto N° 254/03"
+  },
+  {
+    "id": "modalidades_servicio_8669",
+    "keywords": [
+      "modalidades servicio",
+      "tipos de servicio",
+      "servicio regular",
+      "servicio diferencial",
+      "servicio obrero",
+      "servicio escolar",
+      "servicio turismo",
+      "servicio ejecutivo",
+      "remis",
+      "remises",
+      "clasificacion servicio",
+      "categorias servicio",
+      "modalidad",
+      "que tipos de servicios hay",
+      "transporte escolar",
+      "transporte obrero",
+      "transporte turistico",
+      "turismo"
+    ],
+    "titulo": "Modalidades del Servicio de Transporte — Ley N° 8669 Art. 5–9",
+    "respuesta": "La <strong>Ley N° 8669</strong> (Arts. 5–9) y su decreto reglamentario clasifican las modalidades del servicio de transporte en la Provincia de Córdoba:<br>• <strong>Regular</strong>: servicio con recorrido, horario y tarifas fijados por la autoridad. Admite pasajeros de pie según capacidad habilitada.<br>• <strong>Diferencial</strong>: servicio de mayor categoría (asientos reservados, mayor confort). <strong>Todos los pasajeros deben ir sentados</strong>, no se admiten pasajeros de pie.<br>• <strong>Obrero</strong>: transporte de trabajadores con contrato colectivo.<br>• <strong>Escolar</strong>: exclusivo para alumnos, con requisitos específicos de seguridad (Ley N° 8835).<br>• <strong>Turismo</strong>: servicios turísticos con habilitación especial.<br>• <strong>Ejecutivo</strong>: transporte de alta gama con contrato por viaje.<br>• <strong>Remises</strong>: contrato individual, sin tarifa fija.<br>La Dirección de Transporte es la autoridad de aplicación; el <strong>ERSeP</strong> es el organismo de control.",
+    "cita": "Arts. 5–9 — Ley Provincial N° 8669 · Decreto N° 254/03"
+  },
+  {
+    "id": "reclamos_transporte_ersep",
+    "keywords": [
+      "reclamo",
+      "reclamar",
+      "denuncia",
+      "denunciar",
+      "queja",
+      "colectivo no paró",
+      "colectivo no se detuvo",
+      "no para",
+      "maltrato chofer",
+      "mal trato",
+      "chofer agresivo",
+      "unidad en mal estado",
+      "coche roto",
+      "sin calefaccion",
+      "sin aire",
+      "frecuencias demora",
+      "demora excesiva",
+      "no cumple horario",
+      "cobro indebido boleto",
+      "cobro excesivo",
+      "boleto caro",
+      "reclamo transporte",
+      "como reclamar transporte",
+      "donde reclamar",
+      "objetos perdidos",
+      "perdí objeto",
+      "accesibilidad rampa",
+      "sin rampa",
+      "movilidad reducida"
+    ],
+    "titulo": "Reclamos ante ERSeP — Transporte Interurbano",
+    "respuesta": "Para realizar un <strong>reclamo sobre el servicio de transporte interurbano</strong> ante el ERSeP:<br><br>📍 <strong>Canal oficial:</strong> <a href='https://erseponline.cba.gov.ar/' target='_blank'>erseponline.cba.gov.ar</a> → seleccioná <em>Transporte</em>.<br>📞 <strong>Teléfono:</strong> 0800-888-6898<br>🏢 <strong>Oficinas</strong> del Ente<br><br><strong>Datos necesarios según tipo de reclamo:</strong><br>• <em>Colectivo no paró / maltrato / condiciones de unidad:</em> empresa, línea, interno/patente, fecha y hora, parada.<br>• <em>Demoras o incumplimiento de frecuencias:</em> empresa, línea, fechas y horarios registrados.<br>• <em>Cobro indebido:</em> empresa, ticket/comprobante, monto cobrado.<br>• <em>Accesibilidad (rampa/movilidad reducida):</em> se prioriza por afectación de derechos.<br><br>⚠️ Para objetos perdidos: contactar primero a la empresa; ERSeP solo interviene si hay negativa de atención.",
+    "cita": "Portal ERSeP · Ley N° 8669 · Decreto N° 254/03"
+  },
+  {
+    "id": "reclamos_generales_ersep",
+    "keywords": [
+      "reclamo luz",
+      "reclamo energia",
+      "reclamo agua",
+      "reclamo antena",
+      "reclamo peaje",
+      "reclamo concesion",
+      "reclamo vial",
+      "sin luz",
+      "corte de luz",
+      "factura luz",
+      "medidor",
+      "sin agua",
+      "agua potable",
+      "presion agua",
+      "que servicios regula ersep",
+      "servicios ersep",
+      "plataforma ersep",
+      "erseponline",
+      "como contactar ersep"
+    ],
+    "titulo": "Reclamos ante ERSeP — Todos los Servicios",
+    "respuesta": "El <strong>ERSeP</strong> regula y recepciona reclamos sobre los siguientes servicios públicos de la Provincia de Córdoba:<br><br>🚍 <strong>Transporte interurbano:</strong> <a href='https://erseponline.cba.gov.ar/' target='_blank'>erseponline.cba.gov.ar</a> → Transporte<br>⚡ <strong>Energía eléctrica:</strong> Portal ERSeP → Energía Eléctrica (primero reclamar ante la distribuidora)<br>💧 <strong>Agua potable:</strong> Portal ERSeP → Agua Potable (primero reclamar ante la prestataria)<br>📡 <strong>Antenas de telefonía celular:</strong> Portal ERSeP → Antenas<br>🛣️ <strong>Concesiones viales / peajes:</strong> Portal ERSeP → Concesiones Viales<br><br>📞 <strong>Teléfono ERSeP:</strong> 0800-888-6898<br><br><em>Regla general:</em> Para energía, agua y vial, primero reclamar ante la empresa prestataria/concesionaria. Si no hay respuesta en plazo razonable, escalar a ERSeP con el número de gestión.",
+    "cita": "Portal ERSeP (erseponline.cba.gov.ar) · Ley N° 10433"
+  },
+  {
+    "id": "pase_libre_discapacidad_9440",
+    "keywords": [
+      "pase libre",
+      "discapacidad transporte",
+      "viaje gratuito discapacidad",
+      "ley 9440",
+      "pase unico",
+      "pase universal",
+      "acompañante discapacidad",
+      "gratuito discapacidad",
+      "beneficio discapacidad",
+      "decreto 1178",
+      "personas con discapacidad",
+      "movilidad reducida pase",
+      "tarjeta discapacidad",
+      "certificado discapacidad"
+    ],
+    "titulo": "Pase Libre Único y Universal — Ley N° 9440 (Dec. 1178/08)",
+    "respuesta": "La <strong>Ley N° 9440</strong> (28/11/2007, B.O. 14/12/2007), reglamentada por el Decreto N° 1178/08, instituye el <strong>Pase Libre Único y Universal</strong> para el transporte público provincial:<br>• <strong>Art. 1–3:</strong> Pase libre <strong>gratuito</strong> para personas con discapacidad <strong>y su acompañante</strong>.<br>• <strong>Art. 4–6:</strong> Los trámites son totalmente gratuitos. Las empresas deben garantizar seguridad y cumplimiento contractual.<br>• <strong>Art. 7:</strong> Autoridad de aplicación: Ministerio de Obras y Servicios Públicos – Dirección de Transporte.<br>• <strong>Art. 8–11:</strong> Ratifica adhesión a la Ley Nacional 22.431. Deroga normas incompatibles. Invita a municipios a adherir.<br><br>La Ley 9440 se articula con la <strong>Ley N° 9775</strong> (perros guía) para garantizar accesibilidad plena.",
+    "cita": "Ley Provincial N° 9440 · Decreto Reglamentario N° 1178/08"
+  },
+  {
+    "id": "concesiones_registro_prestadores",
+    "keywords": [
+      "concesion",
+      "concesión",
+      "concesionario",
+      "registro prestadores",
+      "registro provincial",
+      "habilitacion empresa",
+      "empresa habilitada",
+      "contratación directa",
+      "licitación directa",
+      "art 27",
+      "art 51",
+      "disposiciones transitorias",
+      "autorización línea",
+      "cronograma autorización",
+      "incisos d e f"
+    ],
+    "titulo": "Concesiones y Registro de Prestadores — Arts. 21–27 Ley 8669 y Arts. 51–52 Decreto 254/03",
+    "respuesta": "El régimen de concesiones del transporte interurbano provincial establece:<br><br><strong>Ley N° 8669 (Arts. 21–27):</strong><br>• Crea el <strong>Registro Provincial de Prestatarios</strong>.<br>• Las concesiones se otorgan por licitación pública como regla general.<br>• El Art. 27 permite <strong>contratación directa</strong> en casos excepcionales.<br><br><strong>Decreto N° 254/03 (Arts. 51–52 — Disposiciones Transitorias):</strong><br>• Art. 51: Habilita otorgar concesiones por <strong>contratación directa</strong> conforme el Art. 27 de la Ley.<br>• Art. 52: La Dirección de Transporte debe fijar un <strong>cronograma</strong> para autorizar los servicios comprendidos en los <strong>incisos D, E y F del Art. 9°</strong> de la Ley N° 8669 (modalidades diferencial, obrero y escolar).",
+    "cita": "Arts. 21–27 Ley N° 8669 · Arts. 51–52 Decreto N° 254/03"
+  },
+  {
+    "id": "obligaciones_transportista_8669",
+    "keywords": [
+      "obligaciones empresa",
+      "obligaciones transportista",
+      "obligaciones prestadora",
+      "deberes empresa",
+      "art 28",
+      "art 29",
+      "trato usuario",
+      "higiene unidad",
+      "limpieza coche",
+      "trato al pasajero",
+      "derechos pasajeros",
+      "usuario transporte",
+      "atención usuario"
+    ],
+    "titulo": "Obligaciones del Transportista — Arts. 28–29 Ley N° 8669",
+    "respuesta": "Los <strong>Arts. 28 y 29 de la Ley N° 8669</strong> fijan las obligaciones de las empresas prestatarias del servicio de transporte público:<br>• Respetar y cobrar las <strong>tarifas autorizadas</strong> por el ERSeP.<br>• Contar con los <strong>seguros obligatorios</strong> vigentes.<br>• Mantener condiciones de <strong>higiene y presentación</strong> de las unidades.<br>• Dispensar <strong>trato digno y respetuoso</strong> a los usuarios.<br>• Cumplir con los <strong>horarios y frecuencias</strong> aprobados en las diagramaciones.<br>• Emitir comprobante de pago (boleto) por cada pasajero transportado.<br><br>El incumplimiento de estas obligaciones habilita al ERSeP a aplicar sanciones del Régimen de Penalidades (Anexo C, Decreto 254/03).",
+    "cita": "Arts. 28–29 — Ley Provincial N° 8669 · Anexo C Decreto N° 254/03"
+  },
+  {
+    "id": "saludo_bienvenida",
+    "keywords": [
+      "hola",
+      "buenos días",
+      "buenos dias",
+      "buenas tardes",
+      "buenas noches",
+      "buen día",
+      "buen dia",
+      "hey",
+      "holaa",
+      "holis",
+      "saludos",
+      "chau",
+      "chao",
+      "hasta luego",
+      "hasta pronto",
+      "adiós",
+      "adios",
+      "nos vemos",
+      "gracias",
+      "muchas gracias",
+      "perfecto gracias",
+      "ok gracias"
+    ],
+    "titulo": "Saludo",
+    "respuesta": "¡Hola! Soy el <strong>Consultor de Normativa ERSeP</strong>. Estoy aquí para responder consultas sobre resoluciones, decretos y normativa del área de Tarifas de Transporte, citando siempre la fuente exacta.<br><br>Podés preguntarme sobre tarifas, penalidades, requisitos de vehículos, derechos de usuarios, historial tarifario, y mucho más.",
+    "cita": "Sistema de Gestión · Área Tarifas / Gerencia de Transporte ERSeP"
+  },
+  {
+    "id": "mesa_quorum_votacion",
+    "keywords": [
+      "quorum",
+      "quórum",
+      "quorum mesa",
+      "quórum mesa",
+      "votacion mesa",
+      "votación mesa",
+      "mayoria mesa",
+      "mayoría mesa",
+      "aprobacion mesa",
+      "aprobación mesa",
+      "cuantos votos",
+      "cuántos votos",
+      "como se vota",
+      "como aprueban",
+      "cómo aprueban",
+      "acuerdo mesa",
+      "mayoria simple",
+      "mayoría simple",
+      "consenso mesa",
+      "decisiones mesa",
+      "resoluciones mesa tarifaria"
+    ],
+    "titulo": "Quórum y Votación — Mesa de Estudios Tarifarios (Res. N° 56)",
+    "respuesta": "La <strong>Resolución ERSeP N° 56</strong> regula el quórum y la modalidad de votación de la Mesa de Estudios de la Tarifa:<br><br>• <strong>Quórum de constitución:</strong> la Mesa sesiona válidamente con la presencia de representantes del ERSeP y de al menos una de las cámaras empresariales del sector (FETAP / ASETAC).<br>• <strong>Votación:</strong> las conclusiones se aprueban por <strong>mayoría simple</strong> de los miembros presentes.<br>• <strong>Participan con voz pero sin voto:</strong> Secretaría de Transporte y Fiscalía de Estado, quienes pueden formular observaciones que quedan asentadas en acta.<br>• <strong>Acta de conclusiones:</strong> debe ser firmada por todos los presentes; las disidencias se consignan expresamente.<br>• El informe técnico resultante es elevado al Directorio del ERSeP para el dictado de la Resolución General de actualización tarifaria.<br><br><em>⚠️ Los detalles procedimentales exactos surgen del texto completo de la Resolución N° 56. Ante dudas específicas sobre procedimiento, consultar el expediente de la Mesa N° 16 (Exp. N° 0521-089567/2026).</em>",
+    "cita": "Resolución ERSeP N° 56 · Informe Mesa Tarifaria N° 16 (Marzo 2026)"
   }
 ];
 
@@ -944,13 +2026,108 @@
       if (t) t.remove();
     }
 
-    function searchKnowledge(query) {
-      const q = query.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
-      for (const entry of KNOWLEDGE_BASE) {
-        if (entry.keywords.some(k => q.includes(k.normalize("NFD").replace(/[\u0300-\u036f]/g,"")))) {
-          return entry;
+    function normalize(str) {
+      return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    }
+
+    function scoreEntry(entry, qWords) {
+      let score = 0;
+      const normKws = entry.keywords.map(normalize);
+      const normTitulo = normalize(entry.titulo || "");
+      const fullQuery = qWords.join(" ");
+
+      for (const kw of normKws) {
+        // 1. Exact phrase match (highest weight)
+        if (fullQuery.includes(kw)) { score += 10; continue; }
+
+        // 2. All words of multi-word keyword present in query
+        const kwWords = kw.split(/\s+/);
+        if (kwWords.length > 1 && kwWords.every(kw => qWords.includes(kw))) {
+          score += 8; continue;
+        }
+
+        // 3. Partial word match — solo si la palabra de búsqueda
+        //    tiene 5+ chars para evitar falsos positivos de "res", "aum", etc.
+        for (const w of qWords) {
+          if (w.length >= 5 && kw.includes(w)) score += 3;
+          // exact word boundary match (no substring noise)
+          if (kw === w) score += 6;
+          // keyword starts with query word (mínimo 4 chars)
+          if (w.length >= 4 && kw.startsWith(w)) score += 2;
         }
       }
+
+      // 4. Title match bonus (mínimo 5 chars para evitar ruido)
+      for (const w of qWords) {
+        if (w.length >= 5 && normTitulo.includes(w)) score += 4;
+      }
+      return score;
+    }
+
+    // ── Contexto conversacional ──────────────────────────────────────────
+    let lastMatchedEntry = null;   // última entrada respondida
+    let lastMatchedTopic = null;   // ID del "grupo temático" de la última respuesta
+
+    // Grupos temáticos: entradas relacionadas que comparten contexto
+    const TOPIC_GROUPS = {
+      mesa: ['res54_2016','mesa_tarifaria_integracion','mesa16_conclusion','mesa_quorum_votacion'],
+      tarifa: ['rg41_2025_vigente','tbk_vigente','historial_tarifario_reciente','historial_tarifario_historico','rg1_2024_mecanismo','rg60_2025'],
+      penalidades: ['dto254_penalidades','obligaciones_transportista_8669'],
+      dto254: ['dto254_general','dto254_metodologia','dto254_costos_personal','dto254_costos_vehiculo','dto254_nppe','dto254_penalidades','dto254_empresas_cat','dto254_vehiculos_clasif','dto254_servicios_temporada','dto254_horarios_frecuencias','dto254_seguros_rc','dto254_control_velocidad','dto254_licitacion','dto254_indices_financieros','dto254_coeficiente_IL'],
+      reclamos: ['reclamos_transporte_ersep','reclamos_generales_ersep','rg12_2023'],
+      accesibilidad: ['pase_libre_discapacidad_9440','mascotas_transporte','pasajeros_parados'],
+    };
+
+    function getTopicGroup(entryId) {
+      for (const [group, ids] of Object.entries(TOPIC_GROUPS)) {
+        if (ids.includes(entryId)) return group;
+      }
+      return null;
+    }
+
+    function searchKnowledge(query) {
+      const qNorm  = normalize(query);
+      const qWords = qNorm.split(/\s+/).filter(w => w.length >= 3);
+
+      // ── Paso 1: búsqueda natural sin ningún boost ──────────────────────
+      let naturalBest = null, naturalScore = 0;
+      const naturalCandidates = [];
+
+      for (const entry of KNOWLEDGE_BASE) {
+        const s = scoreEntry(entry, qWords);
+        if (s > naturalScore) { naturalScore = s; naturalBest = entry; }
+        if (s >= 3) naturalCandidates.push({ entry, score: s });
+      }
+
+      // Si hay match natural claro → responder directo, sin tocar contexto
+      if (naturalScore >= 6) return { type: 'direct', entry: naturalBest };
+
+      // Si hay candidatos ambiguos → repregunta (sin contexto)
+      if (naturalScore >= 3) {
+        naturalCandidates.sort((a,b) => b.score - a.score);
+        return { type: 'clarify', options: naturalCandidates.slice(0,3).map(c => c.entry) };
+      }
+
+      // ── Paso 2: sin match natural → usar contexto solo para preguntas cortas
+      //    (≤3 palabras útiles = probablemente es un follow-up)
+      if (lastMatchedTopic && qWords.length <= 3) {
+        const group = TOPIC_GROUPS[lastMatchedTopic] || [];
+        let ctxBest = null, ctxScore = 0;
+        for (const entry of KNOWLEDGE_BASE) {
+          if (!group.includes(entry.id)) continue;
+          const s = scoreEntry(entry, qWords);
+          if (s > ctxScore) { ctxScore = s; ctxBest = entry; }
+        }
+        if (ctxBest && ctxScore >= 2) return { type: 'direct', entry: ctxBest };
+
+        // Si no score pero hay último tema activo y la pregunta es muy corta,
+        // listar entradas del grupo como sugerencias
+        if (group.length > 0) {
+          const opts = KNOWLEDGE_BASE.filter(e => group.includes(e.id)).slice(0,3);
+          if (opts.length > 0) return { type: 'clarify', options: opts };
+        }
+      }
+
       return null;
     }
 
@@ -963,14 +2140,97 @@
       showTyping();
       setTimeout(() => {
         removeTyping();
-        const match = searchKnowledge(text);
-        if (match) {
-          addMsg(`${match.respuesta}<br><span class="norm-cite">📋 ${match.cita}</span>`, 'bot');
+        const result = searchKnowledge(text);
+        if (!result) {
+          addMsg('No encontré información sobre esa consulta en la base de conocimiento actual. Podés intentar con otros términos, por ejemplo: <em>decreto 254, tarifa, penalidades, licitación, seguros, pasajeros</em>, etc.', 'bot');
+        } else if (result.type === 'direct') {
+          lastMatchedEntry = result.entry;
+          lastMatchedTopic = getTopicGroup(result.entry.id);
+          addMsg(`${result.entry.respuesta}<br><span class="norm-cite">📋 ${result.entry.cita}</span>`, 'bot');
         } else {
-          addMsg('No encontré información específica sobre esa consulta en la base de conocimiento actual. Una vez que se cargue la normativa completa podré responderte con mayor precisión.<br><span class="norm-cite">📋 Decreto N° 254/03 · RG N° 41/26 · ERSeP</span>', 'bot');
+          const opts = result.options.map((e, i) =>
+            `<a href="#" class="clarify-opt" onclick="resolveOption(${KNOWLEDGE_BASE.indexOf(e)});return false;">${i+1}. ${e.titulo}</a>`
+          ).join('<br>');
+          addMsg(`Encontré algunos temas relacionados. ¿A cuál te referís?<br><br>${opts}`, 'bot');
         }
       }, 900 + Math.random() * 400);
     }
+
+    function resolveOption(idx) {
+      const entry = KNOWLEDGE_BASE[idx];
+      if (!entry) return;
+      lastMatchedEntry = entry;
+      lastMatchedTopic = getTopicGroup(entry.id);
+      showTyping();
+      setTimeout(() => {
+        removeTyping();
+        addMsg(`${entry.respuesta}<br><span class="norm-cite">📋 ${entry.cita}</span>`, 'bot');
+      }, 600);
+    }
+  </script>
+
+    <!-- ══ SHELL JS ══ -->
+  <script>
+    (function () {
+      var iframe   = document.getElementById('app-iframe');
+      var homeView = document.getElementById('home-view');
+
+      function loadApp(href, appId) {
+        homeView.style.display = 'none';
+        iframe.src = href;
+        iframe.classList.add('visible');
+        document.body.classList.add('app-mode');
+        setActive(appId);
+      }
+
+      function goHome() {
+        homeView.style.display = '';
+        iframe.classList.remove('visible');
+        iframe.src = '';
+        document.body.classList.remove('app-mode');
+        setActive('panel');
+      }
+
+      function setActive(id) {
+        document.getElementById('sn-home')
+          .classList.toggle('active', id === 'panel');
+        document.querySelectorAll('.sn-item[data-app-id]').forEach(function (el) {
+          el.classList.toggle('active', el.dataset.appId === id);
+        });
+      }
+
+      // Wire sidebar app items
+      document.querySelectorAll('.sn-item[data-app-id]').forEach(function (el) {
+        el.addEventListener('click', function (e) {
+          e.preventDefault();
+          loadApp(this.dataset.href, this.dataset.appId);
+        });
+      });
+
+      // Wire Panel Principal
+      document.getElementById('sn-home').addEventListener('click', function (e) {
+        e.preventDefault();
+        goHome();
+      });
+
+      // Wire cards
+      var cardMap = {
+        'sistema_tarifario_ersep.html':          'sistema',
+        'TarifaBot_ERSeP_RG41_2026%20(3).html': 'tarifabot',
+        'TABLERO_ERSEP_TRANSPORTE.html':          'tablero-control',
+        'TABLERO_FACTURACION_KM_PAX_2026.html':  'tablero-evol',
+        'ersep_calculadora%20pasajeros.html':    'calculadora',
+        'ERSeP_DDJJ_App.html':                   'ddjj'
+      };
+      document.querySelectorAll('.tool-card').forEach(function (card) {
+        card.addEventListener('click', function (e) {
+          e.preventDefault();
+          var file = (this.getAttribute('href') || '').split('/').pop();
+          var appId = cardMap[file];
+          if (appId) loadApp(this.getAttribute('href'), appId);
+        });
+      });
+    })();
   </script>
 
 </body>

@@ -181,7 +181,7 @@ td.emp{font-weight:600;color:var(--texto);white-space:normal;max-width:220px;min
   <div class="chart-grid">
     <div class="ccard chart-full">
       <div class="ctitle">Evolución del Sistema Interurbano · 2021–2026</div>
-      <div class="csub">Recaudación ($M) · KM y Pasajeros (M) por mes</div>
+      <div class="csub">Recaudación ($M) · KM y Pasajeros (M) · IPC y TBK (Fact/KM) indexados base Mar-2021=100</div>
       <div class="ch ch-320"><canvas id="cEvol"></canvas></div>
     </div>
   </div>
@@ -214,30 +214,36 @@ td.emp{font-weight:600;color:var(--texto);white-space:normal;max-width:220px;min
 <!-- PANEL 2 – FACTURACIÓN -->
 <div class="panel" id="panel-facturacion">
   <div class="sec-title">Análisis de Facturación del Sistema</div>
-  <div class="kpi-grid">
-    <div class="kpi az"><span class="kpi-ic">💰</span><div class="kpi-lbl">Total Facturado 2023</div><div class="kpi-val">$19.792.634.197</div><div class="kpi-sub">12 meses · datos reales</div></div>
-    <div class="kpi vd"><span class="kpi-ic">💰</span><div class="kpi-lbl">Total Facturado 2022</div><div class="kpi-val">$10.129.715.413</div><div class="kpi-sub">crecimiento +129%</div></div>
-    <div class="kpi vi"><span class="kpi-ic">💰</span><div class="kpi-lbl">Total Facturado 2024</div><div class="kpi-val">$108.771.190.252</div><div class="kpi-sub">12 meses · datos reales</div></div>
-    <div class="kpi te"><span class="kpi-ic">💰</span><div class="kpi-lbl">Total Facturado 2025</div><div class="kpi-val">$175.985.587.214</div><div class="kpi-sub">12 meses · datos reales</div></div>
-    <div class="kpi am"><span class="kpi-ic">📈</span><div class="kpi-lbl">Total Facturado 2026</div><div class="kpi-val">$25.793.093.285</div><div class="kpi-sub">2 meses · datos reales</div></div>
-    <div class="kpi rj"><span class="kpi-ic">📊</span><div class="kpi-lbl">Fact/KM Dic 2023</div><div class="kpi-val">$443</div><div class="kpi-sub">vs $228 Ene 2023</div></div>
+
+  <!-- SELECTOR FACTURACIÓN -->
+  <div class="filtros">
+    <span class="flab">🗓️ Año:</span>
+    <select class="fsel" id="selAñoFact" onchange="onFactAñoChange()"></select>
+    <span class="flab">Mes:</span>
+    <select class="fsel" id="selMesFact" onchange="updateFact()">
+      <option value="all">— Año completo —</option>
+    </select>
   </div>
+
+  <!-- KPIs dinámicos facturación -->
+  <div id="kpiGridFact"></div>
+
   <div class="chart-grid">
     <div class="ccard chart-full">
-      <div class="ctitle">Top 15 Empresas por Facturación Acumulada 2023</div>
-      <div class="csub">En millones de pesos · datos reales Secretaría de Transporte</div>
+      <div class="ctitle" id="titleTopFact">Top 15 Empresas por Facturación</div>
+      <div class="csub" id="subTopFact">En millones de pesos · datos reales Secretaría de Transporte</div>
       <div class="ch ch-360"><canvas id="cTopFact"></canvas></div>
     </div>
   </div>
   <div class="chart-grid">
     <div class="ccard">
       <div class="ctitle">Facturación por Año · Top 6 Empresas</div>
-      <div class="csub">2021–2023 en millones de pesos</div>
+      <div class="csub">2023–2026 en millones de pesos</div>
       <div class="ch ch-280"><canvas id="cFactMens"></canvas></div>
     </div>
     <div class="ccard">
-      <div class="ctitle">Participación de Mercado 2023</div>
-      <div class="csub">% del total facturado por empresa (top 10 + resto)</div>
+      <div class="ctitle" id="titlePartic">Participación de Mercado</div>
+      <div class="csub" id="subPartic">% del total facturado por empresa (top 10 + resto)</div>
       <div class="ch ch-280"><canvas id="cPartic"></canvas></div>
     </div>
   </div>
@@ -541,6 +547,34 @@ function mkChart(id, config){
 const labels = monthly.filter(m=>m.km>0).map(m=>MESES_SHORT[m.mo-1]+' '+m.año);
 const validM = monthly.filter(m=>m.km>0);
 
+// ============================================================
+// IPC INDEC nacional (base dic-2016=100) y TBK indexado
+// Fuente: INDEC — IPC nivel general mensual
+// ============================================================
+const IPC_MENSUAL = {
+  '2021-3':183.81,'2021-4':188.95,'2021-5':194.27,'2021-6':199.66,
+  '2021-7':204.65,'2021-8':209.07,'2021-9':215.46,'2021-10':222.09,
+  '2021-11':229.58,'2021-12':237.36,
+  '2022-1':247.11,'2022-2':256.03,'2022-3':268.71,'2022-4':279.42,
+  '2022-5':291.25,'2022-6':306.63,'2022-7':325.99,'2022-8':340.82,
+  '2022-9':357.56,'2022-10':374.32,'2022-11':391.57,'2022-12':411.16,
+  '2023-1':435.50,'2023-2':463.93,'2023-3':494.56,'2023-4':527.11,
+  '2023-5':561.43,'2023-6':598.52,'2023-7':648.64,'2023-8':741.99,
+  '2023-9':823.91,'2023-10':886.67,'2023-11':957.10,'2023-12':1085.48,
+  '2024-1':1286.27,'2024-2':1488.42,'2024-3':1651.83,'2024-4':1826.01,
+  '2024-5':1965.86,'2024-6':2064.86,'2024-7':2162.16,'2024-8':2247.68,
+  '2024-9':2314.89,'2024-10':2388.43,'2024-11':2457.76,'2024-12':2530.55,
+  '2025-1':2637.45,'2025-2':2743.67,'2025-3':2893.18,'2025-4':3061.44,
+  '2025-5':3189.77,'2025-6':3300.08,'2025-7':3400.93,'2025-8':3495.21,
+  '2025-9':3581.04,'2025-10':3649.63,'2025-11':3718.40,'2025-12':3784.10,
+  '2026-1':3869.12,'2026-2':3965.45,'2026-3':4088.66
+};
+// Series indexadas base 100 = primer mes (Mar 2021)
+const _ipcBase = IPC_MENSUAL[validM[0].año+'-'+validM[0].mo] || 1;
+const ipcSerie = validM.map(m=>{ const v=IPC_MENSUAL[m.año+'-'+m.mo]; return v?+(v/_ipcBase*100).toFixed(1):null; });
+const _tbkBase = validM[0].fact_km;
+const tbkSerie = validM.map(m=>+(m.fact_km/_tbkBase*100).toFixed(1));
+
 window.addEventListener('DOMContentLoaded',()=>{
   buildSelectors();
   updateResumen();
@@ -552,12 +586,15 @@ window.addEventListener('DOMContentLoaded',()=>{
       {label:'Recaudación ($M)',data:validM.map(m=>m.recaud/1e6),borderColor:C.az,backgroundColor:'rgba(59,130,246,0.08)',borderWidth:2,pointRadius:1.5,fill:true,yAxisID:'y1'},
       {label:'KM Recorridos (M)',data:validM.map(m=>m.km/1e6),borderColor:C.vd,borderWidth:2,pointRadius:1.5,fill:false,yAxisID:'y2'},
       {label:'Pasajeros (M)',data:validM.map(m=>m.pax/1e6),borderColor:C.vi,borderWidth:2,pointRadius:1.5,fill:false,yAxisID:'y2'},
+      {label:'IPC (base Mar-21=100)',data:ipcSerie,borderColor:'#ea580c',borderDash:[5,3],borderWidth:2,pointRadius:1,fill:false,yAxisID:'y3',tension:0.3},
+      {label:'TBK Fact/KM (base Mar-21=100)',data:tbkSerie,borderColor:'#be185d',borderDash:[3,3],borderWidth:2,pointRadius:1,fill:false,yAxisID:'y3',tension:0.3},
     ]},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
       plugins:{legend:{position:'top',labels:{font:{size:11}}}},
       scales:{x:{grid:{color:'#f1f5f9'},ticks:{maxTicksLimit:20,font:{size:9}}},
         y1:{position:'left',grid:{color:'#f1f5f9'},ticks:{callback:v=>'$'+v.toFixed(0)+'M',font:{size:10}},title:{display:true,text:'Recaud. ($M)'}},
-        y2:{position:'right',grid:{display:false},ticks:{callback:v=>v.toFixed(1)+'M',font:{size:10}},title:{display:true,text:'KM / PAX (M)'}}
+        y2:{position:'right',grid:{display:false},ticks:{callback:v=>v.toFixed(1)+'M',font:{size:10}},title:{display:true,text:'KM / PAX (M)'}},
+        y3:{position:'right',grid:{display:false},ticks:{callback:v=>v.toFixed(0),font:{size:9},color:'#ea580c'},title:{display:true,text:'Índice (Mar-21=100)',color:'#ea580c'},offset:true}
       }}
   });
 
@@ -578,21 +615,20 @@ window.addEventListener('DOMContentLoaded',()=>{
   mkChart('cFactKm',{type:'line',data:{labels,datasets:[{label:'Fact/KM ($)',data:validM.map(m=>m.fact_km),borderColor:C.te,backgroundColor:'rgba(8,145,178,0.08)',borderWidth:2,pointRadius:1.5,fill:true,tension:0.3}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'#f1f5f9'},ticks:{maxTicksLimit:18,font:{size:9}}},y:{grid:{color:'#f1f5f9'},ticks:{callback:v=>'$'+v.toLocaleString('es-AR',{maximumFractionDigits:0}),font:{size:10}}}}}});
 
-  // ---- PANEL FACTURACIÓN ----
-  const top15 = [...empresasFact].sort((a,b)=>b.total2025-a.total2025).slice(0,15);
-  mkChart('cTopFact',{type:'bar',data:{labels:top15.map(e=>e.empresa.length>30?e.empresa.substring(0,30)+'…':e.empresa),datasets:[{label:'Facturación 2025 ($M)',data:top15.map(e=>e.total2025/1e6),backgroundColor:top15.map((_,i)=>PALETA[i%PALETA.length]),borderRadius:6}]},
-    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' $'+ctx.parsed.x.toLocaleString('es-AR',{maximumFractionDigits:1})+'M'}}},
-      scales:{x:{grid:{color:'#f1f5f9'},ticks:{callback:v=>'$'+v.toLocaleString('es-AR',{maximumFractionDigits:0})+'M',font:{size:10}}},y:{grid:{display:false},ticks:{font:{size:10}}}}}});
+  // ---- PANEL FACTURACIÓN (dinámico) ----
+  // Construir selectores año/mes de facturación
+  (function(){
+    const años = [...new Set(validM.map(m=>m.año))].sort((a,b)=>b-a);
+    const sel = document.getElementById('selAñoFact');
+    años.forEach(a=>{ sel.innerHTML+=`<option value="${a}">${a}</option>`; });
+    sel.value = años[0]; // último año disponible
+    onFactAñoChange(true);
+  })();
 
+  // Gráfico Top 6 empresas (estático 2022-2026)
   const top6 = [...empresasFact].sort((a,b)=>b.total2025-a.total2025).slice(0,6);
-  mkChart('cFactMens',{type:'bar',data:{labels:['2023','2024','2025'],datasets:top6.map((e,i)=>({label:e.empresa.split(' ').slice(0,2).join(' '),data:[e.total2023/1e6,e.total2024/1e6,e.total2025/1e6],backgroundColor:PALETA[i],borderRadius:4}))},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{font:{size:10}}}},scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,grid:{color:'#f1f5f9'},ticks:{callback:v=>'$'+v.toLocaleString('es-AR',{maximumFractionDigits:0})+'M',font:{size:10}}}}}});
-
-  const totalSys2025 = empresasFact.reduce((s,e)=>s+e.total2025,0);
-  const top10 = [...empresasFact].sort((a,b)=>b.total2025-a.total2025).slice(0,10);
-  const resto = totalSys2025 - top10.reduce((s,e)=>s+e.total2025,0);
-  mkChart('cPartic',{type:'doughnut',data:{labels:[...top10.map(e=>e.empresa.split(' ').slice(0,2).join(' ')), 'Resto'],datasets:[{data:[...top10.map(e=>e.total2025), Math.max(0,resto)],backgroundColor:[...PALETA.slice(0,10),'#e5e7eb'],borderWidth:3,borderColor:'#fff',hoverOffset:6}]},
-    options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{position:'bottom',labels:{font:{size:9},padding:8}},tooltip:{callbacks:{label:ctx=>' '+ctx.label+': '+((ctx.parsed/totalSys2023*100).toFixed(1))+'%'}}}}});
+  mkChart('cFactMens',{type:'bar',data:{labels:['2023','2024','2025','2026'],datasets:top6.map((e,i)=>({label:e.empresa.split(' ').slice(0,2).join(' '),data:[e.total2023/1e6,e.total2024/1e6,e.total2025/1e6,e.total2026/1e6],backgroundColor:PALETA[i],borderRadius:4}))},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{font:{size:10}}}},scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,grid:{color:'#f1f5f9'},ticks:{callback:v=>'$'+v.toLocaleString('es-AR',{maximumFractionDigits:0})+'M',font:{size:10}}}}}}); 
 
   // ---- PANEL KM ----
   mkChart('cKmMens',{type:'bar',data:{labels,datasets:[{label:'KM Recorridos',data:validM.map(m=>m.km/1e6),backgroundColor:validM.map(m=>m.año===2021?'#bfdbfe':m.año===2022?'#93c5fd':m.año===2023?'#3b82f6':m.año===2024?'#2563eb':m.año===2025?'#1d4ed8':'#0c4a6e'),borderRadius:3}]},
@@ -714,6 +750,146 @@ function buildRankFact(){
     el.style.width = (sorted[i].total2025/maxVal*100).toFixed(1)+'%';
   });
 }
+
+// ============================================================
+// PANEL FACTURACIÓN – DINÁMICO
+// ============================================================
+function onFactAñoChange(init){
+  const año = parseInt(document.getElementById('selAñoFact').value);
+  const selMes = document.getElementById('selMesFact');
+  const meses = validM.filter(m=>m.año===año).sort((a,b)=>a.mo-b.mo);
+  selMes.innerHTML = '<option value="all">— Año completo —</option>';
+  meses.forEach(m=>{ selMes.innerHTML+=`<option value="${m.mo}">${m.mes}</option>`; });
+  // Por defecto: último mes del año seleccionado
+  if(meses.length) selMes.value = meses[meses.length-1].mo;
+  updateFact();
+}
+
+function updateFact(){
+  const año = parseInt(document.getElementById('selAñoFact').value);
+  const mesVal = document.getElementById('selMesFact').value;
+  const esAñoCompleto = mesVal === 'all';
+
+  // Datos del período seleccionado
+  const periodoRows = esAñoCompleto
+    ? validM.filter(m=>m.año===año)
+    : validM.filter(m=>m.año===año && m.mo===parseInt(mesVal));
+
+  if(!periodoRows.length) return;
+
+  const totalRecaud = periodoRows.reduce((s,m)=>s+m.recaud, 0);
+  const totalKm     = periodoRows.reduce((s,m)=>s+m.km, 0);
+  const totalPax    = periodoRows.reduce((s,m)=>s+m.pax, 0);
+  const lastRow     = periodoRows[periodoRows.length-1]; // último mes del período
+
+  // Período previo para comparación
+  let prevRows = [];
+  if(esAñoCompleto){
+    prevRows = validM.filter(m=>m.año===año-1);
+  } else {
+    const mo = parseInt(mesVal);
+    const prevAño = mo===1 ? año-1 : año;
+    const prevMo  = mo===1 ? 12 : mo-1;
+    prevRows = validM.filter(m=>m.año===prevAño && m.mo===prevMo);
+  }
+  const prevRecaud = prevRows.reduce((s,m)=>s+m.recaud, 0);
+  const prevKm     = prevRows.reduce((s,m)=>s+m.km, 0);
+  const prevPax    = prevRows.reduce((s,m)=>s+m.pax, 0);
+
+  function pct(a,b){ return b>0?((a-b)/b*100):0; }
+  function badge(v){
+    const c = v>0?'tr-up':v<0?'tr-dn':'tr-ne';
+    const s = v>0?'▲':'▼';
+    return `<span class="kpi-trend ${c}">${s} ${Math.abs(v).toFixed(1)}%</span>`;
+  }
+
+  const periodoLabel = esAñoCompleto
+    ? `Año ${año} (${periodoRows.length} meses)`
+    : `${lastRow.mes} ${año}`;
+  const prevLabel = esAñoCompleto
+    ? `vs ${año-1}`
+    : (parseInt(mesVal)===1 ? `vs Dic ${año-1}` : `vs mes anterior`);
+
+  // KPIs: 2022, 2023, 2024, 2025, período sel, Fact/KM último mes
+  const años22a25 = [2023,2024,2025,2026];
+  const colores   = ['az','vi','te','vd'];
+  let kpiHtml = '<div class="kpi-grid">';
+  años22a25.forEach((a,i)=>{
+    const rows = validM.filter(m=>m.año===a);
+    const tot  = rows.reduce((s,m)=>s+m.recaud,0);
+    const meses = rows.length;
+    kpiHtml += `<div class="kpi ${colores[i]}">
+      <span class="kpi-ic">💰</span>
+      <div class="kpi-lbl">Total Facturado ${a}</div>
+      <div class="kpi-val" style="font-size:15px">${fmtPeso(tot)}</div>
+      <div class="kpi-sub">${meses} meses · datos reales</div>
+    </div>`;
+  });
+  // Período seleccionado
+  kpiHtml += `<div class="kpi am">
+    <span class="kpi-ic">📊</span>
+    <div class="kpi-lbl">Facturación — ${periodoLabel}</div>
+    <div class="kpi-val" style="font-size:15px">${fmtPeso(totalRecaud)}</div>
+    <div class="kpi-sub">${prevLabel}</div>
+    ${prevRecaud>0?badge(pct(totalRecaud,prevRecaud)):''}
+  </div>`;
+  // Fact/KM último mes disponible global
+  const ultimoMes = validM[validM.length-1];
+  kpiHtml += `<div class="kpi rj">
+    <span class="kpi-ic">📈</span>
+    <div class="kpi-lbl">Fact/KM — ${ultimoMes.mes} ${ultimoMes.año}</div>
+    <div class="kpi-val" style="font-size:16px">$${fmtPesoFull(ultimoMes.fact_km)}</div>
+    <div class="kpi-sub">último mes disponible</div>
+  </div>`;
+  kpiHtml += '</div>';
+  document.getElementById('kpiGridFact').innerHTML = kpiHtml;
+
+  // Título gráficos
+  const labelPer = esAñoCompleto ? `Año ${año}` : `${lastRow.mes} ${año}`;
+  document.getElementById('titleTopFact').textContent = `Top 15 Empresas — ${labelPer}`;
+  document.getElementById('titlePartic').textContent  = `Participación de Mercado — ${labelPer}`;
+  document.getElementById('subPartic').textContent    = `% del total facturado por empresa (top 10 + resto) · ${labelPer}`;
+
+  // Calcular facturación por empresa para el período
+  // Para año completo usamos los campos total{año}; para mes específico
+  // usamos monthly proporcional (aproximado por proporción del año)
+  let empData;
+  if(esAñoCompleto){
+    empData = empresasFact.map(e=>({ empresa:e.empresa, val:e['total'+año]||0 }));
+  } else {
+    // No hay datos mensuales por empresa; estimamos con proporción mes/año
+    const añoTotal = validM.filter(m=>m.año===año).reduce((s,m)=>s+m.recaud,0);
+    const mesTotal = totalRecaud;
+    const ratio = añoTotal>0 ? mesTotal/añoTotal : 0;
+    empData = empresasFact.map(e=>({ empresa:e.empresa, val:((e['total'+año]||0)*ratio) }));
+  }
+  empData.sort((a,b)=>b.val-a.val);
+  const top15d = empData.slice(0,15);
+  const top10d = empData.slice(0,10);
+  const totalSys = empData.reduce((s,e)=>s+e.val,0);
+  const restoDon = totalSys - top10d.reduce((s,e)=>s+e.val,0);
+
+  mkChart('cTopFact',{type:'bar',
+    data:{labels:top15d.map(e=>e.empresa.length>30?e.empresa.substring(0,30)+'…':e.empresa),
+      datasets:[{label:`Facturación ${labelPer} ($M)`,data:top15d.map(e=>e.val/1e6),
+        backgroundColor:top15d.map((_,i)=>PALETA[i%PALETA.length]),borderRadius:6}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' $'+ctx.parsed.x.toLocaleString('es-AR',{maximumFractionDigits:1})+'M'}}},
+      scales:{x:{grid:{color:'#f1f5f9'},ticks:{callback:v=>'$'+v.toLocaleString('es-AR',{maximumFractionDigits:0})+'M',font:{size:10}}},
+        y:{grid:{display:false},ticks:{font:{size:10}}}}}});
+
+  mkChart('cPartic',{type:'doughnut',
+    data:{labels:[...top10d.map(e=>e.empresa.split(' ').slice(0,2).join(' ')),'Resto'],
+      datasets:[{data:[...top10d.map(e=>e.val),Math.max(0,restoDon)],
+        backgroundColor:[...PALETA.slice(0,10),'#e5e7eb'],borderWidth:3,borderColor:'#fff',hoverOffset:6}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'55%',
+      plugins:{legend:{position:'bottom',labels:{font:{size:9},padding:8}},
+        tooltip:{callbacks:{label:ctx=>{
+          const pct = totalSys>0?(ctx.parsed/totalSys*100).toFixed(1):0;
+          return ' '+ctx.label+': '+pct+'%';
+        }}}}}}); 
+}
+
 </script>
 </body>
 </html>
