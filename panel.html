@@ -192,6 +192,9 @@
     body.app-mode #shell-nav {
       width: 250px; min-width: 250px; overflow-y: auto;
     }
+    body.app-mode.full-app #shell-nav {
+      width: 0 !important; min-width: 0 !important; overflow: hidden;
+    }
     #shell-nav::-webkit-scrollbar { width: 3px; }
     #shell-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
     #shell-content {
@@ -2188,6 +2191,7 @@
         iframe.classList.remove('visible');
         iframe.src = '';
         document.body.classList.remove('app-mode');
+        document.body.classList.remove('full-app');
         setActive('panel');
       }
 
@@ -2204,6 +2208,12 @@
         el.addEventListener('click', function (e) {
           e.preventDefault();
           loadApp(this.dataset.href, this.dataset.appId);
+        });
+        // Doble clic: abre la app en pantalla completa (oculta el panel lateral)
+        el.addEventListener('dblclick', function (e) {
+          e.preventDefault();
+          loadApp(this.dataset.href, this.dataset.appId);
+          document.body.classList.add('full-app');
         });
       });
 
