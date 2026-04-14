@@ -195,6 +195,7 @@
     body.app-mode.full-app #shell-nav {
       width: 0 !important; min-width: 0 !important; overflow: hidden;
     }
+    body.app-mode #chat-bubble { display: none !important; }
     #shell-nav::-webkit-scrollbar { width: 3px; }
     #shell-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
     #shell-content {
@@ -2184,9 +2185,9 @@
         iframe.classList.add('visible');
         document.body.classList.add('app-mode');
         setActive(appId);
-        // Ocultar el chat del panel cuando se abre TarifaBot (tiene su propio chat)
-        var chatToggle = document.getElementById('chat-toggle');
-        if (chatToggle) chatToggle.style.display = appId === 'tarifabot' ? 'none' : '';
+        // Ocultar el "Consultor de Normativa" del panel al abrir cualquier app
+        var chatBubble = document.getElementById('chat-bubble');
+        if (chatBubble) chatBubble.style.display = 'none';
       }
 
       function goHome() {
@@ -2197,8 +2198,8 @@
         document.body.classList.remove('full-app');
         setActive('panel');
         // Restaurar el chat del panel al volver al inicio
-        var chatToggle = document.getElementById('chat-toggle');
-        if (chatToggle) chatToggle.style.display = '';
+        var chatBubble = document.getElementById('chat-bubble');
+        if (chatBubble) chatBubble.style.display = '';
       }
 
       function setActive(id) {
