@@ -157,7 +157,7 @@ body{
 
 /* ── CHAT WINDOW ── */
 #tb-window{
-  position:fixed;bottom:24px;left:24px;right:auto;z-index:100000;
+  position:fixed;bottom:24px;right:24px;left:auto;z-index:100000;
   width:420px;height:680px;max-height:calc(100vh - 48px);max-width:calc(100vw - 32px);
   border-radius:20px;overflow:hidden;
   box-shadow:var(--shadow-lg);
@@ -166,7 +166,7 @@ body{
   opacity:0;pointer-events:none;
   transform:translateY(20px) scale(.95);
   transition:all .3s cubic-bezier(.4,0,.2,1);
-  transform-origin:bottom left;
+  transform-origin:bottom right;
 }
 #tb-window.open{opacity:1;pointer-events:all;transform:translateY(0) scale(1)}
 
