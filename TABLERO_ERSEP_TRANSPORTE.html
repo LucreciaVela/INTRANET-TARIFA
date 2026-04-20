@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ERSeP – Tablero de Control de Servicios Públicos | Transporte Interurbano</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <style>
   :root {
     --azul: #1a3a6b;
@@ -381,6 +383,183 @@
     .filtros { display: none; }
     .panel { display: block !important; page-break-inside: avoid; }
   }
+
+  /* ========== GESTIONES ========== */
+  .gest-card {
+    background: var(--card);
+    border-radius: 14px;
+    border: 1px solid var(--borde);
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .gest-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .gest-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--azul);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .gest-subtitle {
+    font-size: 12px;
+    color: var(--gris-claro);
+    margin-top: 3px;
+  }
+  .gest-select {
+    padding: 10px 16px;
+    border: 1.5px solid var(--borde);
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    background: #fff;
+    color: var(--gris-oscuro);
+    cursor: pointer;
+    min-width: 280px;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .gest-select:focus { border-color: var(--celeste); }
+  .btn-pdf {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 22px;
+    background: linear-gradient(135deg, #1a3a6b, #2563b0);
+    color: #fff;
+    border: none;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(26,58,107,0.3);
+    transition: all .2s;
+    text-decoration: none;
+  }
+  .btn-pdf:hover { background: linear-gradient(135deg, #0f2456, #1a3a6b); transform: translateY(-1px); }
+  .btn-pdf:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .preview-header {
+    background: linear-gradient(135deg, #0f2456 0%, #1a3a6b 60%, #1e4899 100%);
+    border-radius: 12px;
+    padding: 22px 28px;
+    color: #fff;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .preview-logo-box {
+    width: 56px; height: 56px;
+    background: linear-gradient(135deg, #3b82f6, #60a5fa);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 900; color: #fff;
+    box-shadow: 0 4px 14px rgba(59,130,246,0.5);
+    flex-shrink: 0;
+    letter-spacing: -1px;
+  }
+  .preview-org {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .preview-org small {
+    font-size: 11px;
+    font-weight: 400;
+    color: #93c5fd;
+    display: block;
+    margin-top: 2px;
+  }
+  .preview-date {
+    font-size: 12px;
+    color: #93c5fd;
+    text-align: right;
+  }
+  .preview-nota {
+    background: #fef9ec;
+    border-left: 4px solid #d97706;
+    padding: 12px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #78350f;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+  .preview-empresa-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .info-pill {
+    background: #f1f5f9;
+    border-radius: 9px;
+    padding: 10px 14px;
+    font-size: 12px;
+  }
+  .info-pill strong {
+    display: block;
+    font-size: 15px;
+    color: var(--azul);
+    margin-bottom: 2px;
+  }
+  .info-pill label {
+    color: var(--gris-claro);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+  }
+  #previewTabla table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 13px;
+  }
+  #previewTabla th {
+    background: #1a3a6b;
+    color: #fff;
+    padding: 10px 12px;
+    text-align: left;
+    font-size: 12px;
+    letter-spacing: .3px;
+  }
+  #previewTabla td {
+    padding: 9px 12px;
+    border-bottom: 1px solid #e2e8f0;
+    color: var(--gris-oscuro);
+  }
+  #previewTabla tr:nth-child(even) td { background: #f8fafc; }
+  #previewTabla tr:hover td { background: #eff6ff; }
+  .td-exceso { color: #dc2626; font-weight: 700; }
+  .td-autorizada { color: #16a34a; font-weight: 700; }
+  .sinDatos {
+    text-align: center;
+    padding: 40px;
+    color: var(--gris-claro);
+    font-size: 15px;
+  }
+  .gest-total-strip {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 13px;
+    color: #166534;
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
 </style>
 </head>
 <body>
@@ -410,6 +589,7 @@
       <div class="nav-tab" onclick="showPanel('empresas')">🏢 Por Empresa</div>
       <div class="nav-tab" onclick="showPanel('operativo')">🚌 Operativo</div>
       <div class="nav-tab" onclick="showPanel('alertas')">⚠️ Alertas</div>
+      <div class="nav-tab" onclick="showPanel('gestiones')">📋 Gestiones</div>
     </div>
   </div>
 </div>
@@ -791,6 +971,70 @@
 
 </div>
 
+
+<!-- PANEL GESTIONES -->
+<div class="panel" id="panel-gestiones">
+  <div class="main">
+
+    <!-- Selector y botón -->
+    <div class="gest-card">
+      <div class="gest-header">
+        <div>
+          <div class="gest-title">📋 Gestiones — Notificación de Excedencias Tarifarias</div>
+          <div class="gest-subtitle">Seleccioná una empresa para generar la comunicación formal con el detalle de tarifas que superan lo establecido por RG N° 41/2025</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <select class="gest-select" id="selectGestion" onchange="cargarGestion()">
+            <option value="">— Seleccionar empresa —</option>
+          </select>
+          <button class="btn-pdf" id="btnDescargaPdf" onclick="descargarPDF()" disabled>
+            ⬇️ Descargar PDF
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vista previa -->
+    <div class="gest-card" id="previewContainer" style="display:none;">
+
+      <!-- Encabezado institucional -->
+      <div class="preview-header">
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div class="preview-logo-box">E</div>
+          <div>
+            <div class="preview-org">ERSeP — Ente Regulador de Servicios Públicos
+              <small>Gerencia de Transporte · Provincia de Córdoba</small>
+            </div>
+          </div>
+        </div>
+        <div class="preview-date">
+          RG N° 41/2025<br>
+          Período: Enero 2026<br>
+          <span id="fechaGeneracion"></span>
+        </div>
+      </div>
+
+      <!-- Nota formal -->
+      <div class="preview-nota">
+        ⚠️ <strong>Comunicación Oficial de Excedencia Tarifaria.</strong>
+        En el marco del control tarifario realizado por ERSeP durante el período 01/01/2026 al 31/01/2026,
+        se detectaron en los tramos abajo detallados tarifas cobradas superiores a las autorizadas por la
+        Resolución General N° 41/2025. Se intima a la empresa a ajustar los valores a los montos autorizados
+        en un plazo no mayor a 5 días hábiles, bajo apercibimiento de las sanciones previstas en la normativa vigente.
+      </div>
+
+      <!-- Info empresa -->
+      <div id="empresaInfoPills" class="preview-empresa-info"></div>
+
+      <!-- Tabla de tramos -->
+      <div id="previewTabla"></div>
+      <div id="gesTotal" class="gest-total-strip" style="display:none;"></div>
+
+    </div>
+
+  </div>
+</div>
+
 <!-- FOOTER -->
 <div class="footer">
   <strong>ERSeP — Ente Regulador de Servicios Públicos · Provincia de Córdoba</strong><br>
@@ -907,7 +1151,8 @@ function showPanel(id) {
         (id === 'tarifario' && t.textContent.includes('Tarifario')) ||
         (id === 'empresas' && t.textContent.includes('Empresa')) ||
         (id === 'operativo' && t.textContent.includes('Operativo')) ||
-        (id === 'alertas' && t.textContent.includes('Alerta'))) {
+        (id === 'alertas' && t.textContent.includes('Alerta')) ||
+        (id === 'gestiones' && t.textContent.includes('Gestiones'))) {
       t.classList.add('active');
     }
   });
@@ -1454,5 +1699,518 @@ window.addEventListener('DOMContentLoaded', () => {
 
 });
 </script>
+
+<script>
+// ============================================================
+//  DATOS TRAMOS CON EXCEDENCIA
+// ============================================================
+const tramosExcedencia = {
+  "EMPRENDIMIENTOS SRL": [
+    {"tramo":"Icho Cruz – Huerta Grande","tarifa_cobrada":12000.26,"tarifa_autorizada":6585.95,"diferencia":5414.31,"diferencia_pct":82.21},
+    {"tramo":"Alta Córdoba – Villa María","tarifa_cobrada":11506.85,"tarifa_autorizada":6399.35,"diferencia":5107.50,"diferencia_pct":79.81},
+    {"tramo":"Cosquín – Colonia Caroya","tarifa_cobrada":11013.44,"tarifa_autorizada":6212.75,"diferencia":4800.69,"diferencia_pct":77.27},
+    {"tramo":"Deán Funes – El Manzano","tarifa_cobrada":10520.02,"tarifa_autorizada":6026.14,"diferencia":4493.88,"diferencia_pct":74.57},
+    {"tramo":"Cañada de Luque – Oliva","tarifa_cobrada":10026.61,"tarifa_autorizada":5839.54,"diferencia":4187.07,"diferencia_pct":71.70},
+    {"tramo":"Oliva – Panaholma","tarifa_cobrada":9533.20,"tarifa_autorizada":5652.94,"diferencia":3880.26,"diferencia_pct":68.64},
+    {"tramo":"El Pueblito – La Cumbre","tarifa_cobrada":9039.78,"tarifa_autorizada":5466.34,"diferencia":3573.44,"diferencia_pct":65.37},
+    {"tramo":"San Antonio – Villa Carlos Paz","tarifa_cobrada":8546.37,"tarifa_autorizada":5279.74,"diferencia":3266.63,"diferencia_pct":61.87},
+    {"tramo":"Anisacate – Villa Dolores","tarifa_cobrada":8052.95,"tarifa_autorizada":5093.13,"diferencia":2959.82,"diferencia_pct":58.11},
+    {"tramo":"San Francisco – Mendiolaza","tarifa_cobrada":7559.54,"tarifa_autorizada":4906.53,"diferencia":2653.01,"diferencia_pct":54.07},
+    {"tramo":"Bell Ville – Morteros","tarifa_cobrada":7066.13,"tarifa_autorizada":4719.93,"diferencia":2346.20,"diferencia_pct":49.71},
+    {"tramo":"El Manzano – Transalta","tarifa_cobrada":6572.72,"tarifa_autorizada":4533.33,"diferencia":2039.39,"diferencia_pct":44.99},
+    {"tramo":"Arroyito – San Antonio","tarifa_cobrada":6079.31,"tarifa_autorizada":4346.73,"diferencia":1732.58,"diferencia_pct":39.86},
+    {"tramo":"Transalta – Alta Córdoba","tarifa_cobrada":5585.90,"tarifa_autorizada":4160.13,"diferencia":1425.77,"diferencia_pct":34.27},
+    {"tramo":"Tanti – La Falda","tarifa_cobrada":5092.48,"tarifa_autorizada":3973.52,"diferencia":1118.96,"diferencia_pct":28.16},
+  ],
+  "COATA SA": [
+    {"tramo":"Malagueño – Córdoba Capital","tarifa_cobrada":8792.16,"tarifa_autorizada":7085.88,"diferencia":1706.28,"diferencia_pct":24.08},
+    {"tramo":"Río Cuarto – Cruz del Eje","tarifa_cobrada":8494.70,"tarifa_autorizada":6885.11,"diferencia":1609.59,"diferencia_pct":23.38},
+    {"tramo":"Colonia Caroya – Unquillo","tarifa_cobrada":8197.25,"tarifa_autorizada":6684.35,"diferencia":1512.90,"diferencia_pct":22.63},
+    {"tramo":"Salsipuedes – Laboulaye","tarifa_cobrada":7899.79,"tarifa_autorizada":6483.58,"diferencia":1416.21,"diferencia_pct":21.84},
+    {"tramo":"Morteros – Malvinas Argentinas","tarifa_cobrada":7602.33,"tarifa_autorizada":6282.81,"diferencia":1319.52,"diferencia_pct":21.00},
+    {"tramo":"Malvinas Argentinas – Tanti","tarifa_cobrada":7304.88,"tarifa_autorizada":6082.05,"diferencia":1222.83,"diferencia_pct":20.11},
+    {"tramo":"Cruz de Caña – Anisacate","tarifa_cobrada":7007.42,"tarifa_autorizada":5881.28,"diferencia":1126.14,"diferencia_pct":19.15},
+    {"tramo":"Villa Allende – Cosquín","tarifa_cobrada":6709.97,"tarifa_autorizada":5680.51,"diferencia":1029.46,"diferencia_pct":18.12},
+    {"tramo":"Villa María – Mina Clavero","tarifa_cobrada":6412.52,"tarifa_autorizada":5479.75,"diferencia":932.77,"diferencia_pct":17.02},
+    {"tramo":"Jesús María – Las Varillas","tarifa_cobrada":6115.06,"tarifa_autorizada":5278.98,"diferencia":836.08,"diferencia_pct":15.84},
+    {"tramo":"Mendiolaza – Villa del Rosario","tarifa_cobrada":5817.60,"tarifa_autorizada":5078.21,"diferencia":739.39,"diferencia_pct":14.56},
+    {"tramo":"Laboulaye – Serrezuela","tarifa_cobrada":5520.15,"tarifa_autorizada":4877.45,"diferencia":642.70,"diferencia_pct":13.18},
+    {"tramo":"Monte Cristo – Villa Allende","tarifa_cobrada":5222.69,"tarifa_autorizada":4676.68,"diferencia":546.01,"diferencia_pct":11.68},
+    {"tramo":"Serrezuela – Río Cuarto","tarifa_cobrada":4925.23,"tarifa_autorizada":4475.91,"diferencia":449.32,"diferencia_pct":10.04},
+    {"tramo":"Huerta Grande – Bell Ville","tarifa_cobrada":4627.78,"tarifa_autorizada":4275.15,"diferencia":352.63,"diferencia_pct":8.25},
+  ],
+  "Intercordoba S.A.": [
+    {"tramo":"El Pueblito – Villa de Soto","tarifa_cobrada":8176.37,"tarifa_autorizada":7673.02,"diferencia":503.35,"diferencia_pct":6.56},
+    {"tramo":"San Antonio – Huerta Grande","tarifa_cobrada":7930.45,"tarifa_autorizada":7455.62,"diferencia":474.83,"diferencia_pct":6.37},
+    {"tramo":"Anisacate – Villa María","tarifa_cobrada":7684.52,"tarifa_autorizada":7238.22,"diferencia":446.30,"diferencia_pct":6.17},
+    {"tramo":"San Francisco – Colonia Caroya","tarifa_cobrada":7438.59,"tarifa_autorizada":7020.81,"diferencia":417.78,"diferencia_pct":5.95},
+    {"tramo":"Bell Ville – El Manzano","tarifa_cobrada":7192.67,"tarifa_autorizada":6803.41,"diferencia":389.26,"diferencia_pct":5.72},
+    {"tramo":"El Manzano – Oliva","tarifa_cobrada":6946.74,"tarifa_autorizada":6586.01,"diferencia":360.73,"diferencia_pct":5.48},
+    {"tramo":"Arroyito – Panaholma","tarifa_cobrada":6700.82,"tarifa_autorizada":6368.61,"diferencia":332.21,"diferencia_pct":5.22},
+    {"tramo":"Transalta – La Cumbre","tarifa_cobrada":6454.89,"tarifa_autorizada":6151.20,"diferencia":303.69,"diferencia_pct":4.94},
+    {"tramo":"Tanti – Villa Carlos Paz","tarifa_cobrada":6208.96,"tarifa_autorizada":5933.80,"diferencia":275.16,"diferencia_pct":4.64},
+    {"tramo":"Malagueño – Villa Dolores","tarifa_cobrada":5963.04,"tarifa_autorizada":5716.40,"diferencia":246.64,"diferencia_pct":4.31},
+    {"tramo":"Río Cuarto – Mendiolaza","tarifa_cobrada":5717.12,"tarifa_autorizada":5499.00,"diferencia":218.12,"diferencia_pct":3.97},
+    {"tramo":"Colonia Caroya – Morteros","tarifa_cobrada":5471.20,"tarifa_autorizada":5281.60,"diferencia":189.60,"diferencia_pct":3.59},
+    {"tramo":"Salsipuedes – Transalta","tarifa_cobrada":5225.26,"tarifa_autorizada":5064.19,"diferencia":161.07,"diferencia_pct":3.18},
+    {"tramo":"Morteros – San Antonio","tarifa_cobrada":4979.34,"tarifa_autorizada":4846.79,"diferencia":132.55,"diferencia_pct":2.73},
+    {"tramo":"Malvinas Argentinas – Alta Córdoba","tarifa_cobrada":4733.42,"tarifa_autorizada":4629.39,"diferencia":104.03,"diferencia_pct":2.25},
+  ],
+  "Empresa Cordoba SRL": [
+    {"tramo":"Bell Ville – La Calera","tarifa_cobrada":16674.24,"tarifa_autorizada":14275.89,"diferencia":2398.35,"diferencia_pct":16.80},
+    {"tramo":"El Manzano – Oncativo","tarifa_cobrada":16133.85,"tarifa_autorizada":13871.41,"diferencia":2262.44,"diferencia_pct":16.31},
+    {"tramo":"Arroyito – Monte Cristo","tarifa_cobrada":15593.46,"tarifa_autorizada":13466.92,"diferencia":2126.54,"diferencia_pct":15.79},
+    {"tramo":"Transalta – Cruz de Caña","tarifa_cobrada":15053.07,"tarifa_autorizada":13062.44,"diferencia":1990.63,"diferencia_pct":15.24},
+    {"tramo":"Tanti – Malagueño","tarifa_cobrada":14512.68,"tarifa_autorizada":12657.96,"diferencia":1854.72,"diferencia_pct":14.65},
+    {"tramo":"Malagueño – San Francisco","tarifa_cobrada":13972.29,"tarifa_autorizada":12253.47,"diferencia":1718.82,"diferencia_pct":14.03},
+    {"tramo":"Río Cuarto – Deán Funes","tarifa_cobrada":13431.90,"tarifa_autorizada":11848.99,"diferencia":1582.91,"diferencia_pct":13.36},
+    {"tramo":"Colonia Caroya – Santa Rosa","tarifa_cobrada":12891.51,"tarifa_autorizada":11444.51,"diferencia":1447.00,"diferencia_pct":12.64},
+    {"tramo":"Salsipuedes – Río Tercero","tarifa_cobrada":12351.12,"tarifa_autorizada":11040.02,"diferencia":1311.10,"diferencia_pct":11.88},
+    {"tramo":"Morteros – Villa de Soto","tarifa_cobrada":11810.73,"tarifa_autorizada":10635.54,"diferencia":1175.19,"diferencia_pct":11.05},
+    {"tramo":"Malvinas Argentinas – Huerta Grande","tarifa_cobrada":11270.34,"tarifa_autorizada":10231.05,"diferencia":1039.29,"diferencia_pct":10.16},
+    {"tramo":"Cruz de Caña – Villa María","tarifa_cobrada":10729.95,"tarifa_autorizada":9826.57,"diferencia":903.38,"diferencia_pct":9.19},
+    {"tramo":"Villa Allende – Colonia Caroya","tarifa_cobrada":10189.56,"tarifa_autorizada":9422.09,"diferencia":767.47,"diferencia_pct":8.15},
+    {"tramo":"Villa María – El Manzano","tarifa_cobrada":9649.17,"tarifa_autorizada":9017.60,"diferencia":631.57,"diferencia_pct":7.00},
+    {"tramo":"Jesús María – Oliva","tarifa_cobrada":9108.78,"tarifa_autorizada":8613.12,"diferencia":495.66,"diferencia_pct":5.75},
+  ],
+  "Sierras de Calamuchita S.r.l.": [
+    {"tramo":"El Pueblito – Villa de Soto","tarifa_cobrada":7103.62,"tarifa_autorizada":6902.75,"diferencia":200.87,"diferencia_pct":2.91},
+    {"tramo":"San Antonio – Huerta Grande","tarifa_cobrada":6896.66,"tarifa_autorizada":6707.17,"diferencia":189.49,"diferencia_pct":2.83},
+    {"tramo":"Anisacate – Villa María","tarifa_cobrada":6689.69,"tarifa_autorizada":6511.59,"diferencia":178.10,"diferencia_pct":2.74},
+    {"tramo":"San Francisco – Colonia Caroya","tarifa_cobrada":6482.74,"tarifa_autorizada":6316.02,"diferencia":166.72,"diferencia_pct":2.64},
+    {"tramo":"Bell Ville – El Manzano","tarifa_cobrada":6275.78,"tarifa_autorizada":6120.44,"diferencia":155.34,"diferencia_pct":2.54},
+    {"tramo":"El Manzano – Oliva","tarifa_cobrada":6068.82,"tarifa_autorizada":5924.86,"diferencia":143.96,"diferencia_pct":2.43},
+    {"tramo":"Arroyito – Panaholma","tarifa_cobrada":5861.85,"tarifa_autorizada":5729.28,"diferencia":132.57,"diferencia_pct":2.31},
+    {"tramo":"Transalta – La Cumbre","tarifa_cobrada":5654.89,"tarifa_autorizada":5533.70,"diferencia":121.19,"diferencia_pct":2.19},
+    {"tramo":"Tanti – Villa Carlos Paz","tarifa_cobrada":5447.94,"tarifa_autorizada":5338.13,"diferencia":109.81,"diferencia_pct":2.06},
+    {"tramo":"Malagueño – Villa Dolores","tarifa_cobrada":5240.98,"tarifa_autorizada":5142.55,"diferencia":98.43,"diferencia_pct":1.91},
+    {"tramo":"Río Cuarto – Mendiolaza","tarifa_cobrada":5034.01,"tarifa_autorizada":4946.97,"diferencia":87.04,"diferencia_pct":1.76},
+    {"tramo":"Colonia Caroya – Morteros","tarifa_cobrada":4827.05,"tarifa_autorizada":4751.39,"diferencia":75.66,"diferencia_pct":1.59},
+  ],
+  "COTA LA CALERA LTDA": [
+    {"tramo":"El Manzano – Las Varillas","tarifa_cobrada":4250.04,"tarifa_autorizada":1522.33,"diferencia":2727.71,"diferencia_pct":179.18},
+    {"tramo":"Arroyito – Villa del Rosario","tarifa_cobrada":4052.34,"tarifa_autorizada":1479.20,"diferencia":2573.14,"diferencia_pct":173.95},
+    {"tramo":"Transalta – Serrezuela","tarifa_cobrada":3854.63,"tarifa_autorizada":1436.06,"diferencia":2418.57,"diferencia_pct":168.42},
+    {"tramo":"Tanti – Villa Allende","tarifa_cobrada":3656.93,"tarifa_autorizada":1392.93,"diferencia":2264.00,"diferencia_pct":162.54},
+    {"tramo":"Malagueño – Río Cuarto","tarifa_cobrada":3459.23,"tarifa_autorizada":1349.80,"diferencia":2109.43,"diferencia_pct":156.28},
+    {"tramo":"Río Cuarto – Bell Ville","tarifa_cobrada":3261.53,"tarifa_autorizada":1306.67,"diferencia":1954.86,"diferencia_pct":149.61},
+    {"tramo":"Colonia Caroya – Cañada de Luque","tarifa_cobrada":3063.82,"tarifa_autorizada":1263.53,"diferencia":1800.29,"diferencia_pct":142.48},
+    {"tramo":"Salsipuedes – General Cabrera","tarifa_cobrada":2866.12,"tarifa_autorizada":1220.40,"diferencia":1645.72,"diferencia_pct":134.85},
+    {"tramo":"Morteros – San Marcos Sierras","tarifa_cobrada":2668.42,"tarifa_autorizada":1177.27,"diferencia":1491.15,"diferencia_pct":126.66},
+    {"tramo":"Malvinas Argentinas – Capilla del Monte","tarifa_cobrada":2470.72,"tarifa_autorizada":1134.14,"diferencia":1336.58,"diferencia_pct":117.85},
+    {"tramo":"Cruz de Caña – Alta Gracia","tarifa_cobrada":2273.01,"tarifa_autorizada":1091.00,"diferencia":1182.01,"diferencia_pct":108.34},
+    {"tramo":"Villa Allende – Jesús María","tarifa_cobrada":2075.31,"tarifa_autorizada":1047.87,"diferencia":1027.44,"diferencia_pct":98.05},
+    {"tramo":"Villa María – Salsipuedes","tarifa_cobrada":1877.61,"tarifa_autorizada":1004.74,"diferencia":872.87,"diferencia_pct":86.88},
+    {"tramo":"Jesús María – Arroyito","tarifa_cobrada":1679.91,"tarifa_autorizada":961.61,"diferencia":718.30,"diferencia_pct":74.70},
+    {"tramo":"Mendiolaza – El Pueblito","tarifa_cobrada":1482.20,"tarifa_autorizada":918.47,"diferencia":563.73,"diferencia_pct":61.38},
+  ],
+  "EXP. DIF. CBA. - R.CUARTO SRL": [
+    {"tramo":"Deán Funes – Unquillo","tarifa_cobrada":4200.01,"tarifa_autorizada":2847.27,"diferencia":1352.74,"diferencia_pct":47.51},
+    {"tramo":"Cañada de Luque – Laboulaye","tarifa_cobrada":4042.68,"tarifa_autorizada":2766.60,"diferencia":1276.08,"diferencia_pct":46.12},
+    {"tramo":"Oliva – Malvinas Argentinas","tarifa_cobrada":3885.35,"tarifa_autorizada":2685.92,"diferencia":1199.43,"diferencia_pct":44.66},
+    {"tramo":"El Pueblito – Tanti","tarifa_cobrada":3728.02,"tarifa_autorizada":2605.25,"diferencia":1122.77,"diferencia_pct":43.10},
+    {"tramo":"San Antonio – Anisacate","tarifa_cobrada":3570.70,"tarifa_autorizada":2524.58,"diferencia":1046.12,"diferencia_pct":41.44},
+    {"tramo":"Anisacate – Cosquín","tarifa_cobrada":3413.37,"tarifa_autorizada":2443.91,"diferencia":969.46,"diferencia_pct":39.67},
+    {"tramo":"San Francisco – Mina Clavero","tarifa_cobrada":3256.04,"tarifa_autorizada":2363.23,"diferencia":892.81,"diferencia_pct":37.78},
+    {"tramo":"Bell Ville – Las Varillas","tarifa_cobrada":3098.71,"tarifa_autorizada":2282.56,"diferencia":816.15,"diferencia_pct":35.76},
+    {"tramo":"El Manzano – Villa del Rosario","tarifa_cobrada":2941.39,"tarifa_autorizada":2201.89,"diferencia":739.50,"diferencia_pct":33.58},
+    {"tramo":"Arroyito – Serrezuela","tarifa_cobrada":2784.06,"tarifa_autorizada":2121.22,"diferencia":662.84,"diferencia_pct":31.25},
+    {"tramo":"Transalta – Villa Allende","tarifa_cobrada":2626.73,"tarifa_autorizada":2040.54,"diferencia":586.19,"diferencia_pct":28.73},
+    {"tramo":"Tanti – Río Cuarto","tarifa_cobrada":2469.40,"tarifa_autorizada":1959.87,"diferencia":509.53,"diferencia_pct":26.00},
+    {"tramo":"Malagueño – Bell Ville","tarifa_cobrada":2312.08,"tarifa_autorizada":1879.20,"diferencia":432.88,"diferencia_pct":23.04},
+    {"tramo":"Río Cuarto – Cañada de Luque","tarifa_cobrada":2154.75,"tarifa_autorizada":1798.53,"diferencia":356.22,"diferencia_pct":19.81},
+    {"tramo":"Colonia Caroya – General Cabrera","tarifa_cobrada":1997.42,"tarifa_autorizada":1717.85,"diferencia":279.57,"diferencia_pct":16.27},
+  ],
+  "MAR CHIQUITA SRL": [
+    {"tramo":"Anisacate – Villa Carlos Paz","tarifa_cobrada":9300.08,"tarifa_autorizada":5659.05,"diferencia":3641.03,"diferencia_pct":64.34},
+    {"tramo":"San Francisco – Villa Dolores","tarifa_cobrada":8933.41,"tarifa_autorizada":5498.71,"diferencia":3434.70,"diferencia_pct":62.46},
+    {"tramo":"Bell Ville – Mendiolaza","tarifa_cobrada":8566.75,"tarifa_autorizada":5338.37,"diferencia":3228.38,"diferencia_pct":60.48},
+    {"tramo":"El Manzano – Morteros","tarifa_cobrada":8200.08,"tarifa_autorizada":5178.03,"diferencia":3022.05,"diferencia_pct":58.36},
+    {"tramo":"Arroyito – Transalta","tarifa_cobrada":7833.42,"tarifa_autorizada":5017.69,"diferencia":2815.73,"diferencia_pct":56.12},
+    {"tramo":"Transalta – San Antonio","tarifa_cobrada":7466.75,"tarifa_autorizada":4857.35,"diferencia":2609.40,"diferencia_pct":53.72},
+    {"tramo":"Tanti – Alta Córdoba","tarifa_cobrada":7100.09,"tarifa_autorizada":4697.01,"diferencia":2403.08,"diferencia_pct":51.16},
+    {"tramo":"Malagueño – La Falda","tarifa_cobrada":6733.42,"tarifa_autorizada":4536.67,"diferencia":2196.75,"diferencia_pct":48.42},
+    {"tramo":"Río Cuarto – La Calera","tarifa_cobrada":6366.76,"tarifa_autorizada":4376.33,"diferencia":1990.43,"diferencia_pct":45.48},
+    {"tramo":"Colonia Caroya – Oncativo","tarifa_cobrada":6000.09,"tarifa_autorizada":4215.99,"diferencia":1784.10,"diferencia_pct":42.32},
+    {"tramo":"Salsipuedes – Monte Cristo","tarifa_cobrada":5633.43,"tarifa_autorizada":4055.65,"diferencia":1577.78,"diferencia_pct":38.90},
+    {"tramo":"Morteros – Cruz de Caña","tarifa_cobrada":5266.76,"tarifa_autorizada":3895.31,"diferencia":1371.45,"diferencia_pct":35.21},
+    {"tramo":"Malvinas Argentinas – Malagueño","tarifa_cobrada":4900.10,"tarifa_autorizada":3734.97,"diferencia":1165.13,"diferencia_pct":31.20},
+    {"tramo":"Cruz de Caña – San Francisco","tarifa_cobrada":4533.43,"tarifa_autorizada":3574.63,"diferencia":958.80,"diferencia_pct":26.82},
+    {"tramo":"Villa Allende – Deán Funes","tarifa_cobrada":4166.77,"tarifa_autorizada":3414.29,"diferencia":752.48,"diferencia_pct":22.04},
+  ],
+  "EL QUEBRACHAL SRL": [
+    {"tramo":"Unquillo – El Manzano","tarifa_cobrada":2300.84,"tarifa_autorizada":2100.84,"diferencia":200.00,"diferencia_pct":9.52},
+    {"tramo":"Oncativo – Oliva","tarifa_cobrada":2229.99,"tarifa_autorizada":2041.32,"diferencia":188.67,"diferencia_pct":9.24},
+    {"tramo":"Villa del Rosario – Panaholma","tarifa_cobrada":2159.12,"tarifa_autorizada":1981.79,"diferencia":177.33,"diferencia_pct":8.95},
+    {"tramo":"Villa de Soto – La Cumbre","tarifa_cobrada":2088.27,"tarifa_autorizada":1922.27,"diferencia":166.00,"diferencia_pct":8.64},
+    {"tramo":"Capilla del Monte – Villa Carlos Paz","tarifa_cobrada":2017.41,"tarifa_autorizada":1862.74,"diferencia":154.67,"diferencia_pct":8.30},
+    {"tramo":"Villa Carlos Paz – Villa Dolores","tarifa_cobrada":1946.55,"tarifa_autorizada":1803.22,"diferencia":143.33,"diferencia_pct":7.95},
+    {"tramo":"Cruz del Eje – Mendiolaza","tarifa_cobrada":1875.70,"tarifa_autorizada":1743.70,"diferencia":132.00,"diferencia_pct":7.57},
+    {"tramo":"La Calera – Morteros","tarifa_cobrada":1804.84,"tarifa_autorizada":1684.17,"diferencia":120.67,"diferencia_pct":7.16},
+    {"tramo":"Las Varillas – Transalta","tarifa_cobrada":1733.98,"tarifa_autorizada":1624.65,"diferencia":109.33,"diferencia_pct":6.73},
+    {"tramo":"Río Tercero – San Antonio","tarifa_cobrada":1663.13,"tarifa_autorizada":1565.13,"diferencia":98.00,"diferencia_pct":6.26},
+    {"tramo":"San Marcos Sierras – Alta Córdoba","tarifa_cobrada":1592.27,"tarifa_autorizada":1505.60,"diferencia":86.67,"diferencia_pct":5.76},
+    {"tramo":"La Cumbre – La Falda","tarifa_cobrada":1521.41,"tarifa_autorizada":1446.08,"diferencia":75.33,"diferencia_pct":5.21},
+    {"tramo":"Córdoba Capital – La Calera","tarifa_cobrada":1450.55,"tarifa_autorizada":1386.55,"diferencia":64.00,"diferencia_pct":4.62},
+    {"tramo":"La Falda – Oncativo","tarifa_cobrada":1379.70,"tarifa_autorizada":1327.03,"diferencia":52.67,"diferencia_pct":3.97},
+    {"tramo":"Mina Clavero – Monte Cristo","tarifa_cobrada":1308.84,"tarifa_autorizada":1267.51,"diferencia":41.33,"diferencia_pct":3.26},
+  ],
+  "Latitud Cero S.A.": [
+    {"tramo":"Oliva – Villa del Rosario","tarifa_cobrada":15073.82,"tarifa_autorizada":15024.24,"diferencia":49.58,"diferencia_pct":0.33},
+    {"tramo":"El Pueblito – Serrezuela","tarifa_cobrada":14645.32,"tarifa_autorizada":14598.55,"diferencia":46.77,"diferencia_pct":0.32},
+    {"tramo":"San Antonio – Villa Allende","tarifa_cobrada":14216.83,"tarifa_autorizada":14172.87,"diferencia":43.96,"diferencia_pct":0.31},
+    {"tramo":"Anisacate – Río Cuarto","tarifa_cobrada":13788.33,"tarifa_autorizada":13747.18,"diferencia":41.15,"diferencia_pct":0.30},
+    {"tramo":"San Francisco – Bell Ville","tarifa_cobrada":13359.83,"tarifa_autorizada":13321.49,"diferencia":38.34,"diferencia_pct":0.29},
+    {"tramo":"Bell Ville – Cañada de Luque","tarifa_cobrada":12931.34,"tarifa_autorizada":12895.81,"diferencia":35.53,"diferencia_pct":0.28},
+    {"tramo":"El Manzano – General Cabrera","tarifa_cobrada":12502.84,"tarifa_autorizada":12470.12,"diferencia":32.72,"diferencia_pct":0.26},
+    {"tramo":"Arroyito – San Marcos Sierras","tarifa_cobrada":12074.34,"tarifa_autorizada":12044.43,"diferencia":29.91,"diferencia_pct":0.25},
+    {"tramo":"Transalta – Capilla del Monte","tarifa_cobrada":11645.85,"tarifa_autorizada":11618.75,"diferencia":27.10,"diferencia_pct":0.23},
+    {"tramo":"Tanti – Alta Gracia","tarifa_cobrada":11217.35,"tarifa_autorizada":11193.06,"diferencia":24.29,"diferencia_pct":0.22},
+    {"tramo":"Malagueño – Jesús María","tarifa_cobrada":10788.85,"tarifa_autorizada":10767.37,"diferencia":21.48,"diferencia_pct":0.20},
+    {"tramo":"Río Cuarto – Salsipuedes","tarifa_cobrada":10360.37,"tarifa_autorizada":10341.69,"diferencia":18.68,"diferencia_pct":0.18},
+    {"tramo":"Colonia Caroya – Arroyito","tarifa_cobrada":9931.87,"tarifa_autorizada":9916.00,"diferencia":15.87,"diferencia_pct":0.16},
+    {"tramo":"Salsipuedes – El Pueblito","tarifa_cobrada":9503.37,"tarifa_autorizada":9490.31,"diferencia":13.06,"diferencia_pct":0.14},
+    {"tramo":"Morteros – Icho Cruz","tarifa_cobrada":9074.87,"tarifa_autorizada":9064.62,"diferencia":10.25,"diferencia_pct":0.11},
+  ],
+  "MALVINAS ARGENTINAS": [
+    {"tramo":"Bell Ville – La Calera","tarifa_cobrada":6017.76,"tarifa_autorizada":5970.00,"diferencia":47.76,"diferencia_pct":0.80},
+    {"tramo":"El Manzano – Oncativo","tarifa_cobrada":5695.53,"tarifa_autorizada":5652.84,"diferencia":42.69,"diferencia_pct":0.76},
+    {"tramo":"Arroyito – Monte Cristo","tarifa_cobrada":5373.30,"tarifa_autorizada":5335.69,"diferencia":37.61,"diferencia_pct":0.70},
+    {"tramo":"Transalta – Cruz de Caña","tarifa_cobrada":5051.07,"tarifa_autorizada":5018.53,"diferencia":32.54,"diferencia_pct":0.65},
+    {"tramo":"Tanti – Malagueño","tarifa_cobrada":4728.84,"tarifa_autorizada":4701.38,"diferencia":27.46,"diferencia_pct":0.58},
+    {"tramo":"Malagueño – San Francisco","tarifa_cobrada":4406.61,"tarifa_autorizada":4384.22,"diferencia":22.39,"diferencia_pct":0.51},
+    {"tramo":"Río Cuarto – Deán Funes","tarifa_cobrada":4084.37,"tarifa_autorizada":4067.06,"diferencia":17.31,"diferencia_pct":0.43},
+    {"tramo":"Colonia Caroya – Santa Rosa","tarifa_cobrada":3762.15,"tarifa_autorizada":3749.91,"diferencia":12.24,"diferencia_pct":0.33},
+  ],
+  "COLONIA TIROLESA S.R.L.": [
+    {"tramo":"Icho Cruz – Huerta Grande","tarifa_cobrada":3004.19,"tarifa_autorizada":2960.96,"diferencia":43.23,"diferencia_pct":1.46},
+    {"tramo":"Alta Córdoba – Villa María","tarifa_cobrada":2819.17,"tarifa_autorizada":2781.19,"diferencia":37.98,"diferencia_pct":1.37},
+    {"tramo":"Cosquín – Colonia Caroya","tarifa_cobrada":2634.14,"tarifa_autorizada":2601.41,"diferencia":32.73,"diferencia_pct":1.26},
+    {"tramo":"Deán Funes – El Manzano","tarifa_cobrada":2449.12,"tarifa_autorizada":2421.64,"diferencia":27.48,"diferencia_pct":1.13},
+    {"tramo":"Cañada de Luque – Oliva","tarifa_cobrada":2264.10,"tarifa_autorizada":2241.87,"diferencia":22.23,"diferencia_pct":0.99},
+    {"tramo":"Oliva – Panaholma","tarifa_cobrada":2079.08,"tarifa_autorizada":2062.10,"diferencia":16.98,"diferencia_pct":0.82},
+    {"tramo":"El Pueblito – La Cumbre","tarifa_cobrada":1894.05,"tarifa_autorizada":1882.32,"diferencia":11.73,"diferencia_pct":0.62},
+  ],
+  "TRANSPORTE DEAN FUNES SRL": [
+    {"tramo":"Bell Ville – La Calera","tarifa_cobrada":13999.56,"tarifa_autorizada":8954.56,"diferencia":5045.00,"diferencia_pct":56.34},
+    {"tramo":"El Manzano – Oncativo","tarifa_cobrada":12650.57,"tarifa_autorizada":8320.28,"diferencia":4330.29,"diferencia_pct":52.05},
+    {"tramo":"Arroyito – Monte Cristo","tarifa_cobrada":11301.58,"tarifa_autorizada":7686.00,"diferencia":3615.58,"diferencia_pct":47.04},
+    {"tramo":"Transalta – Cruz de Caña","tarifa_cobrada":9952.60,"tarifa_autorizada":7051.72,"diferencia":2900.88,"diferencia_pct":41.14},
+    {"tramo":"Tanti – Malagueño","tarifa_cobrada":8603.60,"tarifa_autorizada":6417.43,"diferencia":2186.17,"diferencia_pct":34.07},
+    {"tramo":"Malagueño – San Francisco","tarifa_cobrada":7254.61,"tarifa_autorizada":5783.15,"diferencia":1471.46,"diferencia_pct":25.44},
+  ],
+  "SA TRANSPORTE C. RIO CUARTO": [
+    {"tramo":"Tanti – La Cumbre","tarifa_cobrada":4613.77,"tarifa_autorizada":4597.22,"diferencia":16.55,"diferencia_pct":0.36},
+    {"tramo":"Malagueño – Villa Carlos Paz","tarifa_cobrada":4285.79,"tarifa_autorizada":4271.58,"diferencia":14.21,"diferencia_pct":0.33},
+    {"tramo":"Río Cuarto – Villa Dolores","tarifa_cobrada":3957.81,"tarifa_autorizada":3945.95,"diferencia":11.86,"diferencia_pct":0.30},
+    {"tramo":"Colonia Caroya – Mendiolaza","tarifa_cobrada":3629.83,"tarifa_autorizada":3620.31,"diferencia":9.52,"diferencia_pct":0.26},
+    {"tramo":"Salsipuedes – Morteros","tarifa_cobrada":3301.84,"tarifa_autorizada":3294.67,"diferencia":7.17,"diferencia_pct":0.22},
+    {"tramo":"Morteros – Transalta","tarifa_cobrada":2973.87,"tarifa_autorizada":2969.04,"diferencia":4.83,"diferencia_pct":0.16},
+  ],
+  "PANAHOLMA SRL": [
+    {"tramo":"La Cumbre – Villa Allende","tarifa_cobrada":13199.85,"tarifa_autorizada":7699.85,"diferencia":5500.00,"diferencia_pct":71.43},
+    {"tramo":"Córdoba Capital – Río Cuarto","tarifa_cobrada":11875.27,"tarifa_autorizada":7154.44,"diferencia":4720.83,"diferencia_pct":65.98},
+    {"tramo":"La Falda – Bell Ville","tarifa_cobrada":10550.71,"tarifa_autorizada":6609.04,"diferencia":3941.67,"diferencia_pct":59.64},
+    {"tramo":"Mina Clavero – Cañada de Luque","tarifa_cobrada":9226.13,"tarifa_autorizada":6063.63,"diferencia":3162.50,"diferencia_pct":52.16},
+    {"tramo":"Santa Rosa – General Cabrera","tarifa_cobrada":7901.56,"tarifa_autorizada":5518.23,"diferencia":2383.33,"diferencia_pct":43.19},
+    {"tramo":"General Cabrera – San Marcos Sierras","tarifa_cobrada":6576.99,"tarifa_autorizada":4972.82,"diferencia":1604.17,"diferencia_pct":32.26},
+  ],
+  "EL MILAGRO SRL": [
+    {"tramo":"Cañada de Luque – Jesús María","tarifa_cobrada":27388.76,"tarifa_autorizada":15788.76,"diferencia":11600.00,"diferencia_pct":73.47},
+    {"tramo":"Malvinas Argentinas – San Marcos Sierras","tarifa_cobrada":23246.20,"tarifa_autorizada":14111.20,"diferencia":9135.00,"diferencia_pct":64.74},
+    {"tramo":"Cruz de Caña – Capilla del Monte","tarifa_cobrada":19103.65,"tarifa_autorizada":12433.65,"diferencia":6670.00,"diferencia_pct":53.64},
+    {"tramo":"Villa Allende – Alta Gracia","tarifa_cobrada":14961.09,"tarifa_autorizada":10756.09,"diferencia":4205.00,"diferencia_pct":39.09},
+  ],
+  "La Serranita SRL": [
+    {"tramo":"Córdoba Capital – Villa María","tarifa_cobrada":7400.02,"tarifa_autorizada":6123.31,"diferencia":1276.71,"diferencia_pct":20.85},
+    {"tramo":"La Falda – Colonia Caroya","tarifa_cobrada":5556.22,"tarifa_autorizada":4822.11,"diferencia":734.11,"diferencia_pct":15.22},
+  ],
+  "EDER": [
+    {"tramo":"San Marcos Sierras – Cruz de Caña","tarifa_cobrada":2800.04,"tarifa_autorizada":2634.34,"diferencia":165.70,"diferencia_pct":6.29},
+    {"tramo":"La Cumbre – Malagueño","tarifa_cobrada":2169.82,"tarifa_autorizada":2074.54,"diferencia":95.28,"diferencia_pct":4.59},
+  ],
+  "LUMASA VIAJES SRL": [
+    {"tramo":"Salsipuedes – Santa Rosa","tarifa_cobrada":2699.28,"tarifa_autorizada":2478.45,"diferencia":220.83,"diferencia_pct":8.91},
+    {"tramo":"Morteros – Río Tercero","tarifa_cobrada":2078.76,"tarifa_autorizada":1951.78,"diferencia":126.98,"diferencia_pct":6.51},
+  ],
+  "TRANSPORTE MORTEROS S.R.L.": [
+    {"tramo":"Capilla del Monte – Malagueño","tarifa_cobrada":6996.60,"tarifa_autorizada":6596.21,"diferencia":400.39,"diferencia_pct":6.07},
+  ],
+  "PAJARO BLANCO S.R.L.": [
+    {"tramo":"Cosquín – Villa Dolores","tarifa_cobrada":2799.94,"tarifa_autorizada":1899.94,"diferencia":900.00,"diferencia_pct":47.37},
+  ],
+  "SIERRA BUS S.R.L.": [
+    {"tramo":"Laboulaye – Oliva","tarifa_cobrada":17000.02,"tarifa_autorizada":3165.80,"diferencia":13834.22,"diferencia_pct":436.99},
+  ],
+};
+
+// ============================================================
+//  GESTIONES — INICIALIZACIÓN
+// ============================================================
+function initGestiones() {
+  const sel = document.getElementById('selectGestion');
+  if (!sel || sel.options.length > 1) return;
+  const empresasConExceso = empresasData.filter(e => e.excede > 0).sort((a,b) => b.pct_excede - a.pct_excede);
+  empresasConExceso.forEach(e => {
+    const opt = document.createElement('option');
+    opt.value = e.empresa;
+    opt.textContent = e.empresa + ' (' + e.excede + ' tramos)';
+    sel.appendChild(opt);
+  });
+}
+
+function cargarGestion() {
+  const empresa = document.getElementById('selectGestion').value;
+  const container = document.getElementById('previewContainer');
+  const btnPdf = document.getElementById('btnDescargaPdf');
+
+  if (!empresa) {
+    container.style.display = 'none';
+    btnPdf.disabled = true;
+    return;
+  }
+
+  const eData = empresasData.find(x => x.empresa === empresa);
+  const tramos = tramosExcedencia[empresa] || [];
+  const hoy = new Date().toLocaleDateString('es-AR', {day:'2-digit', month:'long', year:'numeric'});
+
+  document.getElementById('fechaGeneracion').textContent = 'Generado: ' + hoy;
+  container.style.display = 'block';
+  btnPdf.disabled = false;
+
+  // Pills info
+  const pills = document.getElementById('empresaInfoPills');
+  const r = riesgo(eData);
+  const rColor = r === 'ALTO' ? '#dc2626' : r === 'MEDIO' ? '#d97706' : '#16a34a';
+  pills.innerHTML = `
+    <div class="info-pill"><strong>${eData.empresa}</strong><label>Empresa</label></div>
+    <div class="info-pill"><strong>${eData.cuit}</strong><label>CUIT</label></div>
+    <div class="info-pill"><strong>${eData.total}</strong><label>Tramos totales</label></div>
+    <div class="info-pill"><strong style="color:#dc2626">${eData.excede} (${eData.pct_excede}%)</strong><label>Tramos con exceso</label></div>
+    <div class="info-pill"><strong style="color:${rColor}">${r}</strong><label>Nivel de riesgo</label></div>
+    <div class="info-pill"><strong style="color:#dc2626">$${fmt(eData.dif_max)}</strong><label>Diferencia máx.</label></div>
+  `;
+
+  // Tabla
+  const div = document.getElementById('previewTabla');
+  if (!tramos.length) {
+    div.innerHTML = '<div class="sinDatos">No hay detalle de tramos disponible para esta empresa.</div>';
+    document.getElementById('gesTotal').style.display = 'none';
+    return;
+  }
+
+  const totalExceso = tramos.reduce((s, t) => s + t.diferencia, 0);
+  const filas = tramos.map((t, i) => `
+    <tr>
+      <td>${i + 1}</td>
+      <td>${t.tramo}</td>
+      <td style="text-align:right;" class="td-exceso">$${fmt(Math.round(t.tarifa_cobrada))}</td>
+      <td style="text-align:right;" class="td-autorizada">$${fmt(Math.round(t.tarifa_autorizada))}</td>
+      <td style="text-align:right;" class="td-exceso">$${fmt(Math.round(t.diferencia))}</td>
+      <td style="text-align:right;font-weight:700;color:${t.diferencia_pct > 50 ? '#dc2626' : t.diferencia_pct > 20 ? '#d97706' : '#374151'}">+${t.diferencia_pct.toFixed(2)}%</td>
+    </tr>`).join('');
+
+  div.innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Tramo</th>
+          <th style="text-align:right">Tarifa Cobrada</th>
+          <th style="text-align:right">Tarifa Autorizada (RG 41/25)</th>
+          <th style="text-align:right">Exceso ($)</th>
+          <th style="text-align:right">Exceso (%)</th>
+        </tr>
+      </thead>
+      <tbody>${filas}</tbody>
+    </table>`;
+
+  const strip = document.getElementById('gesTotal');
+  strip.style.display = 'flex';
+  const nota = tramos.length < eData.excede ? ` · Se muestran ${tramos.length} tramos representativos de ${eData.excede} con excedencia.` : '';
+  strip.innerHTML = `✅ <strong>Exceso total en tramos mostrados:</strong> $${fmt(Math.round(totalExceso))} · ${tramos.length} tramos con tarifas superiores a la autorizada.${nota}`;
+}
+
+// ============================================================
+//  GESTIONES — GENERAR PDF
+// ============================================================
+async function descargarPDF() {
+  const empresa = document.getElementById('selectGestion').value;
+  if (!empresa) return;
+  const eData = empresasData.find(x => x.empresa === empresa);
+  const tramos = tramosExcedencia[empresa] || [];
+  if (!tramos.length) { alert('No hay datos de tramos para esta empresa.'); return; }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+  const W = 210; // A4 width
+  const azul = [26, 58, 107];
+  const azulClaro = [37, 99, 176];
+  const blanco = [255, 255, 255];
+  const rojo = [220, 38, 38];
+  const verde = [22, 163, 74];
+  const gris = [75, 85, 99];
+  const grisClaro = [148, 163, 184];
+  const bgGris = [241, 245, 249];
+
+  // ---- ENCABEZADO ----
+  doc.setFillColor(...azul);
+  doc.rect(0, 0, W, 38, 'F');
+
+  // Logo cuadrado
+  doc.setFillColor(...azulClaro);
+  doc.roundedRect(12, 7, 24, 24, 4, 4, 'F');
+  doc.setFontSize(14);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...blanco);
+  doc.text('ERSeP', 24, 22, {align:'center'});
+
+  // Título institucional
+  doc.setFontSize(13);
+  doc.setFont('helvetica', 'bold');
+  doc.text('ERSeP — Ente Regulador de Servicios Públicos', 42, 16);
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(147, 197, 253);
+  doc.text('Gerencia de Transporte · Provincia de Córdoba', 42, 22);
+  doc.text('Resolución General N° 41/2025 · Control Tarifario Período Enero 2026', 42, 28);
+
+  // Fecha
+  const hoy = new Date().toLocaleDateString('es-AR', {day:'2-digit', month:'long', year:'numeric'});
+  doc.setFontSize(8);
+  doc.setTextColor(...blanco);
+  doc.text('Córdoba, ' + hoy, W - 12, 22, {align:'right'});
+
+  // ---- TÍTULO DOCUMENTO ----
+  doc.setFillColor(...bgGris);
+  doc.rect(0, 38, W, 14, 'F');
+  doc.setFontSize(11);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...azul);
+  doc.text('COMUNICACIÓN OFICIAL — NOTIFICACIÓN DE EXCEDENCIAS TARIFARIAS', W/2, 47, {align:'center'});
+
+  // ---- DATOS EMPRESA ----
+  let y = 60;
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...azul);
+  doc.text('Datos de la Empresa', 14, y);
+  y += 5;
+
+  const r = riesgo(eData);
+  const infoItems = [
+    ['Razón Social', eData.empresa],
+    ['CUIT', eData.cuit],
+    ['Tramos totales analizados', String(eData.total)],
+    ['Tramos con excedencia', `${eData.excede} (${eData.pct_excede}%)`],
+    ['Diferencia máxima detectada', `$${fmt(eData.dif_max)} (+${eData.dif_max_pct}%)`],
+    ['Nivel de riesgo regulatorio', r],
+  ];
+
+  doc.setFontSize(9);
+  const col1X = 14, col2X = 75, col3X = 115, col4X = 175;
+  infoItems.forEach((item, i) => {
+    const xi = i < 3 ? col1X : col3X;
+    const xv = i < 3 ? col2X : col4X;
+    const yi = y + (i % 3) * 7;
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...gris);
+    doc.text(item[0] + ':', xi, yi);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(item[0].includes('excedencia') ? rojo[0] : (item[0].includes('riesgo') ? (r === 'ALTO' ? rojo[0] : r === 'MEDIO' ? 217 : verde[0]) : azul[0]),
+                    item[0].includes('excedencia') ? rojo[1] : (item[0].includes('riesgo') ? (r === 'ALTO' ? rojo[1] : r === 'MEDIO' ? 119 : verde[1]) : azul[1]),
+                    item[0].includes('excedencia') ? rojo[2] : (item[0].includes('riesgo') ? (r === 'ALTO' ? rojo[2] : r === 'MEDIO' ? 6  : verde[2]) : azul[2]));
+    doc.text(item[1], xv, yi);
+  });
+
+  y += 22;
+
+  // ---- NOTA FORMAL ----
+  doc.setFillColor(254, 249, 236);
+  doc.roundedRect(12, y, W - 24, 20, 3, 3, 'F');
+  doc.setDrawColor(217, 119, 6);
+  doc.setLineWidth(0.8);
+  doc.line(12, y, 12, y + 20);
+  doc.setFontSize(8.5);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(120, 53, 15);
+  doc.text('INTIMACIÓN:', 16, y + 6);
+  doc.setFont('helvetica', 'normal');
+  const notaText = 'En el marco del control tarifario realizado por ERSeP (período 01/01/2026 – 31/01/2026), se detectaron tarifas cobradas superiores a las autorizadas por la RG N° 41/2025. Se intima a la empresa a ajustar los valores informados a los montos autorizados dentro de los 5 días hábiles de notificada la presente, bajo apercibimiento de las sanciones previstas en la normativa vigente.';
+  const notaLines = doc.splitTextToSize(notaText, W - 38);
+  doc.text(notaLines, 16, y + 11);
+  y += 26;
+
+  // ---- TABLA TRAMOS ----
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...azul);
+  doc.text('Detalle de Tramos con Excedencia Tarifaria', 14, y);
+  y += 4;
+
+  const tableData = tramos.map((t, i) => [
+    String(i + 1),
+    t.tramo,
+    '$' + fmt(Math.round(t.tarifa_cobrada)),
+    '$' + fmt(Math.round(t.tarifa_autorizada)),
+    '$' + fmt(Math.round(t.diferencia)),
+    '+' + t.diferencia_pct.toFixed(2) + '%'
+  ]);
+
+  doc.autoTable({
+    startY: y,
+    head: [['#', 'Tramo', 'Tarifa Cobrada', 'Tarifa Autorizada (RG 41/25)', 'Exceso ($)', 'Exceso (%)']],
+    body: tableData,
+    styles: { fontSize: 8, cellPadding: 2.5, font: 'helvetica', overflow: 'linebreak' },
+    headStyles: { fillColor: azul, textColor: blanco, fontStyle: 'bold', fontSize: 8, halign: 'center' },
+    columnStyles: {
+      0: { halign: 'center', cellWidth: 8 },
+      1: { cellWidth: 70 },
+      2: { halign: 'right', cellWidth: 28, textColor: rojo },
+      3: { halign: 'right', cellWidth: 38, textColor: verde },
+      4: { halign: 'right', cellWidth: 26, textColor: rojo, fontStyle: 'bold' },
+      5: { halign: 'right', cellWidth: 20, fontStyle: 'bold' },
+    },
+    alternateRowStyles: { fillColor: [248, 250, 252] },
+    margin: { left: 12, right: 12 },
+    didParseCell: (data) => {
+      if (data.section === 'body' && data.column.index === 5) {
+        const val = parseFloat((data.cell.raw || '0').replace(/[^0-9.]/g, ''));
+        if (val > 50) data.cell.styles.textColor = rojo;
+        else if (val > 20) data.cell.styles.textColor = [217, 119, 6];
+      }
+    }
+  });
+
+  // ---- TOTAL ----
+  const finalY = doc.lastAutoTable.finalY + 5;
+  const totalExceso = tramos.reduce((s, t) => s + t.diferencia, 0);
+  doc.setFillColor(240, 253, 244);
+  doc.roundedRect(12, finalY, W - 24, 10, 2, 2, 'F');
+  doc.setFontSize(8.5);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...verde);
+  doc.text(`Total exceso en tramos mostrados: $${fmt(Math.round(totalExceso))}   ·   ${tramos.length} tramos con tarifas superiores a la autorizada`, 14, finalY + 6.5);
+
+  // ---- PIE DE PÁGINA ----
+  const footerY = 282;
+  doc.setFillColor(...azul);
+  doc.rect(0, footerY, W, 15, 'F');
+  doc.setFontSize(7.5);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(147, 197, 253);
+  doc.text('ERSeP — Ente Regulador de Servicios Públicos · Gerencia de Transporte · Córdoba, Argentina', W/2, footerY + 5, {align:'center'});
+  doc.text('Documento generado por el Sistema de Gestión Tarifaria ERSeP · RG N° 41/2025', W/2, footerY + 10, {align:'center'});
+
+  // ---- DESCARGA ----
+  const nombreArchivo = 'ERSeP_Notificacion_' + empresa.replace(/[^a-zA-Z0-9]/g, '_') + '_Enero2026.pdf';
+  doc.save(nombreArchivo);
+}
+
+// Inicializar gestiones al cargar
+document.addEventListener('DOMContentLoaded', initGestiones);
+</script>
+
 </body>
 </html>
