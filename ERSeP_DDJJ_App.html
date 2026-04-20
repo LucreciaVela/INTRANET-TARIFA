@@ -351,6 +351,22 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     .ersep-td-help > .ersep-tooltip { bottom: auto; top: calc(100% + 6px); right: 0; left: auto; }
     .ersep-td-help:hover > .ersep-tooltip { opacity: 1; }
     </style>
+  <!-- Firebase SDK v8 compat -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script>
+    var firebaseConfig = {
+      apiKey:            "AIzaSyBvRwgC_1yj4VdTCuvG58h4-AMWEw4Kpx4",
+      authDomain:        "ersep-ddjj.firebaseapp.com",
+      projectId:         "ersep-ddjj",
+      storageBucket:     "ersep-ddjj.firebasestorage.app",
+      messagingSenderId: "1055663547646",
+      appId:             "1:1055663547646:web:9c8a2a0e89c4b012f8b1af"
+    };
+    try {
+      if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    } catch(e) { console.error("Firebase init error:", e); }
+  </script>
 </head>
 <body>
   <div id="root"></div>
@@ -382,27 +398,44 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     var Cell      = _RC.Cell      || function(){ return null; };
     var XLSX      = window.XLSX;
 
-    window.storage = {
-      get: async function(key) {
-        try { var v=localStorage.getItem("ersep_"+key); return v?{key:key,value:v}:null; }
-        catch(e){ return null; }
-      },
-      set: async function(key,value) {
-        try { localStorage.setItem("ersep_"+key, typeof value==="string"?value:JSON.stringify(value)); return {key:key,value:value}; }
-        catch(e){ return null; }
-      },
-      delete: async function(key) {
-        localStorage.removeItem("ersep_"+key); return {key:key,deleted:true};
-      },
-      list: async function(prefix) {
-        var keys=[];
-        for(var i=0;i<localStorage.length;i++){
-          var k=localStorage.key(i);
-          if(k&&k.startsWith("ersep_"+(prefix||""))) keys.push(k.replace("ersep_",""));
+    window.storage = (function() {
+      function db() { try { return firebase.firestore(); } catch(e) { return null; } }
+      var COL = "ersep";
+      return {
+        get: async function(key) {
+          var _db = db();
+          if (!_db) { try { var v=localStorage.getItem("ersep_"+key); return v?{key:key,value:v}:null; } catch(e){ return null; } }
+          try { var snap=await _db.collection(COL).doc(key).get(); return snap.exists?{key:key,value:snap.data().value}:null; }
+          catch(e){ console.error("storage.get:",e); return null; }
+        },
+        set: async function(key,value) {
+          var v=typeof value==="string"?value:JSON.stringify(value);
+          var _db=db();
+          if (!_db) { try{ localStorage.setItem("ersep_"+key,v); return {key:key,value:value}; }catch(e){ return null; } }
+          try { await _db.collection(COL).doc(key).set({value:v}); return {key:key,value:value}; }
+          catch(e){ console.error("storage.set:",e); return null; }
+        },
+        delete: async function(key) {
+          var _db=db();
+          if (!_db) { localStorage.removeItem("ersep_"+key); return {key:key,deleted:true}; }
+          try { await _db.collection(COL).doc(key).delete(); return {key:key,deleted:true}; }
+          catch(e){ console.error("storage.delete:",e); return null; }
+        },
+        list: async function(prefix) {
+          var pfx=prefix||"";
+          var _db=db();
+          if (!_db) {
+            var keys=[];
+            for(var i=0;i<localStorage.length;i++){ var k=localStorage.key(i); if(k&&k.startsWith("ersep_"+pfx)) keys.push(k.replace("ersep_","")); }
+            return {keys:keys};
+          }
+          try {
+            var snap=await _db.collection(COL).orderBy(firebase.firestore.FieldPath.documentId()).startAt(pfx).endAt(pfx+"").get();
+            var keys=[]; snap.forEach(function(doc){ keys.push(doc.id); }); return {keys:keys};
+          } catch(e){ console.error("storage.list:",e); return {keys:[]}; }
         }
-        return {keys:keys};
-      }
-    };
+      };
+    })();
   </script>
   <script>
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
