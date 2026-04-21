@@ -486,7 +486,7 @@ var P = {
 };
 var ADMIN = {
   user: "ERSEP",
-  pass: "ersep2026"
+  pass: "secretaria2026"
 };
 var EMPRESAS_DEMO = [
   // ── Empresa de prueba ── (reemplazar con empresas reales al producción)
@@ -2840,6 +2840,7 @@ var mesStr = function mesStr(a, m) {
 var newLinea = function newLinea() {
   return {
     _id: Math.random().toString(36).slice(2),
+    _manual: false,
     linea: "",
     tramo: "",
     corredor: "",
@@ -3689,6 +3690,34 @@ function DatosGeneralesTab(_ref11) {
     });
   }
 
+  function setLineaManual(id) {
+    setForm(function (p) {
+      return _objectSpread(_objectSpread({}, p), {}, {
+        lineas: p.lineas.map(function (l) {
+          return l._id === id ? _objectSpread(_objectSpread({}, l), {}, {
+            _manual: true,
+            linea: "",
+            tramo: "",
+            corredor: ""
+          }) : l;
+        })
+      });
+    });
+  }
+  function setLineaBack(id) {
+    setForm(function (p) {
+      return _objectSpread(_objectSpread({}, p), {}, {
+        lineas: p.lineas.map(function (l) {
+          return l._id === id ? _objectSpread(_objectSpread({}, l), {}, {
+            _manual: false,
+            linea: "",
+            tramo: "",
+            corredor: ""
+          }) : l;
+        })
+      });
+    });
+  }
   // Lookup habilitado por CUIT
   var lineasHabilitadas = userCuit && ((_LINEAS_POR_CUIT$user = LINEAS_POR_CUIT[userCuit]) === null || _LINEAS_POR_CUIT$user === void 0 ? void 0 : _LINEAS_POR_CUIT$user.lineas) || null;
   function selectLineaFromLookup(lineaId, _id) {
@@ -3800,9 +3829,10 @@ function DatosGeneralesTab(_ref11) {
       style: {
         padding: "6px 8px"
       }
-    }, lineasHabilitadas ? /*#__PURE__*/React.createElement("select", {
+    }, (lineasHabilitadas && !l._manual) ? /*#__PURE__*/React.createElement("select", {
       value: l.linea || "",
       onChange: function onChange(e) {
+        if (e.target.value === "__nueva__") return setLineaManual(l._id);
         return selectLineaFromLookup(e.target.value, l._id);
       },
       style: _objectSpread(_objectSpread({}, colStyle(320)), {}, {
@@ -3817,7 +3847,13 @@ function DatosGeneralesTab(_ref11) {
         key: oi,
         value: opt.id
       }, "[", opt.id, "] ", opt.linea, opt.ruta ? " — " + opt.ruta : "");
-    })) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("input", {
+    }), /*#__PURE__*/React.createElement("option", {
+        value: "__nueva__",
+        style: {fontStyle: "italic", fontWeight: 700, color: "#1565C0"}
+      }, "➕ Nueva línea — no figura en el listado")) : /*#__PURE__*/React.createElement(React.Fragment, null, lineasHabilitadas && l._manual && /*#__PURE__*/React.createElement("button", {
+      onClick: function onClick() { setLineaBack(l._id); },
+      style: {fontSize: 10, color: "#1565C0", background: "none", border: "none", cursor: "pointer", padding: "0 0 4px 0", display: "block", textDecoration: "underline"}
+    }, "← Volver al listado"), /*#__PURE__*/React.createElement("input", {
       value: l.linea,
       onChange: function onChange(e) {
         return updLinea(l._id, "linea", e.target.value);
@@ -3833,6 +3869,13 @@ function DatosGeneralesTab(_ref11) {
       },
       placeholder: "C\xF3rdoba \u2013 Destino",
       style: colStyle(200)
+    }), /*#__PURE__*/React.createElement("input", {
+      value: l.corredor || "",
+      onChange: function onChange(e) {
+        return updLinea(l._id, "corredor", e.target.value);
+      },
+      placeholder: "Corredor (Ej: NORTE)",
+      style: _objectSpread(_objectSpread({}, colStyle(200)), {}, {marginTop: 3})
     })), lineasHabilitadas && l.tramo && /*#__PURE__*/React.createElement("div", {
       style: {
         fontSize: 10,
