@@ -486,6 +486,10 @@ var P = {
 };
 var ADMIN = {
   user: "ERSEP",
+  pass: "ersep2026"
+};
+var ADMIN_SEC = {
+  user: "SECRETARIA DE TRANSPORTE",
   pass: "secretaria2026"
 };
 var EMPRESAS_DEMO = [
@@ -3318,8 +3322,12 @@ function LoginScreen(_ref0) {
             if (tipo === "admin") {
               var storedAdminPass = localStorage.getItem("ersep-admin-pass");
               var validAdminPass = storedAdminPass !== null ? storedAdminPass : ADMIN.pass;
-              if (cuit.trim() === ADMIN.user && validAdminPass === pass) {
+              var isERSEP = cuit.trim() === ADMIN.user && validAdminPass === pass;
+              var isSec = cuit.trim().toUpperCase() === ADMIN_SEC.user && pass === ADMIN_SEC.pass;
+              if (isERSEP) {
                 onLogin({tipo: "admin", firstLogin: storedAdminPass === null});
+              } else if (isSec) {
+                onLogin({tipo: "admin", firstLogin: false});
               } else {
                 setErr("Usuario o contraseña incorrectos.");
               }
