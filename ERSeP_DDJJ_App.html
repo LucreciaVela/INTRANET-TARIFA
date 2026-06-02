@@ -484,6 +484,48 @@ var P = {
   naranja: "#c96a00",
   warn: "#ffc107"
 };
+
+// ═══════════════════════════════════════════════════════════════
+//  FIREBASE FIRESTORE — almacenamiento de claves en la nube
+// ═══════════════════════════════════════════════════════════════
+var FB_API_KEY   = "AIzaSyBvRwgC_1yj4VdTCuvG58h4-AMWEw4Kpx4";
+var FB_PROJECT   = "ersep-ddjj";
+var FB_BASE      = "https://firestore.googleapis.com/v1/projects/" + FB_PROJECT + "/databases/(default)/documents/passwords";
+window.passCache = {};
+
+function fbDocId(key) { return key.replace(/[^a-zA-Z0-9_-]/g, "_"); }
+
+async function fbLoadAll() {
+  try {
+    var res = await fetch(FB_BASE + "?key=" + FB_API_KEY);
+    if (!res.ok) return;
+    var data = await res.json();
+    if (data.documents) {
+      data.documents.forEach(function(doc) {
+        var id = doc.name.split("/").pop();
+        if (doc.fields && doc.fields.pass) window.passCache[id] = doc.fields.pass.stringValue;
+      });
+    }
+  } catch(e) {}
+}
+
+async function fbSetPass(key, val) {
+  try {
+    var id = fbDocId(key);
+    window.passCache[id] = val;
+    var url = FB_BASE + "/" + id + "?updateMask.fieldPaths=pass&key=" + FB_API_KEY;
+    await fetch(url, {
+      method: "PATCH",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({fields: {pass: {stringValue: val}}})
+    });
+  } catch(e) {}
+}
+
+function fbGetCached(key) {
+  return window.passCache[fbDocId(key)] || null;
+}
+
 var ADMIN = {
   user: "ERSEP",
   pass: "ersep2026"
@@ -3356,7 +3398,7 @@ function LoginScreen(_ref0) {
             });
           case 1:
             if (tipo === "admin") {
-              var storedAdminPass = localStorage.getItem("ersep-admin-pass");
+              var storedAdminPass = fbGetCached("ersep-admin-pass");
               var validAdminPass = storedAdminPass !== null ? storedAdminPass : ADMIN.pass;
               var isERSEP = cuit.trim() === ADMIN.user && validAdminPass === pass;
               var isSec = cuit.trim().toUpperCase() === ADMIN_SEC.user && pass === ADMIN_SEC.pass;
@@ -3374,7 +3416,7 @@ function LoginScreen(_ref0) {
               if (!emp) {
                 setErr("CUIT no registrado en el sistema.");
               } else {
-                var storedEmpPass = localStorage.getItem("ersep-pass-" + emp.cuit);
+                var storedEmpPass = fbGetCached("ersep-pass-" + emp.cuit);
                 var validEmpPass = storedEmpPass !== null ? storedEmpPass : emp.pass;
                 if (validEmpPass !== pass) {
                   setErr("Contraseña incorrecta.");
@@ -5801,7 +5843,7 @@ function ChangePasswordScreen(_ref_cp) {
     if (newPass.length < 6) { setErr("La contraseña debe tener al menos 6 caracteres."); return; }
     if (newPass !== confPass) { setErr("Las contraseñas no coinciden."); return; }
     var key = user.tipo === "admin" ? "ersep-admin-pass" : ("ersep-pass-" + user.cuit);
-    localStorage.setItem(key, newPass);
+    fbSetPass(key, newPass);
     setSaved(true);
     setTimeout(function() { onDone(); }, 1200);
   }
@@ -5922,8 +5964,10 @@ function App() {
         '<p style="color:#333;line-height:1.6;margin-top:12px"><b>Solución:</b> Abrí este archivo en un navegador con conexión a internet.</p>' +
         '<p style="color:#999;font-size:12px;margin-top:20px">Recursos requeridos:<br>• unpkg.com/react@18<br>• unpkg.com/react-dom@18</p></div>';
     } else {
-      var rootEl = ReactDOM.createRoot(document.getElementById("root"));
-      rootEl.render(React.createElement(App));
+      fbLoadAll().then(function() {
+        var rootEl = ReactDOM.createRoot(document.getElementById("root"));
+        rootEl.render(React.createElement(App));
+      });
     }
   </script>
   <script>
