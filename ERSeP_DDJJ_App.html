@@ -484,6 +484,48 @@ var P = {
   naranja: "#c96a00",
   warn: "#ffc107"
 };
+
+// ═══════════════════════════════════════════════════════════════
+//  FIREBASE FIRESTORE — almacenamiento de claves en la nube
+// ═══════════════════════════════════════════════════════════════
+var FB_API_KEY   = "AIzaSyBvRwgC_1yj4VdTCuvG58h4-AMWEw4Kpx4";
+var FB_PROJECT   = "ersep-ddjj";
+var FB_BASE      = "https://firestore.googleapis.com/v1/projects/" + FB_PROJECT + "/databases/(default)/documents/passwords";
+window.passCache = {};
+
+function fbDocId(key) { return key.replace(/[^a-zA-Z0-9_-]/g, "_"); }
+
+async function fbLoadAll() {
+  try {
+    var res = await fetch(FB_BASE + "?key=" + FB_API_KEY);
+    if (!res.ok) return;
+    var data = await res.json();
+    if (data.documents) {
+      data.documents.forEach(function(doc) {
+        var id = doc.name.split("/").pop();
+        if (doc.fields && doc.fields.pass) window.passCache[id] = doc.fields.pass.stringValue;
+      });
+    }
+  } catch(e) {}
+}
+
+async function fbSetPass(key, val) {
+  try {
+    var id = fbDocId(key);
+    window.passCache[id] = val;
+    var url = FB_BASE + "/" + id + "?updateMask.fieldPaths=pass&key=" + FB_API_KEY;
+    await fetch(url, {
+      method: "PATCH",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({fields: {pass: {stringValue: val}}})
+    });
+  } catch(e) {}
+}
+
+function fbGetCached(key) {
+  return window.passCache[fbDocId(key)] || null;
+}
+
 var ADMIN = {
   user: "ERSEP",
   pass: "ersep2026"
@@ -493,8 +535,45 @@ var ADMIN_SEC = {
   pass: "secretaria2026"
 };
 var EMPRESAS_DEMO = [
-  // ── Empresa de prueba ── (reemplazar con empresas reales al producción)
-  {cuit: "30-00000000-0", pass: "prueba2026", rs: "EMPRESA DE PRUEBA S.R.L."}
+  {cuit: "30-00000000-0", pass: "prueba2026", rs: "EMPRESA DE PRUEBA S.R.L."},
+  {cuit: "30-70955876-1", pass: "NbrnTP3fAb", rs: "ALEJANDRO S.R.L"},
+  {cuit: "33-70906355-9", pass: "nFbmOHnKYa", rs: "CANELLO HNOS SRL"},
+  {cuit: "30-70936427-4", pass: "XRvj7uff0L", rs: "CAR-BUS SRL"},
+  {cuit: "30-70735483-2", pass: "YTH8xIZM1J", rs: "CAR-COR S.R.L."},
+  {cuit: "30-54624472-1", pass: "RcoreogrNw", rs: "COATA SA"},
+  {cuit: "30-59873589-8", pass: "wmq6OLkTkx", rs: "COLONIA TIROLESA S.R.L."},
+  {cuit: "30-54633555-7", pass: "9NIQ0Wobtq", rs: "COTA LA CALERA  LTDA."},
+  {cuit: "30-70456132-2", pass: "n62tOy4Cqp", rs: "DIFERENCIAL TRANSIERRAS"},
+  {cuit: "30-70877962-4", pass: "IqK3yn9Ffc", rs: "EDER SERVICIO DIFERENCIAL"},
+  {cuit: "30-71020701-8", pass: "gMXAdx9G81", rs: "EL MILAGRO S.R.L."},
+  {cuit: "30-54643075-4", pass: "aSQHqNgAC7", rs: "EL PORVENIR S.R.L."},
+  {cuit: "30-68973672-2", pass: "2qFl41sNLj", rs: "EL QUEBRACHAL S.R.L."},
+  {cuit: "30-70784072-9", pass: "VHWGaub52Z", rs: "EL TATU CARRETERO SRL"},
+  {cuit: "30-54644726-6", pass: "td26fEeVVh", rs: "EMP TRANSPORTE MORTEROS"},
+  {cuit: "30-67871434-4", pass: "DIq2AnHTmt", rs: "EMPRENDIMIENTOS S.R.L."},
+  {cuit: "30-54622193-4", pass: "9OBGhnuKon", rs: "EMPRESA CORDOBA SRL"},
+  {cuit: "30-54626164-2", pass: "eNo41eoPni", rs: "EMPRESA EL TURISTA S.R.L."},
+  {cuit: "30-70730781-8", pass: "6JDWYlgAAC", rs: "EMPRESA SARMIENTO S.R.L."},
+  {cuit: "30-64484750-7", pass: "TP9gyv1plB", rs: "EXC S. DE CALAMUCHITA"},
+  {cuit: "30-69297423-5", pass: "Arp5B1Id9Z", rs: "EXP. DIF CBA RIO IV SRL"},
+  {cuit: "30-55665492-8", pass: "850kEnydx9", rs: "EXPRESO ACHIRAS S.R.L."},
+  {cuit: "30-70824000-8", pass: "qWCA79ISjs", rs: "EXPRESO VILLA DEL ROSARIO"},
+  {cuit: "30-70334427-1", pass: "8JHUdKF0j7", rs: "INTERCORDOBA S.A."},
+  {cuit: "30-70817267-3", pass: "elKPoh3pKM", rs: "LA DILIGENCIA VIP S.R.L."},
+  {cuit: "30-56220555-8", pass: "zKG5mSoyPs", rs: "LA ESTRELLA S.R.L."},
+  {cuit: "30-70857491-7", pass: "tUeC99enq5", rs: "LA SERRANITA SRL"},
+  {cuit: "33-71068746-9", pass: "22wjZRL9Oa", rs: "LATITUD CERO S.A."},
+  {cuit: "30-70756382-2", pass: "YsP6ihgIqL", rs: "LUMASA VIAJES S.R.L."},
+  {cuit: "30-54635858-1", pass: "SmNqE40fAr", rs: "MALVINAS ARGENTINAS SRL"},
+  {cuit: "30-54285640-4", pass: "aVNqTIAae2", rs: "MAR CHIQUITA S.R.L."},
+  {cuit: "30-70104598-6", pass: "4HZKjht3X1", rs: "PAJARO BLANCO S.R.L."},
+  {cuit: "30-70764510-1", pass: "3npgW2zMj5", rs: "PANAHOLMA SRL"},
+  {cuit: "33-61581294-9", pass: "18Y2bTu5X1", rs: "S.A.T CIUDAD DE RIO CUARTO"},
+  {cuit: "30-70752397-9", pass: "YqWg21nYCs", rs: "SIERRA BUS S.R.L."},
+  {cuit: "30-54661187-2", pass: "Xoblu17rNy", rs: "SIERRAS DE CALAMUCHITA"},
+  {cuit: "30-70812089-4", pass: "8H6h8l7qgA", rs: "SOCSA SRL"},
+  {cuit: "30-70772512-1", pass: "TtLFxJpRa5", rs: "TRANSPORTE DEAN FUNES"},
+  {cuit: "30-71130358-4", pass: "HSUPwePut0", rs: "ZETA BUS S.R.L"}
 ];
 var DOCS_CONFIG = [{
   sec: "A",
@@ -3320,7 +3399,7 @@ function LoginScreen(_ref0) {
             });
           case 1:
             if (tipo === "admin") {
-              var storedAdminPass = localStorage.getItem("ersep-admin-pass");
+              var storedAdminPass = fbGetCached("ersep-admin-pass");
               var validAdminPass = storedAdminPass !== null ? storedAdminPass : ADMIN.pass;
               var isERSEP = cuit.trim() === ADMIN.user && validAdminPass === pass;
               var isSec = cuit.trim().toUpperCase() === ADMIN_SEC.user && pass === ADMIN_SEC.pass;
@@ -3338,7 +3417,7 @@ function LoginScreen(_ref0) {
               if (!emp) {
                 setErr("CUIT no registrado en el sistema.");
               } else {
-                var storedEmpPass = localStorage.getItem("ersep-pass-" + emp.cuit);
+                var storedEmpPass = fbGetCached("ersep-pass-" + emp.cuit);
                 var validEmpPass = storedEmpPass !== null ? storedEmpPass : emp.pass;
                 if (validEmpPass !== pass) {
                   setErr("Contraseña incorrecta.");
@@ -5765,7 +5844,7 @@ function ChangePasswordScreen(_ref_cp) {
     if (newPass.length < 6) { setErr("La contraseña debe tener al menos 6 caracteres."); return; }
     if (newPass !== confPass) { setErr("Las contraseñas no coinciden."); return; }
     var key = user.tipo === "admin" ? "ersep-admin-pass" : ("ersep-pass-" + user.cuit);
-    localStorage.setItem(key, newPass);
+    fbSetPass(key, newPass);
     setSaved(true);
     setTimeout(function() { onDone(); }, 1200);
   }
@@ -5886,8 +5965,10 @@ function App() {
         '<p style="color:#333;line-height:1.6;margin-top:12px"><b>Solución:</b> Abrí este archivo en un navegador con conexión a internet.</p>' +
         '<p style="color:#999;font-size:12px;margin-top:20px">Recursos requeridos:<br>• unpkg.com/react@18<br>• unpkg.com/react-dom@18</p></div>';
     } else {
-      var rootEl = ReactDOM.createRoot(document.getElementById("root"));
-      rootEl.render(React.createElement(App));
+      fbLoadAll().then(function() {
+        var rootEl = ReactDOM.createRoot(document.getElementById("root"));
+        rootEl.render(React.createElement(App));
+      });
     }
   </script>
   <script>
