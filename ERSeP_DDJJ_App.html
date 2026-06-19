@@ -4182,7 +4182,7 @@ function DatosGeneralesTab(_ref11) {
     }
   }, /*#__PURE__*/React.createElement(Btn, {
     onClick: onSave,
-    disabled: saving,
+    disabled: saving || enviando,
     style: saved ? {background: P.verde, color: "#fff", borderColor: P.verde} : {}
   }, saving ? "Guardando..." : saved ? "✅ ¡Guardado!" : "💾 Guardar borrador"), form.estado === "enviado" && /*#__PURE__*/React.createElement(Badge, {
     color: P.verde
@@ -4714,7 +4714,7 @@ function EmpresaApp(_ref15) {
         while (1) switch (_context5.n) {
           case 0:
             setSaving(true);
-            nuevoEstado = modoRect ? "rectificativa" : form.estado === "enviado" ? "enviado" : "borrador";
+            nuevoEstado = ["enviado","rectificativa_enviada"].includes(form.estado) ? form.estado : modoRect ? "rectificativa" : "borrador";
             _context5.n = 1;
             return db.set(k, _objectSpread(_objectSpread({}, form), {}, {
               estado: nuevoEstado,
@@ -5193,8 +5193,8 @@ function AdminDashboard(_ref16) {
         textAlign: "center"
       }
     }, /*#__PURE__*/React.createElement(Badge, {
-      color: ((_r$form11 = r.form) === null || _r$form11 === void 0 ? void 0 : _r$form11.estado) === "enviado" ? P.verde : P.naranja
-    }, ((_r$form12 = r.form) === null || _r$form12 === void 0 ? void 0 : _r$form12.estado) === "enviado" ? "enviado" : "borrador")), BENCH_COLS.map(function (c) {
+      color: ((_r$form11 = r.form) === null || _r$form11 === void 0 ? void 0 : _r$form11.estado) === "enviado" || _r$form11 && _r$form11.estado === "rectificativa_enviada" ? P.verde : P.naranja
+    }, ((_r$form12 = r.form) === null || _r$form12 === void 0 ? void 0 : _r$form12.estado) === "enviado" || _r$form12 && _r$form12.estado === "rectificativa_enviada" ? "enviado" : "borrador")), BENCH_COLS.map(function (c) {
       return /*#__PURE__*/React.createElement("td", {
         key: c.k,
         style: {
