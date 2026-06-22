@@ -354,12 +354,13 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   <!-- Firebase SDK v8 compat -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
   <script>
     var firebaseConfig = {
       apiKey:            "AIzaSyBvRwgC_1yj4VdTCuvG58h4-AMWEw4Kpx4",
       authDomain:        "ersep-ddjj.firebaseapp.com",
       projectId:         "ersep-ddjj",
-      storageBucket:     "ersep-ddjj.firebasestorage.app",
+      storageBucket:     "ersep-ddjj.appspot.com",
       messagingSenderId: "1055663547646",
       appId:             "1:1055663547646:web:9c8a2a0e89c4b012f8b1af"
     };
@@ -4753,35 +4754,26 @@ function EmpresaApp(_ref15) {
               });
             }
 
-            // ── Guardar archivos en Firestore como base64 ──
+            // ── Subir archivos a Firebase Storage ──
             var updatedDocs = Object.assign({}, form.documentos || {});
             var uploadErrors = [];
-            var MAX_BYTES = 700 * 1024; // ~700 KB límite por doc Firestore
 
             for (var _docId in updatedDocs) {
               var _docData = updatedDocs[_docId];
               if (_docData && _docData.file instanceof File) {
-                if (_docData.file.size > MAX_BYTES) {
-                  uploadErrors.push(_docData.nombre + " (supera 700 KB)");
-                  updatedDocs[_docId] = { nombre: _docData.nombre, tamaño: _docData.tamaño, fecha: _docData.fecha };
-                  continue;
-                }
                 try {
-                  var _dataUrl = await readAsDataURL(_docData.file);
-                  var _archivoRef = "archivo:" + user.cuit + ":" + periodo.año + "-" + String(periodo.mes).padStart(2,"0") + ":" + _docId;
-                  await window.storage.set(_archivoRef, JSON.stringify({
-                    dataUrl: _dataUrl,
-                    nombre: _docData.nombre,
-                    tipo: _docData.file.type || "application/octet-stream"
-                  }));
+                  var _storagePath = "ddjj/" + user.cuit + "/" + periodo.año + "-" + String(periodo.mes).padStart(2,"0") + "/" + _docId + "/" + _docData.nombre;
+                  var _storageRef = firebase.storage().ref(_storagePath);
+                  var _snapshot = await _storageRef.put(_docData.file);
+                  var _downloadURL = await _snapshot.ref.getDownloadURL();
                   updatedDocs[_docId] = {
                     nombre: _docData.nombre,
                     tamaño: _docData.tamaño,
                     fecha: _docData.fecha,
-                    archivoRef: _archivoRef
+                    storageUrl: _downloadURL
                   };
                 } catch(_uploadErr) {
-                  console.error("Error guardando " + _docId + ":", _uploadErr);
+                  console.error("Error subiendo " + _docId + " a Storage:", _uploadErr);
                   uploadErrors.push(_docData.nombre);
                   updatedDocs[_docId] = { nombre: _docData.nombre, tamaño: _docData.tamaño, fecha: _docData.fecha };
                 }
@@ -4806,7 +4798,7 @@ function EmpresaApp(_ref15) {
             setTab("enviar");
 
             if (uploadErrors.length > 0) {
-              alert("⚠ DDJJ enviada con advertencias.\nArchivos no guardados (superan 700 KB): " + uploadErrors.join(", ") + ".\nReducí el tamaño de esos archivos y volvé a adjuntarlos.");
+              alert("⚠ DDJJ enviada con advertencias.\nArchivos no subidos a Storage: " + uploadErrors.join(", ") + ".\nVerificá tu conexión e intentá nuevamente.");
             } else {
               alert("\u2705 DDJJ enviada correctamente.\nTodos los datos y archivos fueron guardados en Firebase.");
             }
