@@ -2993,7 +2993,11 @@ function exportExcel(rows, periodo_str) {
   // Hoja 1 – Resumen
   var resumen = rows.map(function (r) {
     var _r$form, _r$form2, _r$form3, _r$form4, _r$form5, _r$form6;
+    var _añoR = r.periodo ? r.periodo.año : parseInt(periodo_str.split(' ')[1]);
+    var _mesR = r.periodo ? MESES[r.periodo.mes - 1] : periodo_str.split(' ')[0];
     return {
+      "Año": _añoR,
+      "Mes": _mesR,
       "CUIT": r.cuit,
       "Razón Social": r.rs,
       "Estado": ((_r$form = r.form) === null || _r$form === void 0 ? void 0 : _r$form.estado) || "sin datos",
@@ -3020,7 +3024,11 @@ function exportExcel(rows, periodo_str) {
   rows.forEach(function (r) {
     var _r$form7;
     return (((_r$form7 = r.form) === null || _r$form7 === void 0 ? void 0 : _r$form7.lineas) || []).forEach(function (l) {
+      var _añoL = r.periodo ? r.periodo.año : parseInt(periodo_str.split(' ')[1]);
+      var _mesL = r.periodo ? MESES[r.periodo.mes - 1] : periodo_str.split(' ')[0];
       return lineasRows.push({
+        "Año": _añoL,
+        "Mes": _mesL,
         "Empresa": r.rs,
         "Línea": l.linea,
         "Tramo": l.tramo,
@@ -5512,9 +5520,43 @@ function DescargasTab(_ref18) {
     _useState32 = _slicedToArray(_useState31, 2),
     selCuit = _useState32[0],
     setSelCuit = _useState32[1];
-  var rowsFilt = selCuit === "todas" ? rows : rows.filter(function (r) {
+  var _useState_sp = useState("actual"),
+    _useState_sp2 = _slicedToArray(_useState_sp, 2),
+    selPeriodo = _useState_sp2[0],
+    setSelPeriodo = _useState_sp2[1];
+  var _useState_ar = useState([]),
+    _useState_ar2 = _slicedToArray(_useState_ar, 2),
+    allRows = _useState_ar2[0],
+    setAllRows = _useState_ar2[1];
+  var _useState_al = useState(false),
+    _useState_al2 = _slicedToArray(_useState_al, 2),
+    allLoading = _useState_al2[0],
+    setAllLoading = _useState_al2[1];
+  useEffect(function() {
+    if (selPeriodo !== "todos") return;
+    setAllLoading(true);
+    (async function() {
+      try {
+        var keys = await db.list("ddjj:");
+        var results = await Promise.all(keys.map(function(k) { return db.get(k); }));
+        var loaded = results.filter(Boolean).map(function(f, idx) {
+          var key = keys[idx];
+          var parts = key.split(':');
+          var ym = (parts[2] || '').split('-');
+          var pAño = parseInt(ym[0]) || periodo.año;
+          var pMes = parseInt(ym[1]) || periodo.mes;
+          return { cuit: f.cuit, rs: f.rs || f.razonSocial || f.cuit, form: f, kpi: calcKPI(f), periodo: {año: pAño, mes: pMes} };
+        }).filter(function(r) { return r.form && r.form.estado && r.form.estado !== "borrador"; });
+        setAllRows(loaded);
+      } catch(e) { console.error(e); }
+      setAllLoading(false);
+    })();
+  }, [selPeriodo]);
+  var activeRows = selPeriodo === "todos" ? allRows : rows;
+  var rowsFilt = selCuit === "todas" ? activeRows : activeRows.filter(function (r) {
     return r.cuit === selCuit;
   });
+  var activePeriodoStr = selPeriodo === "todos" ? "Todos los per\xEDodos" : ps;
   return /*#__PURE__*/React.createElement("div", {
     style: {
       padding: "22px 24px",
@@ -5524,7 +5566,20 @@ function DescargasTab(_ref18) {
     style: {
       marginBottom: 18
     }
-  }, /*#__PURE__*/React.createElement(SecTitle, null, "\uD83D\uDD3D Filtrar descarga"), /*#__PURE__*/React.createElement("select", {
+  }, /*#__PURE__*/React.createElement(SecTitle, null, "\uD83D\uDD3D Filtrar descarga"),
+    /*#__PURE__*/React.createElement("div", {style:{marginBottom:8}},
+      /*#__PURE__*/React.createElement("label", {style:{fontSize:12,fontWeight:600,color:P.gris,display:"block",marginBottom:4}}, "\uD83D\uDCC5 Per\xEDodo:"),
+      /*#__PURE__*/React.createElement("select", {
+        value: selPeriodo,
+        onChange: function(e){ setSelPeriodo(e.target.value); setSelCuit("todas"); },
+        style:{width:"100%",padding:"8px 12px",border:"1.5px solid ".concat(P.borde),borderRadius:8,fontSize:13,fontFamily:"inherit",color:P.txt,marginBottom:6}
+      },
+        /*#__PURE__*/React.createElement("option", {value:"actual"}, "Mes actual \u2013 ", ps),
+        /*#__PURE__*/React.createElement("option", {value:"todos"}, "\u2705 Todos los per\xEDodos")
+      ),
+      allLoading && /*#__PURE__*/React.createElement("div", {style:{fontSize:12,color:P.sub,padding:"4px 0"}}, "\u231B Cargando todos los per\xEDodos...")
+    ),
+    /*#__PURE__*/React.createElement("select", {
     value: selCuit,
     onChange: function onChange(e) {
       return setSelCuit(e.target.value);
@@ -5551,7 +5606,7 @@ function DescargasTab(_ref18) {
       fontSize: 11,
       color: P.sub
     }
-  }, "Se incluir\xE1n ", rowsFilt.length, " empresa(s) \xB7 Per\xEDodo: ", ps)), /*#__PURE__*/React.createElement("div", {
+  }, "Se incluir\xE1n ", rowsFilt.length, " empresa(s) \xB7 Per\xEDodo: ", activePeriodoStr)), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "grid",
       gridTemplateColumns: "1fr 1fr",
