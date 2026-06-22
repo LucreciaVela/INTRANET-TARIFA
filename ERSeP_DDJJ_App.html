@@ -4754,28 +4754,49 @@ function EmpresaApp(_ref15) {
               });
             }
 
-            // ── Subir archivos a Firebase Storage ──
+            // ── Subir archivos: Firebase Storage con fallback a base64 ──
             var updatedDocs = Object.assign({}, form.documentos || {});
             var uploadErrors = [];
+            var MAX_BYTES_B64 = 700 * 1024;
+
+            function readAsDataURL(file) {
+              return new Promise(function(res, rej) {
+                var fr = new FileReader();
+                fr.onload = function() { res(fr.result); };
+                fr.onerror = function() { rej(fr.error); };
+                fr.readAsDataURL(file);
+              });
+            }
 
             for (var _docId in updatedDocs) {
               var _docData = updatedDocs[_docId];
               if (_docData && _docData.file instanceof File) {
+                var _saved = false;
                 try {
                   var _storagePath = "ddjj/" + user.cuit + "/" + periodo.año + "-" + String(periodo.mes).padStart(2,"0") + "/" + _docId + "/" + _docData.nombre;
                   var _storageRef = firebase.storage().ref(_storagePath);
                   var _snapshot = await _storageRef.put(_docData.file);
                   var _downloadURL = await _snapshot.ref.getDownloadURL();
-                  updatedDocs[_docId] = {
-                    nombre: _docData.nombre,
-                    tamaño: _docData.tamaño,
-                    fecha: _docData.fecha,
-                    storageUrl: _downloadURL
-                  };
-                } catch(_uploadErr) {
-                  console.error("Error subiendo " + _docId + " a Storage:", _uploadErr);
-                  uploadErrors.push(_docData.nombre);
-                  updatedDocs[_docId] = { nombre: _docData.nombre, tamaño: _docData.tamaño, fecha: _docData.fecha };
+                  updatedDocs[_docId] = { nombre: _docData.nombre, tamaño: _docData.tamaño, fecha: _docData.fecha, storageUrl: _downloadURL };
+                  _saved = true;
+                } catch(_storageErr) {
+                  console.warn("Storage no disponible, usando base64:", _storageErr.message);
+                }
+                if (!_saved) {
+                  if (_docData.file.size > MAX_BYTES_B64) {
+                    uploadErrors.push(_docData.nombre + " (supera 700 KB)");
+                    updatedDocs[_docId] = { nombre: _docData.nombre, tamaño: _docData.tamaño, fecha: _docData.fecha };
+                  } else {
+                    try {
+                      var _dataUrl = await readAsDataURL(_docData.file);
+                      var _archivoRef = "archivo:" + user.cuit + ":" + periodo.año + "-" + String(periodo.mes).padStart(2,"0") + ":" + _docId;
+                      await window.storage.set(_archivoRef, JSON.stringify({ dataUrl: _dataUrl, nombre: _docData.nombre, tipo: _docData.file.type || "application/octet-stream" }));
+                      updatedDocs[_docId] = { nombre: _docData.nombre, tamaño: _docData.tamaño, fecha: _docData.fecha, archivoRef: _archivoRef };
+                    } catch(_b64Err) {
+                      uploadErrors.push(_docData.nombre);
+                      updatedDocs[_docId] = { nombre: _docData.nombre, tamaño: _docData.tamaño, fecha: _docData.fecha };
+                    }
+                  }
                 }
               }
             }
