@@ -5958,9 +5958,10 @@ function App() {
     _useState46 = _slicedToArray(_useState45, 2),
     user = _useState46[0],
     setUser = _useState46[1];
-  var _useState47 = useState({
-      año: 2026,
-      mes: 3
+  var _useState47 = useState(function() {
+      var _d = new Date();
+      var _m = _d.getMonth(); // 0-indexed: Jan=0, Jun=5 → prev month en 1-indexed
+      return _m === 0 ? { año: _d.getFullYear() - 1, mes: 12 } : { año: _d.getFullYear(), mes: _m };
     }),
     _useState48 = _slicedToArray(_useState47, 2),
     periodo = _useState48[0],
