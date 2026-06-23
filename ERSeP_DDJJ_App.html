@@ -5123,6 +5123,7 @@ function AdminDashboard(_ref16) {
       km: Math.round(r.kpi.kmTotal / 1000)
     };
   });
+  var totalKm = barData.reduce(function(s, d) { return s + d.km; }, 0);
   return /*#__PURE__*/React.createElement("div", {
     style: {
       padding: "22px 24px"
@@ -5251,7 +5252,9 @@ function AdminDashboard(_ref16) {
     style: {
       color: P.red
     }
-  }, "\u25CF"), " a revisar")), /*#__PURE__*/React.createElement(Card, null, /*#__PURE__*/React.createElement(SecTitle, null, "\uD83D\uDCC8 Km producidos (miles)"), /*#__PURE__*/React.createElement(ResponsiveContainer, {
+  }, "\u25CF"), " a revisar")), /*#__PURE__*/React.createElement(Card, null, /*#__PURE__*/React.createElement(SecTitle, null, "\uD83D\uDCC8 Km producidos (miles)"), totalKm === 0
+    ? /*#__PURE__*/React.createElement("div", { style: { padding: "40px 0", textAlign: "center", color: P.sub, fontSize: 13 } }, "Sin datos de km registrados para este per\xEDodo")
+    : /*#__PURE__*/React.createElement(ResponsiveContainer, {
     width: "100%",
     height: 240
   }, /*#__PURE__*/React.createElement(BarChart, {
@@ -5763,7 +5766,7 @@ function AdminApp(_ref19) {
     loadData(año, mes);
   }, [año, mes]);
   var rowsConDatos = rows.filter(function (r) {
-    return r.form;
+    return r.form && r.form.estado === "enviado";
   });
   var TABS = [{
     id: "dashboard",
@@ -5850,7 +5853,7 @@ function AdminApp(_ref19) {
       fontSize: 11,
       color: P.sub
     }
-  }, rowsConDatos.length, " DDJJ presentadas")), /*#__PURE__*/React.createElement(TabBar, {
+  }, rowsConDatos.length, " DDJJ enviadas")), /*#__PURE__*/React.createElement(TabBar, {
     tabs: TABS,
     active: tab,
     onChange: setTab
