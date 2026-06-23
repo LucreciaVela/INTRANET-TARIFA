@@ -5765,7 +5765,7 @@ function AdminApp(_ref19) {
     loadData(año, mes);
   }, [año, mes]);
   var rowsConDatos = rows.filter(function (r) {
-    return r.form && r.form.estado === "enviado";
+    return r.form;
   });
   var TABS = [{
     id: "dashboard",
@@ -5852,7 +5852,7 @@ function AdminApp(_ref19) {
       fontSize: 11,
       color: P.sub
     }
-  }, rowsConDatos.length, " DDJJ enviadas")), /*#__PURE__*/React.createElement(TabBar, {
+  }, rowsConDatos.length, " formularios cargados")), /*#__PURE__*/React.createElement(TabBar, {
     tabs: TABS,
     active: tab,
     onChange: setTab
