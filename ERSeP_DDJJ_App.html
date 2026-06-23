@@ -4253,7 +4253,7 @@ function DocRow(_ref12) {
       fontSize: 11,
       color: P.verde
     }
-  }, "\uD83D\uDCCE ", doc.nombre, " \xB7 ", doc.tamaÃ±o, " \xB7 ", doc.fecha)), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("input", {
+  }, "\uD83D\uDCCE ", doc.nombre, " \xB7 ", doc.tamaño, " \xB7 ", doc.fecha)), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("input", {
     type: "file",
     ref: inputRef,
     style: {
@@ -4299,7 +4299,7 @@ function DocumentacionTab(_ref13) {
     reader.onload = function(e) {
       var meta = {
         nombre: file.name,
-        tamaÃ±o: (file.size / 1024).toFixed(1) + " KB",
+        tamaño: (file.size / 1024).toFixed(1) + " KB",
         tipo: file.type,
         fecha: new Date().toLocaleDateString("es-AR"),
         file: file,
