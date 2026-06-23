@@ -3074,7 +3074,7 @@ function exportPDF(rows, periodo_str) {
     return "<h2>Totales del sistema</h2>\n    <div class=\"kpi-grid\">\n      <div class=\"kpi\"><div class=\"kpi-v\">".concat(fmtN(sys.km), "</div><div class=\"kpi-l\">Km Producidos</div></div>\n      <div class=\"kpi\"><div class=\"kpi-v\">").concat(fmtM(sys.ing), "</div><div class=\"kpi-l\">Ingresos</div></div>\n      <div class=\"kpi\"><div class=\"kpi-v\">").concat(fmtN(sys.veh), "</div><div class=\"kpi-l\">Veh\xEDculos</div></div>\n      <div class=\"kpi\"><div class=\"kpi-v\">").concat(fmtN(sys.empl), "</div><div class=\"kpi-l\">Empleados</div></div>\n    </div>");
   }(), "\n  <h2>Detalle por empresa</h2>\n  <table><thead><tr>\n    <th>Empresa</th><th>Km Prod.</th><th>Ingresos</th><th>Veh.</th>\n    <th>Choferes</th><th>Empleados</th><th>Ing/km</th>\n    <th>Ch/Veh</th><th>Empl/Veh</th><th>Km/Veh</th><th>Lts/Veh</th>\n  </tr></thead><tbody>\n  ").concat(rows.map(function (r) {
     var _r$form9, _r$form0;
-    return "<tr>\n    <td>".concat(r.rs, "</td>\n    <td style=\"text-align:right\">").concat(fmtN(r.kpi.kmTotal), "</td>\n    <td style=\"text-align:right\">").concat(fmtM(r.kpi.ingTotal), "</td>\n    <td style=\"text-align:center\">").concat(((_r$form9 = r.form) === null || _r$form9 === void 0 ? void 0 : _r$form9.vehiculosActivos) || "-", "</td>\n    <td style=\"text-align:center\">").concat(((_r$form0 = r.form) === null || _r$form0 === void 0 ? void 0 : _r$form0.choferes) || "-", "</td>\n    <td style=\"text-align:center\">").concat(r.kpi.empl || "-", "</td>\n    <td style=\"text-align:right\">").concat(fmtM(r.kpi.ingXkm), "</td>\n    <td style=\"text-align:center\">").concat(fmtR(r.kpi.chsXveh), "</td>\n    <td style=\"text-align:center\">").concat(fmtR(r.kpi.emplXveh), "</td>\n    <td style=\"text-align:right\">").concat(fmtN(r.kpi.kmXveh), "</td>\n    <td style=\"text-align:right\">").concat(fmtN(r.kpi.ltsXveh), "</td>\n  </tr>");
+    return "<tr>\n    <td>".concat(r.rs, "</td>\n    <td style=\"text-align:right\">").concat((r.kpi.kmTotal > 1000000 ? "⚠ " : "") + fmtN(r.kpi.kmTotal), "</td>\n    <td style=\"text-align:right\">").concat(fmtM(r.kpi.ingTotal), "</td>\n    <td style=\"text-align:center\">").concat(((_r$form9 = r.form) === null || _r$form9 === void 0 ? void 0 : _r$form9.vehiculosActivos) || "-", "</td>\n    <td style=\"text-align:center\">").concat(((_r$form0 = r.form) === null || _r$form0 === void 0 ? void 0 : _r$form0.choferes) || "-", "</td>\n    <td style=\"text-align:center\">").concat(r.kpi.empl || "-", "</td>\n    <td style=\"text-align:right\">").concat(fmtM(r.kpi.ingXkm), "</td>\n    <td style=\"text-align:center\">").concat(fmtR(r.kpi.chsXveh), "</td>\n    <td style=\"text-align:center\">").concat(fmtR(r.kpi.emplXveh), "</td>\n    <td style=\"text-align:right\">").concat(fmtN(r.kpi.kmXveh), "</td>\n    <td style=\"text-align:right\">").concat(fmtN(r.kpi.ltsXveh), "</td>\n  </tr>");
   }).join(""), "\n  </tbody></table>\n  <script>window.onload=()=>{setTimeout(()=>window.print(),300)}<\/script>\n  </body></html>");
   var w = window.open("", "_blank", "width=1200,height=900");
   w === null || w === void 0 || w.document.write(html);
@@ -3895,6 +3895,7 @@ function DatosGeneralesTab(_ref11) {
     }, "i"));
   }))), /*#__PURE__*/React.createElement("tbody", null, form.lineas.map(function (l, idx) {
     var km = Math.round(n(l.kmT) * n(l.svcs));
+    var kmAlert = n(l.kmT) > 1000 || km > 500000;
     return /*#__PURE__*/React.createElement("tr", {
       key: l._id,
       style: {
@@ -3988,7 +3989,8 @@ function DatosGeneralesTab(_ref11) {
       value: l.kmT,
       onChange: function onChange(e) {
         return updLinea(l._id, "kmT", e.target.value);
-      },
+      }
+    }), n(l.kmT) > 1000 && /*#__PURE__*/React.createElement("div", {style:{fontSize:9,color:"#c0392b",marginTop:2,fontWeight:600}}, "\u26A0 ¿es el km total? Ingresá km por trayecto (un sentido),
       placeholder: "0",
       style: _objectSpread(_objectSpread({}, colStyle(80)), {}, {
         textAlign: "right"
@@ -4028,9 +4030,9 @@ function DatosGeneralesTab(_ref11) {
         padding: "6px 8px",
         textAlign: "right",
         fontWeight: 700,
-        color: P.navy
+        color: kmAlert ? "#c0392b" : P.navy
       }
-    }, fmtN(km)), /*#__PURE__*/React.createElement("td", {
+    }, fmtN(km), kmAlert && /*#__PURE__*/React.createElement("div",{style:{fontSize:9,color:"#c0392b",fontWeight:700,lineHeight:1.2}},"⚠ ¿km totales?")), /*#__PURE__*/React.createElement("td", {
       style: {
         padding: "6px 8px",
         textAlign: "center"
