@@ -4212,7 +4212,7 @@ function DocRow(_ref12) {
       borderRadius: 10,
       padding: "14px 18px",
       marginBottom: 12,
-      background: doc ? "".concat(P.verde, "0d") : "#fff"
+      background: (doc && doc.subiendo) ? "".concat(P.naranja, "0d") : doc ? "".concat(P.verde, "0d") : "#fff"
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
@@ -4240,14 +4240,12 @@ function DocRow(_ref12) {
     }
   }, cfg.label), /*#__PURE__*/React.createElement(Badge, {
     color: P.sub
-  }, cfg.fmt), doc && /*#__PURE__*/React.createElement(Badge, {
-    color: P.verde
-  }, "\u2713 Adjunto")), /*#__PURE__*/React.createElement("div", {
+  }, cfg.fmt), (doc && doc.subiendo) ? /*#__PURE__*/React.createElement(Badge, { color: P.naranja }, "\u23F3 Subiendo...") : doc ? /*#__PURE__*/React.createElement(Badge, { color: P.verde }, "\u2713 Adjunto") : null), /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 11,
       color: P.sub
     }
-  }, cfg.hint), doc && /*#__PURE__*/React.createElement("div", {
+  }, cfg.hint), doc && !doc.subiendo && /*#__PURE__*/React.createElement("div", {
     style: {
       marginTop: 6,
       fontSize: 11,
@@ -4270,7 +4268,7 @@ function DocRow(_ref12) {
     },
     variant: doc ? "ghost" : "primary",
     sm: true
-  }, doc ? "📎 Reemplazar" : "📂 Adjuntar"))));
+  }, (doc && doc.subiendo) ? "⏳ Subiendo..." : doc ? "📎 Reemplazar" : "📂 Adjuntar"))));
 }
 function DocumentacionTab(_ref13) {
   var form = _ref13.form,
@@ -4288,30 +4286,70 @@ function DocumentacionTab(_ref13) {
     _useState14 = _slicedToArray(_useState13, 2),
     fileError = _useState14[0],
     setFileError = _useState14[1];
-  function handleFile(id, file) {
+  async function handleFile(id, file) {
     if (!file) return;
     if (file.size > MAX_MB * 1024 * 1024) {
-      setFileError("\u26A0 El archivo \"".concat(file.name, "\" supera el l\xEDmite de ").concat(MAX_MB, " MB (tama\xF1o: ").concat((file.size / 1024 / 1024).toFixed(1), " MB). Por favor comprimilo o dividilo antes de adjuntarlo."));
+      setFileError("\u26A0 El archivo \"" + file.name + "\" supera el l\xEDmite de " + MAX_MB + " MB. Por favor comprimilo o dividilo.");
       return;
     }
     setFileError("");
-    var reader = new FileReader();
-    reader.onload = function(e) {
-      var meta = {
-        nombre: file.name,
-        tamaño: (file.size / 1024).toFixed(1) + " KB",
-        tipo: file.type,
-        fecha: new Date().toLocaleDateString("es-AR"),
-        file: file,
-        dataUrl: e.target.result
-      };
-      setForm(function (p) {
-        return _objectSpread(_objectSpread({}, p), {}, {
-          documentos: _objectSpread(_objectSpread({}, p.documentos), {}, _defineProperty({}, id, meta))
-        });
-      });
+
+    // Mostrar estado "subiendo" inmediatamente en la UI
+    setForm(function(p) {
+      var docs = Object.assign({}, p.documentos || {});
+      docs[id] = { nombre: file.name, tamaño: (file.size/1024).toFixed(1)+" KB", fecha: new Date().toLocaleDateString("es-AR"), subiendo: true };
+      return Object.assign({}, p, { documentos: docs });
+    });
+
+    var meta = {
+      nombre: file.name,
+      tamaño: (file.size / 1024).toFixed(1) + " KB",
+      fecha: new Date().toLocaleDateString("es-AR")
     };
-    reader.readAsDataURL(file);
+
+    // ── Intentar subir a Firebase Storage inmediatamente ──
+    var subidoOk = false;
+    try {
+      var _storagePath2 = "ddjj/" + user.cuit + "/" + periodo.año + "-" + String(periodo.mes).padStart(2,"0") + "/" + id + "/" + file.name;
+      var _storageRef2 = firebase.storage().ref(_storagePath2);
+      var _snap2 = await _storageRef2.put(file);
+      meta.storageUrl = await _snap2.ref.getDownloadURL();
+      subidoOk = true;
+    } catch(_storErr2) {
+      console.warn("Storage no disponible al adjuntar, usando base64:", _storErr2.message);
+    }
+
+    // ── Fallback: guardar como base64 en documento separado de Firestore ──
+    if (!subidoOk) {
+      try {
+        var _dataUrl2 = await new Promise(function(res, rej) {
+          var fr = new FileReader();
+          fr.onload = function() { res(fr.result); };
+          fr.onerror = function() { rej(fr.error); };
+          fr.readAsDataURL(file);
+        });
+        var _archivoKey2 = "archivo:" + user.cuit + ":" + periodo.año + "-" + String(periodo.mes).padStart(2,"0") + ":" + id;
+        await window.storage.set(_archivoKey2, JSON.stringify({ dataUrl: _dataUrl2, nombre: file.name, tipo: file.type || "application/octet-stream" }));
+        meta.archivoRef = _archivoKey2;
+        subidoOk = true;
+      } catch(_b64Err2) {
+        // Si todo falla, limpiar el estado y avisar al usuario
+        setForm(function(p) {
+          var docs = Object.assign({}, p.documentos || {});
+          docs[id] = null;
+          return Object.assign({}, p, { documentos: docs });
+        });
+        setFileError("\u274C No se pudo guardar \"" + file.name + "\". Verificá tu conexión e intentá de nuevo.");
+        return;
+      }
+    }
+
+    // ── Actualizar form con metadata persistible (sin objeto File) ──
+    setForm(function(p) {
+      var docs = Object.assign({}, p.documentos || {});
+      docs[id] = meta;
+      return Object.assign({}, p, { documentos: docs });
+    });
   }
   var secA = DOCS_CONFIG.filter(function (d) {
     return d.sec === "A";
@@ -4407,7 +4445,7 @@ function descargarComprobante(form, periodo, razonSocial) {
   // Resumen documentación
   var docsRows = DOCS_CONFIG.map(function(dc) {
     var doc = (form.documentos || {})[dc.id];
-    var estado = doc ? ('<span style="color:#1a7a44;font-weight:700">✔ Adjunto</span> — ' + doc.nombre + ' · ' + doc.tamaño + ' · ' + doc.fecha) : '<span style="color:#b00;font-weight:700">✘ No adjunto</span>';
+    var estado = (doc && doc.subiendo) ? '<span style="color:#c96a00;font-weight:700">⏳ Subiendo...</span>' : doc ? ('<span style="color:#1a7a44;font-weight:700">✔ Adjunto</span> — ' + doc.nombre + ' · ' + doc.tamaño + ' · ' + doc.fecha) : '<span style="color:#b00;font-weight:700">✘ No adjunto</span>';
     return '<tr><td style="padding:6px 10px;border-bottom:1px solid #e0e8f0;">' + dc.label + '</td><td style="padding:6px 10px;border-bottom:1px solid #e0e8f0;">' + dc.fmt + '</td><td style="padding:6px 10px;border-bottom:1px solid #e0e8f0;">' + estado + '</td></tr>';
   }).join('');
 
@@ -4707,7 +4745,7 @@ function EmpresaApp(_ref15) {
         setForm(v);
         setEstadoOriginal(v.estado);
         // Si ya fue enviado, mostrar modal de rectificativa
-        if (v.estado === "enviado") setShowRectModal(true);
+        if (v.estado === "enviado" || v.estado === "rectificativa_enviada") setShowRectModal(true);
       } else {
         setEstadoOriginal(null);
       }
@@ -4725,10 +4763,21 @@ function EmpresaApp(_ref15) {
             setSaving(true);
             nuevoEstado = ["enviado","rectificativa_enviada"].includes(form.estado) ? form.estado : modoRect ? "rectificativa" : "borrador";
             _context5.n = 1;
+            // Filtrar propiedades no serializables (File, dataUrl, subiendo)
+            var _docsSeguros = Object.fromEntries(
+              Object.entries(form.documentos || {}).map(function(_e) {
+                var _id = _e[0], _doc = _e[1];
+                if (!_doc) return [_id, _doc];
+                var _clean = Object.assign({}, _doc);
+                delete _clean.file; delete _clean.dataUrl; delete _clean.subiendo;
+                return [_id, _clean];
+              })
+            );
             return db.set(k, _objectSpread(_objectSpread({}, form), {}, {
               estado: nuevoEstado,
               cuit: user.cuit,
-              rs: user.rs
+              rs: user.rs,
+              documentos: _docsSeguros
             }));
           case 1:
             setSaving(false);
@@ -4745,100 +4794,65 @@ function EmpresaApp(_ref15) {
     return _onEnviar.apply(this, arguments);
   }
   function _onEnviar() {
-    _onEnviar = function() {
-      return new Promise(function(resolve) {
-        (async function() {
-          setEnviando(true);
-          try {
-            var nuevoEstado = modoRect ? "rectificativa_enviada" : "enviado";
+    _onEnviar = async function() {
+      setEnviando(true);
+      try {
+        var nuevoEstado = modoRect ? "rectificativa_enviada" : "enviado";
 
-            // Helper: leer File como DataURL base64
-            function readAsDataURL(file) {
-              return new Promise(function(res, rej) {
-                var fr = new FileReader();
-                fr.onload = function() { res(fr.result); };
-                fr.onerror = function() { rej(fr.error); };
-                fr.readAsDataURL(file);
-              });
+        // ── Los archivos ya fueron subidos en handleFile.
+        //    Solo limpiamos propiedades no serializables por si quedó alguna. ──
+        var updatedDocs = Object.fromEntries(
+          Object.entries(form.documentos || {}).map(function(_e) {
+            var _id = _e[0], _doc = _e[1];
+            if (!_doc) return [_id, _doc];
+            var _clean = Object.assign({}, _doc);
+            delete _clean.file; delete _clean.dataUrl; delete _clean.subiendo;
+            return [_id, _clean];
+          })
+        );
+
+        // ── Si por alguna razón quedó un File sin subir, intentar subirlo ahora ──
+        var uploadErrors = [];
+        for (var _docId in updatedDocs) {
+          var _docData = (form.documentos || {})[_docId];
+          if (_docData && _docData.file instanceof File && !updatedDocs[_docId].storageUrl && !updatedDocs[_docId].archivoRef) {
+            try {
+              var _p = "ddjj/" + user.cuit + "/" + periodo.año + "-" + String(periodo.mes).padStart(2,"0") + "/" + _docId + "/" + _docData.nombre;
+              var _sn = await firebase.storage().ref(_p).put(_docData.file);
+              updatedDocs[_docId].storageUrl = await _sn.ref.getDownloadURL();
+            } catch(_e2) {
+              uploadErrors.push(_docData.nombre);
+              console.warn("No se pudo subir en enviar:", _e2.message);
             }
-
-            // ── Subir archivos: Firebase Storage con fallback a base64 ──
-            var updatedDocs = Object.assign({}, form.documentos || {});
-            var uploadErrors = [];
-            var MAX_BYTES_B64 = 700 * 1024;
-
-            function readAsDataURL(file) {
-              return new Promise(function(res, rej) {
-                var fr = new FileReader();
-                fr.onload = function() { res(fr.result); };
-                fr.onerror = function() { rej(fr.error); };
-                fr.readAsDataURL(file);
-              });
-            }
-
-            for (var _docId in updatedDocs) {
-              var _docData = updatedDocs[_docId];
-              if (_docData && _docData.file instanceof File) {
-                var _saved = false;
-                try {
-                  var _storagePath = "ddjj/" + user.cuit + "/" + periodo.año + "-" + String(periodo.mes).padStart(2,"0") + "/" + _docId + "/" + _docData.nombre;
-                  var _storageRef = firebase.storage().ref(_storagePath);
-                  var _snapshot = await _storageRef.put(_docData.file);
-                  var _downloadURL = await _snapshot.ref.getDownloadURL();
-                  updatedDocs[_docId] = { nombre: _docData.nombre, tamaño: _docData.tamaño, fecha: _docData.fecha, storageUrl: _downloadURL };
-                  _saved = true;
-                } catch(_storageErr) {
-                  console.warn("Storage no disponible, usando base64:", _storageErr.message);
-                }
-                if (!_saved) {
-                  if (_docData.file.size > MAX_BYTES_B64) {
-                    uploadErrors.push(_docData.nombre + " (supera 700 KB)");
-                    updatedDocs[_docId] = { nombre: _docData.nombre, tamaño: _docData.tamaño, fecha: _docData.fecha };
-                  } else {
-                    try {
-                      var _dataUrl = await readAsDataURL(_docData.file);
-                      var _archivoRef = "archivo:" + user.cuit + ":" + periodo.año + "-" + String(periodo.mes).padStart(2,"0") + ":" + _docId;
-                      await window.storage.set(_archivoRef, JSON.stringify({ dataUrl: _dataUrl, nombre: _docData.nombre, tipo: _docData.file.type || "application/octet-stream" }));
-                      updatedDocs[_docId] = { nombre: _docData.nombre, tamaño: _docData.tamaño, fecha: _docData.fecha, archivoRef: _archivoRef };
-                    } catch(_b64Err) {
-                      uploadErrors.push(_docData.nombre);
-                      updatedDocs[_docId] = { nombre: _docData.nombre, tamaño: _docData.tamaño, fecha: _docData.fecha };
-                    }
-                  }
-                }
-              }
-            }
-
-            // ── Guardar formulario principal en Firestore ──
-            var f = Object.assign({}, form, {
-              estado: nuevoEstado,
-              fechaEnvio: new Date().toLocaleDateString("es-AR"),
-              cuit: user.cuit,
-              rs: user.rs,
-              backendId: k,
-              documentos: updatedDocs
-            });
-            if (modoRect) f.fechaRectificativa = new Date().toLocaleDateString("es-AR");
-
-            setForm(f);
-            await db.set(k, f);
-
-            setEnviando(false);
-            setTab("enviar");
-
-            if (uploadErrors.length > 0) {
-              alert("⚠ DDJJ enviada con advertencias.\nArchivos no subidos a Storage: " + uploadErrors.join(", ") + ".\nVerificá tu conexión e intentá nuevamente.");
-            } else {
-              alert("\u2705 DDJJ enviada correctamente.\nTodos los datos y archivos fueron guardados en Firebase.");
-            }
-          } catch(err) {
-            console.error("Error en onEnviar:", err);
-            setEnviando(false);
-            alert("\u274C Error al enviar la DDJJ:\n" + err.message + "\n\nVerificá tu conexión e intentá nuevamente.");
           }
-          resolve();
-        })();
-      });
+        }
+
+        // ── Guardar formulario en Firestore ──
+        var f = Object.assign({}, form, {
+          estado: nuevoEstado,
+          fechaEnvio: new Date().toLocaleDateString("es-AR"),
+          cuit: user.cuit,
+          rs: user.rs,
+          backendId: k,
+          documentos: updatedDocs
+        });
+        if (modoRect) f.fechaRectificativa = new Date().toLocaleDateString("es-AR");
+
+        setForm(f);
+        await db.set(k, f);
+        setEnviando(false);
+        setTab("enviar");
+
+        if (uploadErrors.length > 0) {
+          alert("⚠ DDJJ enviada con advertencias.\nAlgunos archivos no pudieron subirse: " + uploadErrors.join(", ") + ".\nVerificá tu conexión.");
+        } else {
+          alert("\u2705 DDJJ enviada correctamente. Todos los datos y archivos guardados en Firebase.");
+        }
+      } catch(err) {
+        console.error("Error en onEnviar:", err);
+        setEnviando(false);
+        alert("\u274C Error al enviar la DDJJ:\n" + err.message + "\n\nVerificá tu conexión e intentá nuevamente.");
+      }
     };
     return _onEnviar.apply(this, arguments);
   }
@@ -5546,7 +5560,7 @@ function DescargasTab(_ref18) {
           var pAño = parseInt(ym[0]) || periodo.año;
           var pMes = parseInt(ym[1]) || periodo.mes;
           return { cuit: f.cuit, rs: f.rs || f.razonSocial || f.cuit, form: f, kpi: calcKPI(f), periodo: {año: pAño, mes: pMes} };
-        }).filter(function(r) { return r.form && r.form.estado && r.form.estado !== "borrador"; });
+        }).filter(function(r) { return r.form && (r.form.estado === "enviado" || r.form.estado === "rectificativa_enviada"); });
         setAllRows(loaded);
       } catch(e) { console.error(e); }
       setAllLoading(false);
