@@ -4274,7 +4274,9 @@ function DocRow(_ref12) {
 function DocumentacionTab(_ref13) {
   var form = _ref13.form,
     setForm = _ref13.setForm,
-    onSave = _ref13.onSave;
+    onSave = _ref13.onSave,
+    user = _ref13.user,
+    periodo = _ref13.periodo;
   var refs = {
     a1: useRef(null),
     a2: useRef(null),
@@ -5017,7 +5019,9 @@ function EmpresaApp(_ref15) {
   }), tab === "documentacion" && /*#__PURE__*/React.createElement(DocumentacionTab, {
     form: form,
     setForm: setForm,
-    onSave: onSave
+    onSave: onSave,
+    user: user,
+    periodo: periodo
   }), tab === "enviar" && /*#__PURE__*/React.createElement(EnviarTab, {
     form: form,
     periodo: periodo,
