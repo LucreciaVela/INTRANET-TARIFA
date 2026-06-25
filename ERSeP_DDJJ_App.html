@@ -4317,7 +4317,7 @@ function DocumentacionTab(_ref13) {
       meta.storageUrl = await _snap2.ref.getDownloadURL();
       subidoOk = true;
     } catch(_storErr2) {
-      console.warn("Storage no disponible al adjuntar, usando base64:", _storErr2.message);
+      console.warn("Storage FALLO:", _storErr2.code, "|", _storErr2.message);
     }
 
     // ── Fallback: guardar como base64 en documento separado de Firestore ──
@@ -4335,12 +4335,13 @@ function DocumentacionTab(_ref13) {
         subidoOk = true;
       } catch(_b64Err2) {
         // Si todo falla, limpiar el estado y avisar al usuario
+        console.error("handleFile b64 catch:", _b64Err2 && (_b64Err2.code||_b64Err2.name), _b64Err2 && _b64Err2.message, "fileSize:", file && file.size);
         setForm(function(p) {
           var docs = Object.assign({}, p.documentos || {});
           docs[id] = null;
           return Object.assign({}, p, { documentos: docs });
         });
-        setFileError("\u274C No se pudo guardar \"" + file.name + "\". Verificá tu conexión e intentá de nuevo.");
+        setFileError("\u274C No se pudo guardar \"" + file.name + "\". Error: " + (_b64Err2 && _b64Err2.message ? _b64Err2.message.substring(0,80) : "desconocido") + ". Intentá de nuevo.");
         return;
       }
     }
@@ -6104,8 +6105,4 @@ function App() {
         if (icon) hideTip();
       });
 
-      document.addEventListener('scroll', hideTip, true);
-    })();
-  </script>
-</body>
-</html>
+      document.addEventListener('scroll'
