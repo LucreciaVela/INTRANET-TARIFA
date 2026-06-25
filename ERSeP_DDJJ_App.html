@@ -3753,6 +3753,7 @@ function DatosGeneralesTab(_ref11) {
     onSave = _ref11.onSave,
     saving = _ref11.saving,
     saved = _ref11.saved,
+    enviando = _ref11.enviando,
     userCuit = _ref11.userCuit;
   var kpi = calcKPI(form);
   function updField(f, v) {
@@ -5010,6 +5011,7 @@ function EmpresaApp(_ref15) {
     onSave: onSave,
     saving: saving,
     saved: saved,
+    enviando: enviando,
     userCuit: user.cuit
   }), tab === "documentacion" && /*#__PURE__*/React.createElement(DocumentacionTab, {
     form: form,
