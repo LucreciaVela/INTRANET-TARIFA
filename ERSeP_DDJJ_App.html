@@ -4758,7 +4758,7 @@ function EnviarTab(_ref14) {
         color: c.ok ? P.txt : P.sub
       }
     }, c.label));
-  })), form.estado === "enviado" || form.estado === "rectificativa_enviada" ? /*#__PURE__*/React.createElement(Card, {
+  })), (form.estado === "enviado" && !modoRect) || form.estado === "rectificativa_enviada" ? /*#__PURE__*/React.createElement(Card, {
     style: {
       textAlign: "center",
       background: form.estado === "rectificativa_enviada" ? "".concat(P.naranja, "10") : "".concat(P.verde, "10")
