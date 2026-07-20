@@ -581,31 +581,45 @@ var DOCS_CONFIG = [{
   id: "a1",
   label: "A1 – Facturas de combustible",
   fmt: "PDF",
+  accept: ".pdf",
   hint: "Facturas del período: nº, fecha, tipo (gasoil/GNC), litros, precio unitario."
 }, {
   sec: "A",
   id: "a2",
   label: "A2 – Remitos de carga",
   fmt: "Excel / CSV",
+  accept: ".xlsx,.xls,.csv",
   hint: "Planilla: fecha, patente, proveedor, litros cargados por evento."
 }, {
   sec: "A",
   id: "a3",
   label: "A3 – Padrón de flota activa",
   fmt: "Excel / CSV",
+  accept: ".xlsx,.xls,.csv",
   hint: "Listado: patente, marca, modelo, año, categoría, tipo combustible, capacidad tanque."
 }, {
   sec: "B",
   id: "b1",
   label: "B1 – Libro de Sueldos Digital (LSD)",
-  fmt: "Excel / CSV",
-  hint: "Apertura individual por CUIL: categoría, función, remuneración imponible, adicionales, horas extra."
+  fmt: "Excel / PDF",
+  accept: ".xlsx,.xls,.csv,.pdf",
+  hint: "Apertura individual por CUIL: categoría, función, remuneración imponible, adicionales, horas extra. Se acepta planilla Excel o PDF del libro digital."
 }, {
   sec: "B",
   id: "b2",
   label: "B2 – Formulario F.931 (AFIP)",
   fmt: "PDF",
+  accept: ".pdf",
   hint: "Declaración jurada del período. Validación cruzada de masa salarial y contribuciones patronales."
+}, {
+  sec: "C",
+  id: "c1",
+  label: "C1 – Otros",
+  fmt: "Excel / PDF / JPG",
+  accept: ".xlsx,.xls,.csv,.pdf,.jpg,.jpeg",
+  hint: "Documentación adicional no contemplada en las categorías anteriores. Incluí una breve descripción del contenido.",
+  opcional: true,
+  conDescripcion: true
 }];
 var LINEAS_POR_CUIT = {
   "30-00000000-0": {
@@ -2973,8 +2987,10 @@ function emptyForm() {
       a2: null,
       a3: null,
       b1: null,
-      b2: null
+      b2: null,
+      c1: null
     },
+    otrosDescripcion: "",
     estado: "borrador",
     fechaEnvio: null
   };
@@ -4191,7 +4207,7 @@ function DatosGeneralesTab(_ref11) {
     }
   }, /*#__PURE__*/React.createElement(Btn, {
     onClick: onSave,
-    disabled: saving || enviando,
+    disabled: saving,
     style: saved ? {background: P.verde, color: "#fff", borderColor: P.verde} : {}
   }, saving ? "Guardando..." : saved ? "✅ ¡Guardado!" : "💾 Guardar borrador"), form.estado === "enviado" && /*#__PURE__*/React.createElement(Badge, {
     color: P.verde
@@ -4205,7 +4221,9 @@ function DocRow(_ref12) {
   var cfg = _ref12.cfg,
     doc = _ref12.doc,
     inputRef = _ref12.inputRef,
-    onAttach = _ref12.onAttach;
+    onAttach = _ref12.onAttach,
+    descripcion = _ref12.descripcion,
+    onDescripcion = _ref12.onDescripcion;
   return /*#__PURE__*/React.createElement("div", {
     style: {
       border: "1px solid ".concat(P.borde),
@@ -4240,12 +4258,30 @@ function DocRow(_ref12) {
     }
   }, cfg.label), /*#__PURE__*/React.createElement(Badge, {
     color: P.sub
-  }, cfg.fmt), (doc && doc.subiendo) ? /*#__PURE__*/React.createElement(Badge, { color: P.naranja }, "\u23F3 Subiendo...") : doc ? /*#__PURE__*/React.createElement(Badge, { color: P.verde }, "\u2713 Adjunto") : null), /*#__PURE__*/React.createElement("div", {
+  }, cfg.fmt), cfg.opcional ? /*#__PURE__*/React.createElement(Badge, { color: P.sub }, "Opcional") : null, (doc && doc.subiendo) ? /*#__PURE__*/React.createElement(Badge, { color: P.naranja }, "\u23F3 Subiendo...") : doc ? /*#__PURE__*/React.createElement(Badge, { color: P.verde }, "\u2713 Adjunto") : null), /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 11,
       color: P.sub
     }
-  }, cfg.hint), doc && !doc.subiendo && /*#__PURE__*/React.createElement("div", {
+  }, cfg.hint), cfg.conDescripcion ? /*#__PURE__*/React.createElement("input", {
+    type: "text",
+    placeholder: "Breve descripci\xF3n del contenido (opcional)",
+    value: descripcion || "",
+    onChange: function onChange(e) {
+      return onDescripcion && onDescripcion(e.target.value);
+    },
+    style: {
+      marginTop: 8,
+      width: "100%",
+      maxWidth: 360,
+      fontSize: 12,
+      padding: "6px 10px",
+      border: "1px solid ".concat(P.borde),
+      borderRadius: 6,
+      fontFamily: "inherit",
+      display: "block"
+    }
+  }) : null, doc && !doc.subiendo && /*#__PURE__*/React.createElement("div", {
     style: {
       marginTop: 6,
       fontSize: 11,
@@ -4257,7 +4293,7 @@ function DocRow(_ref12) {
     style: {
       display: "none"
     },
-    accept: cfg.fmt === "PDF" ? ".pdf" : ".xlsx,.xls,.csv",
+    accept: cfg.accept || (cfg.fmt === "PDF" ? ".pdf" : ".xlsx,.xls,.csv"),
     onChange: function onChange(e) {
       return onAttach(cfg.id, e.target.files[0]);
     }
@@ -4273,19 +4309,46 @@ function DocRow(_ref12) {
 function DocumentacionTab(_ref13) {
   var form = _ref13.form,
     setForm = _ref13.setForm,
-    onSave = _ref13.onSave;
+    onSave = _ref13.onSave,
+    user = _ref13.user,
+    periodo = _ref13.periodo;
   var refs = {
     a1: useRef(null),
     a2: useRef(null),
     a3: useRef(null),
     b1: useRef(null),
-    b2: useRef(null)
+    b2: useRef(null),
+    c1: useRef(null)
   };
   var MAX_MB = 5;
   var _useState13 = useState(""),
     _useState14 = _slicedToArray(_useState13, 2),
     fileError = _useState14[0],
     setFileError = _useState14[1];
+  // Comprime una imagen JPG/PNG en el navegador (canvas) para que entre en el
+  // límite de ~1MB por documento de Firestore cuando Storage no está disponible.
+  function comprimirImagen(file, maxDim, calidad) {
+    return new Promise(function(resolve, reject) {
+      var img = new Image();
+      var url = URL.createObjectURL(file);
+      img.onload = function() {
+        URL.revokeObjectURL(url);
+        var w = img.width, h = img.height;
+        if (w > maxDim || h > maxDim) {
+          if (w >= h) { h = Math.round(h * (maxDim / w)); w = maxDim; }
+          else { w = Math.round(w * (maxDim / h)); h = maxDim; }
+        }
+        var canvas = document.createElement("canvas");
+        canvas.width = w; canvas.height = h;
+        var ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL("image/jpeg", calidad));
+      };
+      img.onerror = function() { URL.revokeObjectURL(url); reject(new Error("No se pudo leer la imagen")); };
+      img.src = url;
+    });
+  }
+
   async function handleFile(id, file) {
     if (!file) return;
     if (file.size > MAX_MB * 1024 * 1024) {
@@ -4309,6 +4372,7 @@ function DocumentacionTab(_ref13) {
 
     // ── Intentar subir a Firebase Storage inmediatamente ──
     var subidoOk = false;
+    var _diagStor2 = null, _diagB642 = null;
     try {
       var _storagePath2 = "ddjj/" + user.cuit + "/" + periodo.año + "-" + String(periodo.mes).padStart(2,"0") + "/" + id + "/" + file.name;
       var _storageRef2 = firebase.storage().ref(_storagePath2);
@@ -4316,30 +4380,70 @@ function DocumentacionTab(_ref13) {
       meta.storageUrl = await _snap2.ref.getDownloadURL();
       subidoOk = true;
     } catch(_storErr2) {
+      _diagStor2 = (_storErr2 && (_storErr2.code || _storErr2.message)) || String(_storErr2);
       console.warn("Storage no disponible al adjuntar, usando base64:", _storErr2.message);
     }
 
     // ── Fallback: guardar como base64 en documento separado de Firestore ──
+    // Firestore limita cada documento a ~1MB, así que si es una imagen la
+    // comprimimos antes de codificarla; si es otro tipo de archivo y no entra,
+    // avisamos con un mensaje claro (no es un problema de conexión a internet).
     if (!subidoOk) {
+      var FIRESTORE_DOC_LIMIT = 900000; // margen de seguridad bajo 1MB
       try {
-        var _dataUrl2 = await new Promise(function(res, rej) {
-          var fr = new FileReader();
-          fr.onload = function() { res(fr.result); };
-          fr.onerror = function() { rej(fr.error); };
-          fr.readAsDataURL(file);
-        });
+        var _esImagen2 = /^image\//.test(file.type || "") || /\.(jpe?g|png)$/i.test(file.name || "");
+        var _dataUrl2;
+        if (_esImagen2) {
+          try {
+            _dataUrl2 = await comprimirImagen(file, 1600, 0.72);
+            if (_dataUrl2.length > FIRESTORE_DOC_LIMIT) {
+              _dataUrl2 = await comprimirImagen(file, 1000, 0.55);
+            }
+          } catch(_imgErr2) {
+            // si falla la compresión, seguimos con el archivo original
+            _dataUrl2 = await new Promise(function(res, rej) {
+              var fr = new FileReader();
+              fr.onload = function() { res(fr.result); };
+              fr.onerror = function() { rej(fr.error); };
+              fr.readAsDataURL(file);
+            });
+          }
+        } else {
+          _dataUrl2 = await new Promise(function(res, rej) {
+            var fr = new FileReader();
+            fr.onload = function() { res(fr.result); };
+            fr.onerror = function() { rej(fr.error); };
+            fr.readAsDataURL(file);
+          });
+        }
+
+        if (_dataUrl2.length > FIRESTORE_DOC_LIMIT) {
+          setForm(function(p) {
+            var docs = Object.assign({}, p.documentos || {});
+            docs[id] = null;
+            return Object.assign({}, p, { documentos: docs });
+          });
+          setFileError(_esImagen2
+            ? "\u274C La imagen \"" + file.name + "\" sigue siendo muy pesada incluso comprimida. Probá sacar la foto con menor resolución o recortarla."
+            : "\u274C El archivo \"" + file.name + "\" es demasiado grande para guardarse (el almacenamiento principal no está disponible en este momento). Probá con un archivo más chico.");
+          return;
+        }
+
         var _archivoKey2 = "archivo:" + user.cuit + ":" + periodo.año + "-" + String(periodo.mes).padStart(2,"0") + ":" + id;
         await window.storage.set(_archivoKey2, JSON.stringify({ dataUrl: _dataUrl2, nombre: file.name, tipo: file.type || "application/octet-stream" }));
         meta.archivoRef = _archivoKey2;
         subidoOk = true;
       } catch(_b64Err2) {
+        _diagB642 = (_b64Err2 && (_b64Err2.code || _b64Err2.message)) || String(_b64Err2);
+        console.error("No se pudo guardar el archivo:", _b64Err2);
         // Si todo falla, limpiar el estado y avisar al usuario
         setForm(function(p) {
           var docs = Object.assign({}, p.documentos || {});
           docs[id] = null;
           return Object.assign({}, p, { documentos: docs });
         });
-        setFileError("\u274C No se pudo guardar \"" + file.name + "\". Verificá tu conexión e intentá de nuevo.");
+        var _detalle2 = [_diagStor2, _diagB642].filter(Boolean).join(" / ");
+        setFileError("\u274C No se pudo guardar \"" + file.name + "\"." + (_detalle2 ? " Detalle: " + _detalle2 + "." : "") + " Probá de nuevo o avisá con este detalle si se repite.");
         return;
       }
     }
@@ -4351,13 +4455,28 @@ function DocumentacionTab(_ref13) {
       return Object.assign({}, p, { documentos: docs });
     });
   }
+  function handleDescripcion(value) {
+    setForm(function(p) {
+      return Object.assign({}, p, { otrosDescripcion: value });
+    });
+  }
   var secA = DOCS_CONFIG.filter(function (d) {
     return d.sec === "A";
   });
   var secB = DOCS_CONFIG.filter(function (d) {
     return d.sec === "B";
   });
-  var totalDocs = Object.values(form.documentos || {}).filter(Boolean).length;
+  var secC = DOCS_CONFIG.filter(function (d) {
+    return d.sec === "C";
+  });
+  var requiredIds = DOCS_CONFIG.filter(function (d) {
+    return !d.opcional;
+  }).map(function (d) {
+    return d.id;
+  });
+  var totalDocs = requiredIds.filter(function (id) {
+    return form.documentos && form.documentos[id];
+  }).length;
   return /*#__PURE__*/React.createElement("div", {
     style: {
       padding: "22px 24px",
@@ -4427,6 +4546,21 @@ function DocumentacionTab(_ref13) {
       inputRef: refs[d.id],
       onAttach: handleFile
     });
+  })), /*#__PURE__*/React.createElement(Card, {
+    style: {
+      marginBottom: 20
+    }
+  }, /*#__PURE__*/React.createElement(SecTitle, null, "\uD83D\uDCCE C \u2013 Otros (opcional)"), secC.map(function (d) {
+    var _form$documentos3;
+    return /*#__PURE__*/React.createElement(DocRow, {
+      key: d.id,
+      cfg: d,
+      doc: (_form$documentos3 = form.documentos) === null || _form$documentos3 === void 0 ? void 0 : _form$documentos3[d.id],
+      inputRef: refs[d.id],
+      onAttach: handleFile,
+      descripcion: form.otrosDescripcion,
+      onDescripcion: handleDescripcion
+    });
   })), /*#__PURE__*/React.createElement(Btn, {
     onClick: function() { onSave(); var btn=event.target; btn.textContent="✅ ¡Guardado!"; btn.style.background=P.verde; btn.style.color="#fff"; btn.style.borderColor=P.verde; setTimeout(function(){ btn.textContent="💾 Guardar documentación"; btn.style.background=""; btn.style.color=""; btn.style.borderColor=""; }, 2500); }
   }, "\uD83D\uDCBE Guardar documentaci\xF3n"));
@@ -4445,7 +4579,17 @@ function descargarComprobante(form, periodo, razonSocial) {
   // Resumen documentación
   var docsRows = DOCS_CONFIG.map(function(dc) {
     var doc = (form.documentos || {})[dc.id];
-    var estado = (doc && doc.subiendo) ? '<span style="color:#c96a00;font-weight:700">⏳ Subiendo...</span>' : doc ? ('<span style="color:#1a7a44;font-weight:700">✔ Adjunto</span> — ' + doc.nombre + ' · ' + doc.tamaño + ' · ' + doc.fecha) : '<span style="color:#b00;font-weight:700">✘ No adjunto</span>';
+    var estado;
+    if (doc && doc.subiendo) {
+      estado = '<span style="color:#c96a00;font-weight:700">⏳ Subiendo...</span>';
+    } else if (doc) {
+      estado = '<span style="color:#1a7a44;font-weight:700">✔ Adjunto</span> — ' + doc.nombre + ' · ' + doc.tamaño + ' · ' + doc.fecha;
+      if (dc.conDescripcion && form.otrosDescripcion) estado += ' · "' + form.otrosDescripcion + '"';
+    } else if (dc.opcional) {
+      estado = '<span style="color:#999;font-weight:600">— No cargado (opcional)</span>';
+    } else {
+      estado = '<span style="color:#b00;font-weight:700">✘ No adjunto</span>';
+    }
     return '<tr><td style="padding:6px 10px;border-bottom:1px solid #e0e8f0;">' + dc.label + '</td><td style="padding:6px 10px;border-bottom:1px solid #e0e8f0;">' + dc.fmt + '</td><td style="padding:6px 10px;border-bottom:1px solid #e0e8f0;">' + estado + '</td></tr>';
   }).join('');
 
@@ -4554,7 +4698,14 @@ function EnviarTab(_ref14) {
     _ref14$modoRect = _ref14.modoRect,
     modoRect = _ref14$modoRect === void 0 ? false : _ref14$modoRect;
   var kpi = calcKPI(form);
-  var docsOk = Object.values(form.documentos || {}).filter(Boolean).length;
+  var requiredDocIds = DOCS_CONFIG.filter(function (d) {
+    return !d.opcional;
+  }).map(function (d) {
+    return d.id;
+  });
+  var docsOk = requiredDocIds.filter(function (id) {
+    return form.documentos && form.documentos[id];
+  }).length;
   var lineasOk = (form.lineas || []).filter(function (l) {
     return l.linea || l.tramo;
   }).length;
@@ -5014,7 +5165,9 @@ function EmpresaApp(_ref15) {
   }), tab === "documentacion" && /*#__PURE__*/React.createElement(DocumentacionTab, {
     form: form,
     setForm: setForm,
-    onSave: onSave
+    onSave: onSave,
+    user: user,
+    periodo: periodo
   }), tab === "enviar" && /*#__PURE__*/React.createElement(EnviarTab, {
     form: form,
     periodo: periodo,
