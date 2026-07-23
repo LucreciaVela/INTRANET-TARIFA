@@ -3777,6 +3777,13 @@ function DatosGeneralesTab(_ref11) {
     });
   }
   function updLinea(id, f, v) {
+    if (f === "kmT") {
+      var kmNum = parseFloat(v);
+      if (!isNaN(kmNum) && kmNum > 600) {
+        alert("El Km / Trayecto no puede superar los 600 km. Se ajust\xF3 el valor al m\xE1ximo permitido.");
+        v = "600";
+      }
+    }
     setForm(function (p) {
       return _objectSpread(_objectSpread({}, p), {}, {
         lineas: p.lineas.map(function (l) {
@@ -4002,6 +4009,8 @@ function DatosGeneralesTab(_ref11) {
       }
     }, /*#__PURE__*/React.createElement("input", {
       type: "number",
+      max: 600,
+      min: 0,
       value: l.kmT,
       onChange: function onChange(e) {
         return updLinea(l._id, "kmT", e.target.value);
