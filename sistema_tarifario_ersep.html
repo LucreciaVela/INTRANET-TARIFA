@@ -409,11 +409,11 @@ body{
   <label>Período <span class="req">*</span></label>
   <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
     <span style="font-size:11px;font-weight:600;color:var(--neutral-500)">Desde:</span>
-    <select id="iMesD" style="padding:8px 10px;border:1px solid var(--neutral-300);border-radius:6px;font-family:inherit;font-size:13px"><option value="">Mes</option><option>Enero</option><option>Febrero</option><option>Marzo</option><option>Abril</option><option>Mayo</option><option>Junio</option><option>Julio</option><option>Agosto</option><option>Septiembre</option><option>Octubre</option><option>Noviembre</option><option selected>Diciembre</option></select>
-    <input type="number" id="iAnioD" value="2024" min="2020" max="2040" style="width:80px;padding:8px;border:1px solid var(--neutral-300);border-radius:6px;font-size:13px;font-family:inherit">
+    <select id="iMesD" class="idx-input" data-key="idx_iMesD" style="padding:8px 10px;border:1px solid var(--neutral-300);border-radius:6px;font-family:inherit;font-size:13px"><option value="">Mes</option><option>Enero</option><option>Febrero</option><option>Marzo</option><option>Abril</option><option>Mayo</option><option>Junio</option><option>Julio</option><option>Agosto</option><option>Septiembre</option><option>Octubre</option><option>Noviembre</option><option selected>Diciembre</option></select>
+    <input type="number" id="iAnioD" class="idx-input" data-key="idx_iAnioD" value="2024" min="2020" max="2040" style="width:80px;padding:8px;border:1px solid var(--neutral-300);border-radius:6px;font-size:13px;font-family:inherit">
     <span style="font-size:11px;font-weight:600;color:var(--neutral-500);margin-left:8px">Hasta:</span>
-    <select id="iMesH" style="padding:8px 10px;border:1px solid var(--neutral-300);border-radius:6px;font-family:inherit;font-size:13px"><option value="">Mes</option><option>Enero</option><option>Febrero</option><option>Marzo</option><option>Abril</option><option>Mayo</option><option>Junio</option><option>Julio</option><option>Agosto</option><option>Septiembre</option><option>Octubre</option><option>Noviembre</option><option selected>Diciembre</option></select>
-    <input type="number" id="iAnioH" value="2025" min="2020" max="2040" style="width:80px;padding:8px;border:1px solid var(--neutral-300);border-radius:6px;font-size:13px;font-family:inherit">
+    <select id="iMesH" class="idx-input" data-key="idx_iMesH" style="padding:8px 10px;border:1px solid var(--neutral-300);border-radius:6px;font-family:inherit;font-size:13px"><option value="">Mes</option><option>Enero</option><option>Febrero</option><option>Marzo</option><option>Abril</option><option>Mayo</option><option>Junio</option><option>Julio</option><option>Agosto</option><option>Septiembre</option><option>Octubre</option><option>Noviembre</option><option selected>Diciembre</option></select>
+    <input type="number" id="iAnioH" class="idx-input" data-key="idx_iAnioH" value="2025" min="2020" max="2040" style="width:80px;padding:8px;border:1px solid var(--neutral-300);border-radius:6px;font-size:13px;font-family:inherit">
   </div>
   <span class="periodo-display" id="iPeriodoDisp">Diciembre 2024 – Diciembre 2025</span>
 </div>
@@ -423,9 +423,9 @@ body{
   <div class="panel-h"><h3>📊 Cálculo por Índice — Res. ERSeP N° 1/2024</h3><span class="badge">Módulo 1</span></div>
   <div class="panel-b">
     <div class="frow">
-      <div class="fg"><label>N° de Mesa Tarifaria</label><input type="text" id="iNroMesa" placeholder="Ej: 14" value="14"></div>
-      <div class="fg"><label>TBK Base ($/km sin IVA)</label><input type="number" step="0.0001" id="iTBK" value="78.5020"></div>
-      <div class="fg"><label>Resolución base</label><input type="text" id="iResBase" placeholder="Ej: R.G. ERSeP N° 13/2025" value="R.G. ERSeP N° 13/2025"></div>
+      <div class="fg"><label>N° de Mesa Tarifaria</label><input type="text" id="iNroMesa" class="idx-input" data-key="idx_iNroMesa" placeholder="Ej: 14" value="14"></div>
+      <div class="fg"><label>TBK Base ($/km sin IVA)</label><input type="number" step="0.0001" id="iTBK" class="idx-input" data-key="idx_iTBK" value="78.5020"></div>
+      <div class="fg"><label>Resolución base</label><input type="text" id="iResBase" class="idx-input" data-key="idx_iResBase" placeholder="Ej: R.G. ERSeP N° 13/2025" value="R.G. ERSeP N° 13/2025"></div>
     </div>
   </div>
 </div>
@@ -442,24 +442,24 @@ body{
       </tr></thead>
       <tbody>
         <tr><td>Costos asociados al Personal</td>
-          <td class="tar"><input type="number" step="0.01" id="iCA" value="1296.22"></td>
+          <td class="tar"><input type="number" step="0.01" id="iCA" class="idx-input" data-key="idx_iCA" value="1451.99"></td>
           <td class="tar" id="iPA">-</td><td>Conv. Colectivo de Trabajo</td><td>AOITA</td>
-          <td class="tar"><input type="number" step="0.01" id="iTA" value="0"></td>
+          <td class="tar"><input type="number" step="0.01" id="iTA" class="idx-input" data-key="idx_iTA" value="0"></td>
           <td class="tar" id="iNA">-</td></tr>
         <tr><td>Costos Variables asoc. al Vehículo</td>
-          <td class="tar"><input type="number" step="0.01" id="iCB" value="416.82"></td>
+          <td class="tar"><input type="number" step="0.01" id="iCB" class="idx-input" data-key="idx_iCB" value="432.56"></td>
           <td class="tar" id="iPB">-</td><td>Precio del combustible</td><td>Propio</td>
-          <td class="tar"><input type="number" step="0.01" id="iTB" value="0"></td>
+          <td class="tar"><input type="number" step="0.01" id="iTB" class="idx-input" data-key="idx_iTB" value="0"></td>
           <td class="tar" id="iNB">-</td></tr>
         <tr><td>Costos Fijos asoc. al Vehículo</td>
-          <td class="tar"><input type="number" step="0.01" id="iCC" value="419.15"></td>
+          <td class="tar"><input type="number" step="0.01" id="iCC" class="idx-input" data-key="idx_iCC" value="439.59"></td>
           <td class="tar" id="iPC">-</td><td>IPC Nivel General</td><td>INDEC</td>
-          <td class="tar"><input type="number" step="0.01" id="iTC" value="0"></td>
+          <td class="tar"><input type="number" step="0.01" id="iTC" class="idx-input" data-key="idx_iTC" value="0"></td>
           <td class="tar" id="iNC">-</td></tr>
         <tr><td>Costos Empresarios e Impositivos</td>
-          <td class="tar"><input type="number" step="0.01" id="iCD" value="301.38"></td>
+          <td class="tar"><input type="number" step="0.01" id="iCD" class="idx-input" data-key="idx_iCD" value="327.53"></td>
           <td class="tar" id="iPD">-</td><td>IPC Nivel General</td><td>INDEC</td>
-          <td class="tar"><input type="number" step="0.01" id="iTD" value="0"></td>
+          <td class="tar"><input type="number" step="0.01" id="iTD" class="idx-input" data-key="idx_iTD" value="0"></td>
           <td class="tar" id="iND">-</td></tr>
         <tr class="r-total"><td><strong>TOTAL CMP</strong></td>
           <td class="tar" id="iCT">-</td><td class="tar">100%</td>
@@ -475,8 +475,8 @@ body{
   <div class="panel-h"><h3>Verificación de Tope IPC (Res. ERSeP N° 1/2024)</h3></div>
   <div class="panel-b">
     <div class="frow">
-      <div class="fg"><label>IPC Base (dic-24)</label><input type="number" step="0.01" id="iIPCb" value="7694.01"></div>
-      <div class="fg"><label>IPC Período</label><input type="number" step="0.01" id="iIPCp" value="8353.32"></div>
+      <div class="fg"><label>IPC Base (dic-24)</label><input type="number" step="0.01" id="iIPCb" class="idx-input" data-key="idx_iIPCb" value="7694.01"></div>
+      <div class="fg"><label>IPC Período</label><input type="number" step="0.01" id="iIPCp" class="idx-input" data-key="idx_iIPCp" value="8353.32"></div>
       <div class="fg"><label>Variación IPC (%)</label><input type="text" id="iIPCvar" readonly style="background:var(--neutral-100);font-weight:700"></div>
     </div>
     <div id="iTopeMsg" style="margin-top:10px;font-size:12px;padding:8px 12px;border-radius:6px;display:none"></div>
@@ -743,6 +743,21 @@ function showRTab(btn,id){
       if(e.key==='Enter'){e.preventDefault();const next=inputs[i+1];if(next){next.focus();next.select();}}
     });
   });
+})();
+
+/* ═══ MÓDULO ÍNDICE: persistencia automática (sin necesidad de "Cargar simulación") ═══
+   Cada campo del módulo Cálculo por Índice se guarda en localStorage apenas cambia,
+   y se restaura solo al iniciar la app, para que la última simulación cargada
+   quede disponible la próxima vez que se abre el sistema. */
+(function initIdxPersist(){
+  const inputs=document.querySelectorAll('.idx-input');
+  inputs.forEach(inp=>{
+    const saved=localStorage.getItem(inp.dataset.key);
+    if(saved!==null && saved!=='')inp.value=saved;
+    inp.addEventListener('change',()=>localStorage.setItem(inp.dataset.key,inp.value));
+    inp.addEventListener('input',()=>localStorage.setItem(inp.dataset.key,inp.value));
+  });
+  updPerDisp('i');
 })();
 
 function rv(id){return parseFloat(document.getElementById('rv_'+id).value)||0}
@@ -1119,7 +1134,7 @@ function clrDec(){
 /* ═══ EXPORT MODULE: PREVIEW (template + editable) ═══ */
 function prev(mod){
   const d=mod==='indice'?indiceData:decretoData;if(!d){toast('Primero calcule','er');return}
-  document.getElementById('pvC').innerHTML='<div class="pdoc" contenteditable="true" id="pvEditable" style="outline:none;min-height:200px">'+bldPrev(mod,d)+'</div><p style="text-align:center;margin-top:12px;font-size:10px;color:var(--neutral-400)">✏️ Este informe es editable. Modifique texto directamente antes de exportar.</p>';
+  document.getElementById('pvC').innerHTML='<div class="pdoc" contenteditable="true" id="pvEditable" data-mod="'+mod+'" style="outline:none;min-height:200px">'+bldPrev(mod,d)+'</div><p style="text-align:center;margin-top:12px;font-size:10px;color:var(--neutral-400)">✏️ Este informe es editable. Modifique texto directamente antes de exportar. Los cambios se reflejan también en la descarga Word.</p>';
   document.getElementById('pvM').classList.add('on');
 }
 function closePv(){document.getElementById('pvM').classList.remove('on')}
@@ -1273,49 +1288,75 @@ function dlPDF(mod){
   const fn='Informe_ERSeP_Tarifario_'+safeFn(d.periodo)+'.pdf';doc.save(fn);toast('PDF: '+fn,'ok');
 }
 
-/* ═══ EXPORT MODULE: WORD ═══ */
+/* ═══ EXPORT MODULE: WORD ═══
+   Genera el .docx a partir del MISMO HTML que arma la Vista Previa (bldPrev),
+   así el Word queda igual a lo que se ve en pantalla — incluyendo ediciones
+   manuales hechas en la vista previa antes de descargar. */
 async function dlWord(mod){
   const d=mod==='indice'?indiceData:decretoData;if(!d){toast('Primero calcule','er');return}
   try{
   const DC=window.docx;
   const{Document,Packer,Paragraph,TextRun,Table,TableRow,TableCell,AlignmentType,BorderStyle,WidthType,ShadingType}=DC;
   const brd={style:BorderStyle.SINGLE,size:1,color:'CCCCCC'};const brds={top:brd,bottom:brd,left:brd,right:brd};
-  const hFill={fill:'13294B',type:ShadingType.CLEAR};const aFill={fill:'F1F6FC',type:ShadingType.CLEAR};
+  const hFill={fill:'13294B',type:ShadingType.CLEAR};
+  const totFill={fill:'E3EEF9',type:ShadingType.CLEAR};
   const cM={top:60,bottom:60,left:80,right:80};const TW=9360;
-  function mk(t,o={}){const w=o.w||TW/4;return new TableCell({borders:brds,width:{size:w,type:WidthType.DXA},margins:cM,shading:o.sh||undefined,children:[new Paragraph({alignment:o.a||AlignmentType.LEFT,children:[new TextRun({text:String(t),bold:o.b||false,size:o.s||17,color:o.c||'333333',font:'Arial'})]})]})}
-  const ch=[];
-  ch.push(new Paragraph({alignment:AlignmentType.CENTER,spacing:{after:60},children:[new TextRun({text:'INFORME T\u00C9CNICO CONJUNTO',bold:true,size:28,color:'13294B',font:'Arial'})]}));
-  ch.push(new Paragraph({alignment:AlignmentType.CENTER,spacing:{after:40},children:[new TextRun({text:'Gerencia Transporte y Subdirecci\u00F3n Costos y Tarifas',size:18,color:'666666',font:'Arial'})]}));
-  ch.push(new Paragraph({alignment:AlignmentType.CENTER,spacing:{after:40},children:[new TextRun({text:'ERSeP \u2014 Ente Regulador de los Servicios P\u00FAblicos',size:18,color:'666666',font:'Arial'})]}));
-  ch.push(new Paragraph({alignment:AlignmentType.CENTER,spacing:{after:160},border:{bottom:{style:BorderStyle.DOUBLE,size:4,color:'13294B'}},children:[new TextRun({text:'Mesa Tarifaria N\u00B0 '+(d.nroMesa||'\u2014')+' \u2014 Per\u00EDodo: '+d.periodo,bold:true,size:22,color:'13294B',font:'Arial'})]}));
 
-  if(mod==='indice'){
-    ch.push(new Paragraph({spacing:{before:140,after:80},children:[new TextRun({text:'An\u00E1lisis de los Costos Medios Presupuestados (CMP)',bold:true,size:22,color:'13294B',font:'Arial'})]}));
-    const hRow=new TableRow({children:[mk('\u00CDtem de Costos',{w:2600,b:true,c:'FFFFFF',sh:hFill}),mk('Valor ($/km)',{w:1200,b:true,c:'FFFFFF',sh:hFill,a:AlignmentType.RIGHT}),mk('Pond.',{w:900,b:true,c:'FFFFFF',sh:hFill,a:AlignmentType.RIGHT}),mk('\u00CDndice',{w:1600,b:true,c:'FFFFFF',sh:hFill}),mk('Fte.',{w:800,b:true,c:'FFFFFF',sh:hFill}),mk('Tasa',{w:900,b:true,c:'FFFFFF',sh:hFill,a:AlignmentType.RIGHT}),mk('V. Nuevo',{w:1360,b:true,c:'FFFFFF',sh:hFill,a:AlignmentType.RIGHT})]});
-    const rows=[hRow];let alt=false;
-    for(const c of Object.values(d.cats)){const sh=alt?aFill:undefined;rows.push(new TableRow({children:[mk(c.nom,{w:2600,sh}),mk(fN(c.val,2),{w:1200,a:AlignmentType.RIGHT,sh}),mk(fP(c.pond),{w:900,a:AlignmentType.RIGHT,sh}),mk(c.idx,{w:1600,sh}),mk(c.fte,{w:800,sh}),mk(fP(c.tasa),{w:900,a:AlignmentType.RIGHT,sh}),mk(fN(c.nuevo,4),{w:1360,a:AlignmentType.RIGHT,sh})]}));alt=!alt}
-    const ts={fill:'E3EEF9',type:ShadingType.CLEAR};
-    rows.push(new TableRow({children:[mk('TOTAL',{w:2600,b:true,sh:ts}),mk(fN(d.totVal,2),{w:1200,b:true,a:AlignmentType.RIGHT,sh:ts}),mk('100%',{w:900,b:true,a:AlignmentType.RIGHT,sh:ts}),mk('',{w:1600,sh:ts}),mk('',{w:800,sh:ts}),mk(fP(d.tasaTot),{w:900,b:true,a:AlignmentType.RIGHT,sh:ts}),mk(fN(d.totNuevo,2),{w:1360,b:true,a:AlignmentType.RIGHT,sh:ts})]}));
-    ch.push(new Table({width:{size:TW,type:WidthType.DXA},columnWidths:[2600,1200,900,1600,800,900,1360],rows:rows}));
-    ch.push(new Paragraph({spacing:{before:160,after:80},children:[new TextRun({text:'Resultado',bold:true,size:22,color:'13294B',font:'Arial'})]}));
-    ch.push(new Paragraph({spacing:{after:40},children:[new TextRun({text:'TBK Base: ',size:18,font:'Arial'}),new TextRun({text:f$(d.tbk)+'/km sin IVA ('+d.resBase+')',bold:true,size:18,font:'Arial'})]}));
-    ch.push(new Paragraph({spacing:{after:40},children:[new TextRun({text:'TBK Resultante: ',size:18,font:'Arial'}),new TextRun({text:f$(d.tbkNew)+'/km sin IVA \u2014 '+f$(d.tbkNewIVA)+' con IVA 10,5%',bold:true,size:20,color:'13294B',font:'Arial'})]}));
-    ch.push(new Paragraph({spacing:{after:40},children:[new TextRun({text:'Incremento: '+fP(d.tasaTot)+' ('+f$(d.incAbs)+'/km)',bold:true,size:18,font:'Arial'})]}));
-  }else{
-    ch.push(new Paragraph({spacing:{before:140,after:80},children:[new TextRun({text:'Costos Medios Presupuestados \u2014 Decreto N\u00B0 254/03',bold:true,size:22,color:'13294B',font:'Arial'})]}));
-    const hRow=new TableRow({children:[mk('C\u00F3d.',{w:800,b:true,c:'FFFFFF',sh:hFill}),mk('Concepto',{w:5060,b:true,c:'FFFFFF',sh:hFill}),mk('$/km',{w:1750,b:true,c:'FFFFFF',sh:hFill,a:AlignmentType.RIGHT}),mk('% Inc.',{w:1750,b:true,c:'FFFFFF',sh:hFill,a:AlignmentType.RIGHT})]});
-    const rows=[hRow];
-    for(const[k,cat]of Object.entries(d.cats)){const cs={fill:'E3EEF9',type:ShadingType.CLEAR};rows.push(new TableRow({children:[mk('',{w:800,sh:cs}),mk(cat.n,{w:5060,b:true,sh:cs}),mk(fN(cat.t,4),{w:1750,b:true,a:AlignmentType.RIGHT,sh:cs}),mk(fP(cat.p),{w:1750,b:true,a:AlignmentType.RIGHT,sh:cs})]}));let alt2=false;cat.it.forEach(i=>{const p=d.cmp>0?i.val/d.cmp*100:0;const sh=alt2?aFill:undefined;rows.push(new TableRow({children:[mk(i.code,{w:800,sh}),mk(i.label,{w:5060,sh}),mk(fN(i.val,4),{w:1750,a:AlignmentType.RIGHT,sh}),mk(fP(p),{w:1750,a:AlignmentType.RIGHT,sh})]}));alt2=!alt2})}
-    const ts2={fill:'13294B',type:ShadingType.CLEAR};
-    rows.push(new TableRow({children:[mk('',{w:800,c:'FFFFFF',sh:ts2}),mk('CMP TOTAL',{w:5060,b:true,c:'FFFFFF',sh:ts2}),mk(fN(d.cmp,4),{w:1750,b:true,c:'FFFFFF',a:AlignmentType.RIGHT,sh:ts2}),mk('100%',{w:1750,b:true,c:'FFFFFF',a:AlignmentType.RIGHT,sh:ts2})]}));
-    ch.push(new Table({width:{size:TW,type:WidthType.DXA},columnWidths:[800,5060,1750,1750],rows:rows}));
-    ch.push(new Paragraph({spacing:{before:160,after:80},children:[new TextRun({text:'Resultado',bold:true,size:22,color:'13294B',font:'Arial'})]}));
-    ch.push(new Paragraph({spacing:{after:40},children:[new TextRun({text:'TBK Decreto 254/03: ',size:18,font:'Arial'}),new TextRun({text:f$(d.tbkCalc)+'/km sin IVA',bold:true,size:20,color:'13294B',font:'Arial'})]}));
-    ch.push(new Paragraph({spacing:{after:40},children:[new TextRun({text:'RTM: '+fN(d.rtm,0)+' km',size:18,font:'Arial'})]}));
+  const liveEl=document.getElementById('pvEditable');
+  const html=(liveEl && liveEl.dataset.mod===mod)?liveEl.innerHTML:bldPrev(mod,d);
+  const parsed=new DOMParser().parseFromString(html,'text/html');
+  const root=parsed.body;
+
+  function isBoldEl(el){
+    if(!el||el.nodeType!==1)return false;
+    if(el.tagName==='STRONG'||el.tagName==='B'||el.tagName==='TH')return true;
+    const s=el.getAttribute('style')||'';
+    return /font-weight\s*:\s*(700|800|900|bold)/i.test(s);
   }
-  ch.push(new Paragraph({spacing:{before:240,after:80},children:[new TextRun({text:'Conclusi\u00F3n',bold:true,size:22,color:'13294B',font:'Arial'})]}));
-  ch.push(new Paragraph({spacing:{after:60},children:[new TextRun({text:'El presente informe t\u00E9cnico ha sido elaborado conforme a la normativa vigente. Los valores expuestos quedan sujetos a la consideraci\u00F3n de la Mesa de Estudio de la Tarifa del Transporte Interurbano de Pasajeros de la Provincia de C\u00F3rdoba.',size:18,font:'Arial',color:'555555'})]}));
+  function runsFor(node,forceBold,forceColor){
+    let out=[];
+    node.childNodes.forEach(ch2=>{
+      if(ch2.nodeType===3){
+        if(ch2.textContent)out.push(new TextRun({text:ch2.textContent,bold:!!forceBold,color:forceColor||(forceBold?'13294B':'333333'),size:18,font:'Arial'}));
+      }else if(ch2.nodeType===1){
+        out=out.concat(runsFor(ch2,forceBold||isBoldEl(ch2),forceColor));
+      }
+    });
+    return out;
+  }
+  function paraFromEl(el,opts={}){
+    const bold=opts.bold||isBoldEl(el);
+    const r=runsFor(el,bold,opts.color);
+    return new Paragraph({alignment:opts.align||AlignmentType.LEFT,spacing:{before:opts.before||0,after:opts.after!==undefined?opts.after:80},children:r.length?r:[new TextRun({text:el.textContent||'',bold,color:opts.color||'333333',size:opts.size||18,font:'Arial'})]});
+  }
+  function mkCell(el){
+    const isHead=el.tagName==='TH';
+    const inTot=el.parentElement&&el.parentElement.classList.contains('ptot');
+    const bold=isHead||inTot||isBoldEl(el);
+    const color=isHead?'FFFFFF':'333333';
+    const r=runsFor(el,bold,color);
+    return new TableCell({borders:brds,width:{size:1336,type:WidthType.DXA},margins:cM,shading:isHead?hFill:(inTot?totFill:undefined),
+      children:[new Paragraph({children:r.length?r:[new TextRun({text:el.textContent||'',bold,color,size:17,font:'Arial'})]})]});
+  }
+  function tableFromEl(tbl){
+    const trs=[...tbl.querySelectorAll('tr')];
+    const nCols=Math.max(...trs.map(tr=>tr.children.length));
+    const colW=Math.floor(TW/nCols);
+    const rows=trs.map(tr=>new TableRow({children:[...tr.children].map(cell=>{const c=mkCell(cell);c.width={size:colW,type:WidthType.DXA};return c;})}));
+    return new Table({width:{size:TW,type:WidthType.DXA},rows});
+  }
 
+  const ch=[];
+  [...root.children].forEach(block=>{
+    const isHeader=block.classList&&block.classList.contains('ph');
+    [...block.children].forEach(el=>{
+      if(el.tagName==='IMG')return;
+      if(el.tagName==='TABLE'){ch.push(tableFromEl(el));return;}
+      if(el.tagName==='H2'){ch.push(paraFromEl(el,{align:AlignmentType.CENTER,bold:true,color:'13294B',size:30,after:60}));return;}
+      if(el.tagName==='H4'){ch.push(paraFromEl(el,{bold:true,color:'13294B',size:22,before:140,after:70}));return;}
+      if(el.tagName==='P'){ch.push(paraFromEl(el,isHeader?{align:AlignmentType.CENTER,color:'666666',size:17}:{}));return;}
+    });
+  });
   const docObj=new Document({
     styles:{default:{document:{run:{font:'Arial',size:18}}}},
     sections:[{properties:{page:{size:{width:12240,height:15840},margin:{top:1440,right:1200,bottom:1440,left:1200}}},children:ch}]
