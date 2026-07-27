@@ -1292,7 +1292,7 @@ function dlPDF(mod){
       const isLastLine=li===lines.length-1;
       const totalW=line.reduce((s,x,i)=>s+x.w+(i>0?spaceW:0),0);
       const justify=opts.align==='justify' && !isLastLine && line.length>1;
-      const gap=justify?(CW-totalW)/(line.length-1):spaceW;
+      const gap=justify?spaceW+(CW-totalW)/(line.length-1):spaceW;
       let x= opts.align==='center'? M+(CW-totalW)/2 : opts.align==='right'? M+CW-totalW : M;
       line.forEach(w=>{
         doc.setFont('helvetica',w.bold?'bold':'normal');
