@@ -340,6 +340,13 @@ body{
   #tb-fab .fab-icon{width:32px;height:32px;font-size:18px}
 }
 </style>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#7c3aed">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="icon" href="/favicon-32.png" sizes="32x32">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ERSeP TarifaBot">
 </head>
 <body>
 <!-- DECORATIVE ORBS -->
@@ -1010,6 +1017,13 @@ $("tb-input").addEventListener("keydown",e=>{if(e.key==="Enter")handleSend()});
 
 // ── KEYBOARD SHORTCUT ──
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&chatOpen)toggleChat()});
+</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    });
+  }
 </script>
 </body>
 </html>

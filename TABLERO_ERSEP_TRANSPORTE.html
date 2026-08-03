@@ -597,6 +597,13 @@
 .info-pill label{color:#64748b;font-size:11px;}
 .gest-total-strip{background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:12px 16px;font-size:13px;color:#9a3412;margin-top:14px;}
 </style>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0891b2">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="icon" href="/favicon-32.png" sizes="32x32">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ERSeP Tablero">
 </head>
 <body>
 
@@ -1623,6 +1630,13 @@ function descargarPDF() {
   doc.save('ERSeP_Notificacion_'+empresa.replace(/[^a-zA-Z0-9]/g,'_')+'_'+mes.replace(/ /g,'_')+'.pdf');
 }
 
+</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    });
+  }
 </script>
 </body>
 </html>
