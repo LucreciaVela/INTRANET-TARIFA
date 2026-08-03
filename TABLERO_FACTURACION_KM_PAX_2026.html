@@ -113,6 +113,13 @@ td.emp{font-weight:600;color:var(--texto);white-space:normal;max-width:220px;min
   .header-badges{display:none}
 }
 </style>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#059669">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="icon" href="/favicon-32.png" sizes="32x32">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ERSeP Facturación">
 </head>
 <body>
 
@@ -918,6 +925,13 @@ function buildRankFact(){
     el.style.width = (sorted[i].total2025/maxVal*100).toFixed(1)+'%';
   });
 }
+</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    });
+  }
 </script>
 </body>
 </html>
