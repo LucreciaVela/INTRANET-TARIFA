@@ -375,6 +375,26 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     .ersep-td-help { position: relative; display: inline-block; width: 100%; }
     .ersep-td-help > .ersep-tooltip { bottom: auto; top: calc(100% + 6px); right: 0; left: auto; }
     .ersep-td-help:hover > .ersep-tooltip { opacity: 1; }
+
+    /* ── Responsive (mobile) — additive only, no effect above 900px ── */
+    @media (max-width: 900px) {
+      .resp-grid-a { grid-template-columns: 1fr 1fr !important; }
+      .resp-grid-b { grid-template-columns: 1fr !important; }
+      .ersep-app-header { padding: 0 12px !important; height: auto !important; min-height: 58px !important; flex-wrap: wrap !important; }
+      .ersep-app-header-info { gap: 10px !important; }
+      .ersep-tabbar { padding: 0 8px !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; flex-wrap: nowrap !important; }
+      .ersep-scroll-table { display: block !important; overflow-x: auto !important; white-space: nowrap !important; }
+      .ersep-tab-btn { white-space: nowrap !important; flex: 0 0 auto !important; padding: 12px 12px !important; }
+      .ersep-periodo-bar { padding: 8px 12px !important; flex-wrap: wrap !important; row-gap: 8px !important; }
+      .ersep-card { padding: 16px !important; }
+    }
+    @media (max-width: 480px) {
+      .resp-grid-a { grid-template-columns: 1fr !important; }
+      .ersep-app-header-info > div:last-child { font-size: 11px !important; }
+      .ersep-kpibox { padding: 10px 8px !important; }
+      .ersep-card { padding: 12px !important; }
+    }
+    
     </style>
   <!-- Firebase SDK v8 compat -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -3213,8 +3233,11 @@ function exportPDF(rows, periodo_str) {
 var Card = function Card(_ref) {
   var children = _ref.children,
     _ref$style = _ref.style,
-    style = _ref$style === void 0 ? {} : _ref$style;
+    style = _ref$style === void 0 ? {} : _ref$style,
+    _ref$className = _ref.className,
+    className = _ref$className === void 0 ? "" : _ref$className;
   return /*#__PURE__*/React.createElement("div", {
+    className: "ersep-card ".concat(className),
     style: _objectSpread({
       background: P.white,
       borderRadius: 12,
@@ -3353,6 +3376,7 @@ function KpiBox(_ref6) {
     _ref6$color = _ref6.color,
     color = _ref6$color === void 0 ? P.navy : _ref6$color;
   return /*#__PURE__*/React.createElement("div", {
+    className: "ersep-kpibox",
     style: {
       background: P.white,
       border: "1px solid ".concat(P.borde),
@@ -3419,6 +3443,7 @@ function AppHeader(_ref8) {
     periodo = _ref8.periodo,
     onLogout = _ref8.onLogout;
   return /*#__PURE__*/React.createElement("div", {
+    className: "ersep-app-header",
     style: {
       background: P.navy,
       padding: "0 24px",
@@ -3429,6 +3454,7 @@ function AppHeader(_ref8) {
       boxShadow: "0 2px 8px rgba(0,0,0,.2)"
     }
   }, /*#__PURE__*/React.createElement("div", {
+    className: "ersep-app-header-info",
     style: {
       display: "flex",
       alignItems: "center",
@@ -3474,6 +3500,7 @@ function TabBar(_ref9) {
     active = _ref9.active,
     onChange = _ref9.onChange;
   return /*#__PURE__*/React.createElement("div", {
+    className: "ersep-tabbar",
     style: {
       background: P.white,
       borderBottom: "1px solid ".concat(P.borde),
@@ -3484,6 +3511,7 @@ function TabBar(_ref9) {
   }, tabs.map(function (t) {
     return /*#__PURE__*/React.createElement("button", {
       key: t.id,
+      className: "ersep-tab-btn",
       onClick: function onClick() {
         return onChange(t.id);
       },
@@ -3630,6 +3658,7 @@ function LoginScreen(_ref0) {
       marginTop: 6
     }
   }, "Ente Regulador de los Servicios P\xFAblicos \xB7 Provincia de C\xF3rdoba")), /*#__PURE__*/React.createElement(Card, null, /*#__PURE__*/React.createElement("div", {
+    className: "resp-grid-b",
     style: {
       display: "grid",
       gridTemplateColumns: "1fr 1fr",
@@ -3768,6 +3797,7 @@ function PeriodoScreen(_ref10) {
       marginTop: 5
     }
   }, isEmpresa ? "Bienvenido. Seleccion\xE1 el per\xEDodo de la declaraci\xF3n." : "Seleccion\xE1 el per\xEDodo que quer\xE9s consultar o gestionar.")), /*#__PURE__*/React.createElement(Card, null, /*#__PURE__*/React.createElement(SecTitle, null, "\uD83D\uDCC5 Per\xEDodo de ", isEmpresa ? "declaración" : "consulta"), /*#__PURE__*/React.createElement("div", {
+    className: "resp-grid-b",
     style: {
       display: "grid",
       gridTemplateColumns: "1fr 1fr",
@@ -4228,6 +4258,7 @@ function DatosGeneralesTab(_ref11) {
     variant: "ghost",
     sm: true
   }, "+ Agregar l\xEDnea"))), /*#__PURE__*/React.createElement("div", {
+    className: "resp-grid-a",
     style: {
       display: "grid",
       gridTemplateColumns: "1fr 1fr 1fr",
@@ -4245,6 +4276,7 @@ function DatosGeneralesTab(_ref11) {
     note: "Unidades en servicio durante el per\xEDodo",
     help: "Considerar solo los veh\xEDculos en servicio, sin incluir los habilitados fuera de operaci\xF3n."
   })), /*#__PURE__*/React.createElement(Card, null, /*#__PURE__*/React.createElement(SecTitle, null, "\uD83D\uDC77 Personal"), /*#__PURE__*/React.createElement("div", {
+    className: "resp-grid-a",
     style: {
       display: "grid",
       gridTemplateColumns: "1fr 1fr 1fr",
@@ -4301,6 +4333,7 @@ function DatosGeneralesTab(_ref11) {
       marginBottom: 20
     }
   }, /*#__PURE__*/React.createElement(SecTitle, null, "\uD83D\uDCCA Indicadores calculados del per\xEDodo"), /*#__PURE__*/React.createElement("div", {
+    className: "resp-grid-a",
     style: {
       display: "grid",
       gridTemplateColumns: "repeat(6,1fr)",
@@ -5215,6 +5248,7 @@ function EmpresaApp(_ref15) {
         lineHeight: 1.7
       }
     }, /*#__PURE__*/React.createElement("strong", null, "\u26A0 Si continu\xE1s, estar\xE1s generando una RECTIFICATIVA."), /*#__PURE__*/React.createElement("br", null), "La rectificativa reemplaza los datos previamente declarados para este per\xEDodo. Asegurate de ingresar la informaci\xF3n completa y correcta."), /*#__PURE__*/React.createElement("div", {
+      className: "resp-grid-b",
       style: {
         display: "grid",
         gridTemplateColumns: "1fr 1fr",
@@ -5554,6 +5588,7 @@ function AdminDashboard(_ref16) {
       padding: "22px 24px"
     }
   }, /*#__PURE__*/React.createElement("div", {
+    className: "resp-grid-a",
     style: {
       display: "grid",
       gridTemplateColumns: "repeat(6,1fr)",
@@ -5589,6 +5624,7 @@ function AdminDashboard(_ref16) {
     sub: "litros cargados",
     color: P.naranja
   })), /*#__PURE__*/React.createElement(SecTitle, null, "📐 Indicadores generales del sistema"), /*#__PURE__*/React.createElement("div", {
+    className: "resp-grid-a",
     style: {
       display: "grid",
       gridTemplateColumns: "repeat(5,1fr)",
@@ -5616,6 +5652,7 @@ function AdminDashboard(_ref16) {
     value: fmtR(sysInd.emplXveh),
     color: P.blue
 })), /*#__PURE__*/React.createElement("div", {
+    className: "resp-grid-b",
     style: {
       display: "grid",
       gridTemplateColumns: "1fr 1fr",
@@ -5760,6 +5797,7 @@ function AdminDashboard(_ref16) {
       }
     }, fmtM(hm.ingDia)));
   }))))), /*#__PURE__*/React.createElement("div", {
+    className: "resp-grid-b",
     style: {
       display: "grid",
       gridTemplateColumns: "1fr 1fr 1fr",
@@ -6202,6 +6240,7 @@ function AdminEmpresaTab(_ref17) {
       value: r.cuit
     }, r.rs);
   }))), row && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "resp-grid-a",
     style: {
       display: "grid",
       gridTemplateColumns: "repeat(5,1fr)",
@@ -6231,6 +6270,7 @@ function AdminEmpresaTab(_ref17) {
     value: fmtN(row.form && row.form.litrosCombustible || 0),
     color: P.naranja
   })), /*#__PURE__*/React.createElement(SecTitle, null, "📐 Indicadores propios de la empresa"), /*#__PURE__*/React.createElement("div", {
+    className: "resp-grid-a",
     style: {
       display: "grid",
       gridTemplateColumns: "repeat(6,1fr)",
@@ -6266,6 +6306,7 @@ function AdminEmpresaTab(_ref17) {
       marginBottom: 16
     }
   }, /*#__PURE__*/React.createElement(SecTitle, null, "\uD83D\uDCCD L\xEDneas declaradas"), /*#__PURE__*/React.createElement("table", {
+    className: "ersep-scroll-table",
     style: {
       width: "100%",
       borderCollapse: "collapse",
@@ -6323,6 +6364,7 @@ function AdminEmpresaTab(_ref17) {
       }
     }, fmtM(l.ing)));
   })))), /*#__PURE__*/React.createElement(Card, null, /*#__PURE__*/React.createElement(SecTitle, null, "\uD83D\uDCCE Documentaci\xF3n adjunta"), /*#__PURE__*/React.createElement("div", {
+    className: "resp-grid-b",
     style: {
       display: "grid",
       gridTemplateColumns: "1fr 1fr",
@@ -6509,6 +6551,7 @@ function DescargasTab(_ref18) {
       color: P.sub
     }
   }, "Se incluir\xE1n ", rowsFilt.length, " empresa(s) \xB7 Per\xEDodo: ", activePeriodoStr)), /*#__PURE__*/React.createElement("div", {
+    className: "resp-grid-b",
     style: {
       display: "grid",
       gridTemplateColumns: "1fr 1fr",
@@ -6711,6 +6754,7 @@ function AdminApp(_ref19) {
     },
     onLogout: onLogout
   }), /*#__PURE__*/React.createElement("div", {
+    className: "ersep-periodo-bar",
     style: {
       background: P.white,
       borderBottom: "1px solid ".concat(P.borde),
