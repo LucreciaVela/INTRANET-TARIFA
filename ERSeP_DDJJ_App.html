@@ -5659,15 +5659,15 @@ function AdminDashboard(_ref16) {
       gap: 20,
       marginBottom: 22
     }
-  }, /*#__PURE__*/React.createElement(Card, null, /*#__PURE__*/React.createElement(SecTitle, null, "🥧 Participación de mercado (Km producidos)"), pieDataKm.length ? /*#__PURE__*/React.createElement(ResponsiveContainer, {
+  }, /*#__PURE__*/React.createElement(Card, null, /*#__PURE__*/React.createElement(SecTitle, null, "🥧 Participación de mercado (Km producidos)"), pieDataKm.length ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(ResponsiveContainer, {
     width: "100%",
-    height: 340
+    height: 300
   }, /*#__PURE__*/React.createElement(PieChart, null, /*#__PURE__*/React.createElement(Pie, {
     data: pieDataKm,
     dataKey: "value",
     nameKey: "name",
     cx: "50%",
-    cy: "48%",
+    cy: "50%",
     outerRadius: 100,
     labelLine: function (props) {
       if (props.percent < 0.03) return null;
@@ -5707,14 +5707,42 @@ function AdminDashboard(_ref16) {
     formatter: function formatter(v, name) {
       return [fmtN(v) + " km (" + (totalKmPie ? (v / totalKmPie * 100).toFixed(1) : 0) + "%)", name];
     }
-  }), /*#__PURE__*/React.createElement(Legend, {
-    layout: "vertical",
-    align: "right",
-    verticalAlign: "middle",
-    wrapperStyle: {
-      fontSize: 11,
-      maxWidth: 190
+  }))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      flexWrap: "wrap",
+      justifyContent: "center",
+      gap: "6px 16px",
+      marginTop: 10,
+      padding: "0 6px"
     }
+  }, pieDataKm.map(function (d, i) {
+    return /*#__PURE__*/React.createElement("div", {
+      key: i,
+      style: {
+        display: "flex",
+        alignItems: "center",
+        gap: 6,
+        fontSize: 11,
+        color: P.sub,
+        maxWidth: "100%"
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        width: 10,
+        height: 10,
+        borderRadius: 2,
+        flexShrink: 0,
+        display: "inline-block",
+        background: d.name.indexOf("Otros") === 0 ? "#9aa5b5" : KM_PIE_COLORS[i % KM_PIE_COLORS.length]
+      }
+    }), /*#__PURE__*/React.createElement("span", {
+      style: {
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        whiteSpace: "nowrap"
+      }
+    }, d.name));
   }))) : /*#__PURE__*/React.createElement("div", {
     style: {
       padding: 30,
