@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ersep-transporte-v1';
+const CACHE_NAME = 'ersep-transporte-v2';
 const APP_SHELL = [
   '/',
   '/index.html',
