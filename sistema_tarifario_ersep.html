@@ -304,6 +304,7 @@ body{
 .pdoc .ph h2{font-family:'Merriweather',serif;font-size:16px;color:var(--primary-800)}
 .pdoc .ph p{color:var(--neutral-500);font-size:11px}
 .pdoc .ps{margin-bottom:14px}
+.pdoc .ps p{text-align:justify}
 .pdoc .ps h4{font-size:12px;color:var(--primary-600);margin-bottom:6px;border-bottom:1px solid var(--neutral-200);padding-bottom:3px;font-weight:700}
 .pdoc table{width:100%;border-collapse:collapse;margin:8px 0;font-size:10px}
 .pdoc table th,.pdoc table td{padding:5px 8px;border:1px solid var(--neutral-300);text-align:left}
@@ -501,13 +502,13 @@ body{
   <div class="panel-b">
     <p style="font-size:11px;color:var(--neutral-500);margin-bottom:10px">Si se cargan, se usan para redactar el párrafo de análisis de personal y combustible del punto "III.A" del informe (vista previa, PDF y Word). Si se dejan vacíos, ese párrafo simplemente no se incluye.</p>
     <div class="frow">
-      <div class="fg"><label>Salario básico Conductor Guarda L.D. — mes base ($)</label><input type="number" step="0.01" id="iSalBase" class="idx-input" data-key="idx_iSalBase"></div>
-      <div class="fg"><label>Salario básico Conductor Guarda L.D. — mes período ($)</label><input type="number" step="0.01" id="iSalPeriodo" class="idx-input" data-key="idx_iSalPeriodo"></div>
+      <div class="fg"><label>Salario básico Conductor Guarda L.D. — mes base ($)</label><input type="number" step="0.01" id="iSalBase" class="idx-input" data-key="idx_iSalBase" placeholder="Ej: 1471900"></div>
+      <div class="fg"><label>Salario básico Conductor Guarda L.D. — mes período ($)</label><input type="number" step="0.01" id="iSalPeriodo" class="idx-input" data-key="idx_iSalPeriodo" placeholder="Ej: 1721172"></div>
       <div class="fg"><label>Variación salarial (%)</label><input type="text" id="iSalVar" readonly style="background:var(--neutral-100);font-weight:700"></div>
     </div>
     <div class="frow">
-      <div class="fg"><label>Combustible — valor promedio relevado ($/L)</label><input type="number" step="0.01" id="iGasoilProm" class="idx-input" data-key="idx_iGasoilProm"></div>
-      <div class="fg"><label>Combustible — valor de referencia ($/L)</label><input type="number" step="0.01" id="iGasoilRef" class="idx-input" data-key="idx_iGasoilRef"></div>
+      <div class="fg"><label>Combustible — valor promedio relevado ($/L)</label><input type="number" step="0.01" id="iGasoilProm" class="idx-input" data-key="idx_iGasoilProm" placeholder="Ej: 1410.08"></div>
+      <div class="fg"><label>Combustible — valor de referencia ($/L)</label><input type="number" step="0.01" id="iGasoilRef" class="idx-input" data-key="idx_iGasoilRef" placeholder="Ej: 1315.34"></div>
       <div class="fg"><label>Variación combustible (%)</label><input type="text" id="iGasoilVar" readonly style="background:var(--neutral-100);font-weight:700"></div>
     </div>
   </div>
@@ -809,6 +810,14 @@ function showRTab(btn,id){
     inp.addEventListener('input',()=>localStorage.setItem(inp.dataset.key,inp.value));
   });
   updPerDisp('i');
+  // Los valores restaurados no disparan los eventos 'input', así que hay que
+  // recalcular a mano los campos derivados (ponderadores, tasas, IPC, salario
+  // y combustible) para que no queden vacíos hasta que el usuario retipee algo.
+  rcP();
+  const sb0=pf('iSalBase'),sp0=pf('iSalPeriodo');
+  document.getElementById('iSalVar').value=(sb0>0&&sp0>0)?fP((sp0/sb0-1)*100):'';
+  const gr0=pf('iGasoilRef'),gv0=pf('iGasoilProm');
+  document.getElementById('iGasoilVar').value=(gr0>0&&gv0>0)?fP((gv0/gr0-1)*100):'';
 })();
 
 function rv(id){return parseFloat(document.getElementById('rv_'+id).value)||0}
@@ -839,6 +848,15 @@ function loadSv(m){try{const d=JSON.parse(localStorage.getItem('sim_'+m));if(m==
   document.getElementById('iCC').value=d.cC||'';document.getElementById('iCD').value=d.cD||'';
   document.getElementById('iTA').value=d.tA||'';document.getElementById('iTB').value=d.tB||'';
   document.getElementById('iTC').value=d.tC||'';document.getElementById('iTD').value=d.tD||'';
+  // Solo pisamos estos campos si la simulación guardada realmente trae el dato,
+  // para no vaciar valores ya cargados cuando se restaura una simulación vieja
+  // (guardada antes de que existieran estos campos).
+  if(d.salBase!==undefined)document.getElementById('iSalBase').value=d.salBase||'';
+  if(d.salPeriodo!==undefined)document.getElementById('iSalPeriodo').value=d.salPeriodo||'';
+  if(d.gasoilProm!==undefined)document.getElementById('iGasoilProm').value=d.gasoilProm||'';
+  if(d.gasoilRef!==undefined)document.getElementById('iGasoilRef').value=d.gasoilRef||'';
+  const sb=pf('iSalBase'),sp=pf('iSalPeriodo');document.getElementById('iSalVar').value=(sb>0&&sp>0)?fP((sp/sb-1)*100):'';
+  const gr=pf('iGasoilRef'),gv=pf('iGasoilProm');document.getElementById('iGasoilVar').value=(gr>0&&gv>0)?fP((gv/gr-1)*100):'';
   rcP();updPerDisp('i');toast('Simulación cargada','ok');
 }document.getElementById(m==='indice'?'bnIdx':'bnDec').style.display='none'}catch(e){toast('Error','er')}}
 function clrSv(m){localStorage.removeItem('sim_'+m);document.getElementById(m==='indice'?'bnIdx':'bnDec').style.display='none';toast('Descartada','inf')}
@@ -895,7 +913,14 @@ function calcIdx(){
   // Tasa efectivamente aplicable: si supera el tope IPC, se aplica solo hasta el tope
   // y el excedente debe convocarse a Audiencia Pública (art. 2 inc. d, RG ERSeP N° 1/2024)
   const tasaAplicada=cumpleTope||ipcVar===null?tasaTot:ipcVar;
-  const excedente=cumpleTope||ipcVar===null?0:(tasaTot-ipcVar);
+  // Excedente compuesto (no aritmético): si primero se aplica el tope y más adelante,
+  // por Audiencia Pública, se aplica el excedente SOBRE la tarifa ya incrementada,
+  // ambos incrementos combinados (compuestos) deben dar el total de índices propios
+  // (tasaTot), no la suma. (1+tasaTot) = (1+tope) × (1+excedente)
+  // => excedente = (1+tasaTot)/(1+tope) - 1. Restar tope-tasaTot arroja un valor
+  // mayor al que realmente corresponde y, aplicado luego en forma compuesta,
+  // haría superar el total calculado por los índices propios del sector.
+  const excedente=cumpleTope||ipcVar===null?0:(((1+tasaTot/100)/(1+ipcVar/100)-1)*100);
   const tbkNewAplicada=tbk*(1+tasaAplicada/100);
   const tbkNewIVAAplicada=tbkNewAplicada*1.105;
   const incAbsAplicado=tbkNewAplicada-tbk;
@@ -910,7 +935,8 @@ function calcIdx(){
   indiceData={periodo,periodoCorto:per.corto,tbk,tbkNew,tbkNewIVA,incAbs,tasaTot,tasaAplicada,excedente,tbkNewAplicada,tbkNewIVAAplicada,incAbsAplicado,cats,totVal,totNuevo,nroMesa:document.getElementById('iNroMesa').value,resBase:document.getElementById('iResBase').value,ipcB,ipcP,ipcVar,cumpleTope,
     expte:document.getElementById('iExpte').value,infCyT:document.getElementById('iInfCyT').value,infGT:document.getElementById('iInfGT').value,nota:document.getElementById('iNota').value,fechaNota:document.getElementById('iFechaNota').value,entidad:document.getElementById('iEntidad').value,
     salBase:pf('iSalBase'),salPeriodo:pf('iSalPeriodo'),gasoilProm:pf('iGasoilProm'),gasoilRef:pf('iGasoilRef')};
-  localStorage.setItem('sim_indice',JSON.stringify({mD:per.mD,aD:per.aD,mH:per.mH,aH:per.aH,tbk,cA:cats.A.val,cB:cats.B.val,cC:cats.C.val,cD:cats.D.val,tA:cats.A.tasa,tB:cats.B.tasa,tC:cats.C.tasa,tD:cats.D.tasa}));
+  localStorage.setItem('sim_indice',JSON.stringify({mD:per.mD,aD:per.aD,mH:per.mH,aH:per.aH,tbk,cA:cats.A.val,cB:cats.B.val,cC:cats.C.val,cD:cats.D.val,tA:cats.A.tasa,tB:cats.B.tasa,tC:cats.C.tasa,tD:cats.D.tasa,
+    salBase:pf('iSalBase'),salPeriodo:pf('iSalPeriodo'),gasoilProm:pf('iGasoilProm'),gasoilRef:pf('iGasoilRef')}));
 
   document.getElementById('idxRP').textContent=periodo;
   renderIdxRes(indiceData);
@@ -1290,7 +1316,7 @@ function bldPrev(mod,d){
     if(d.ipcVar===null||d.cumpleTope){
       vars['{{CONCLUSION_BODY}}'] = `<p style="margin-top:8px"><strong>1-</strong> ACTUALIZAR la nueva Tarifa Básica Kilométrica (TBK) en el valor de <strong>${f$(d.tbkNew)}/km</strong> sin IVA conforme a los estudios de este Informe, incluyendo el 10,5% del IVA resulta un valor de <strong>${f$(d.tbkNewIVA)}</strong>. De tal modo el incremento asciende al <strong>${fP(d.tasaTot)}</strong>, porcentaje determinado por el Índice propio del sector y de conformidad a los topes establecidos por la Resolución General ERSeP N° 01/2024.</p><p style="margin-top:6px"><strong>2-</strong> Corresponde FIJAR la nueva Tarifa Básica Kilométrica (TBK) en el valor de <strong>${f$(d.tbkNew)}/km</strong> sin IVA. En consecuencia, el incremento asciende a <strong>${fP(d.tasaTot)}</strong> respecto a la TBK vigente de <strong>${f$(d.tbk)}/km</strong> (${d.resBase||''}).</p>`;
     }else{
-      vars['{{CONCLUSION_BODY}}'] = `<p style="margin-top:8px"><strong>1-</strong> ACTUALIZAR la nueva Tarifa Básica Kilométrica (TBK) en el valor de <strong>${f$(d.tbkNewAplicada)}/km</strong> sin IVA, incluyendo el 10,5% del IVA resulta un valor de <strong>${f$(d.tbkNewIVAAplicada)}</strong>. El incremento surgido de los índices propios del sector asciende al <strong>${fP(d.tasaTot)}</strong>, el cual <strong>SUPERA</strong> el tope establecido por la Resolución General ERSeP N° 1/2024 (${fP(d.ipcVar)}); en consecuencia, corresponde aplicar el incremento únicamente hasta dicho tope, es decir un <strong>${fP(d.tasaAplicada)}</strong>.</p><p style="margin-top:6px"><strong>2-</strong> Corresponde FIJAR la nueva Tarifa Básica Kilométrica (TBK) en el valor de <strong>${f$(d.tbkNewAplicada)}/km</strong> sin IVA. En consecuencia, el incremento asciende a <strong>${fP(d.tasaAplicada)}</strong> respecto a la TBK vigente de <strong>${f$(d.tbk)}/km</strong> (${d.resBase||''}).</p><p style="margin-top:6px"><strong>3-</strong> Por el excedente de <strong>${fP(d.excedente)}</strong> que no puede reconocerse por esta vía, deberá convocarse a Audiencia Pública, conforme lo dispuesto en el inciso d) del artículo 2° de la Resolución General ERSeP N° 1/2024.</p>`;
+      vars['{{CONCLUSION_BODY}}'] = `<p style="margin-top:8px"><strong>1-</strong> ACTUALIZAR la nueva Tarifa Básica Kilométrica (TBK) en el valor de <strong>${f$(d.tbkNewAplicada)}/km</strong> sin IVA, incluyendo el 10,5% del IVA resulta un valor de <strong>${f$(d.tbkNewIVAAplicada)}</strong>. El incremento surgido de los índices propios del sector asciende al <strong>${fP(d.tasaTot)}</strong>, el cual <strong>SUPERA</strong> el tope establecido por la Resolución General ERSeP N° 1/2024 (${fP(d.ipcVar)}); en consecuencia, corresponde aplicar el incremento únicamente hasta dicho tope, es decir un <strong>${fP(d.tasaAplicada)}</strong>.</p><p style="margin-top:6px"><strong>2-</strong> Corresponde FIJAR la nueva Tarifa Básica Kilométrica (TBK) en el valor de <strong>${f$(d.tbkNewAplicada)}/km</strong> sin IVA. En consecuencia, el incremento asciende a <strong>${fP(d.tasaAplicada)}</strong> respecto a la TBK vigente de <strong>${f$(d.tbk)}/km</strong> (${d.resBase||''}).</p><p style="margin-top:6px"><strong>3-</strong> Por el excedente de <strong>${fP(d.excedente)}</strong> (porcentaje a aplicar sobre la Tarifa Básica Kilométrica ya actualizada al tope, de modo que ambos incrementos combinados equivalgan al <strong>${fP(d.tasaTot)}</strong> surgido de los índices propios del sector) que no puede reconocerse por esta vía, deberá convocarse a Audiencia Pública, conforme lo dispuesto en el inciso d) del artículo 2° de la Resolución General ERSeP N° 1/2024.</p>`;
     }
   }else{
     vars['{{TBK_NUEVA}}'] = f$(d.tbkCalc)+'/km';
@@ -1517,7 +1543,7 @@ async function dlWord(mod){
       if(el.tagName==='TABLE'){ch.push(tableFromEl(el));return;}
       if(el.tagName==='H2'){ch.push(paraFromEl(el,{align:AlignmentType.CENTER,bold:true,color:'13294B',size:30,after:60}));return;}
       if(el.tagName==='H4'){ch.push(paraFromEl(el,{bold:true,color:'13294B',size:22,before:140,after:70}));return;}
-      if(el.tagName==='P'){ch.push(paraFromEl(el,isHeader?{align:AlignmentType.CENTER,color:'666666',size:17}:{}));return;}
+      if(el.tagName==='P'){ch.push(paraFromEl(el,isHeader?{align:AlignmentType.CENTER,color:'666666',size:17}:{align:AlignmentType.JUSTIFIED}));return;}
     });
   });
   const docObj=new Document({
