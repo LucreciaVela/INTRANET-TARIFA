@@ -430,9 +430,27 @@ body{
   <div class="panel-h"><h3>📊 Cálculo por Índice — Res. ERSeP N° 1/2024</h3><span class="badge">Módulo 1</span></div>
   <div class="panel-b">
     <div class="frow">
-      <div class="fg"><label>N° de Mesa Tarifaria</label><input type="text" id="iNroMesa" class="idx-input" data-key="idx_iNroMesa" placeholder="Ej: 14" value="14"></div>
+      <div class="fg"><label>N° de Mesa Tarifaria</label><input type="text" id="iNroMesa" class="idx-input" data-key="idx_iNroMesa" placeholder="Ej: 17"></div>
       <div class="fg"><label>TBK Base ($/km sin IVA)</label><input type="number" step="0.0001" id="iTBK" class="idx-input" data-key="idx_iTBK" value="78.5020"></div>
-      <div class="fg"><label>Resolución base</label><input type="text" id="iResBase" class="idx-input" data-key="idx_iResBase" placeholder="Ej: R.G. ERSeP N° 13/2025" value="R.G. ERSeP N° 13/2025"></div>
+      <div class="fg"><label>Resolución base</label><input type="text" id="iResBase" class="idx-input" data-key="idx_iResBase" placeholder="Ej: R.G. ERSeP N° 1/2024"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Datos administrativos para elaboración del Informe -->
+<div class="panel">
+  <div class="panel-h"><h3>🗂️ Datos administrativos del Informe</h3><span class="badge">Consideraciones previas</span></div>
+  <div class="panel-b">
+    <p style="font-size:11px;color:var(--neutral-500);margin-bottom:10px">Estos datos se cargan a mano por expediente y completan el punto "II. Consideraciones Previas – Antecedentes" y el encabezado del informe (vista previa, PDF y Word).</p>
+    <div class="frow">
+      <div class="fg"><label>Expte N°</label><input type="text" id="iExpte" class="idx-input" data-key="idx_iExpte" placeholder="Ej: 0521-088348/2025"></div>
+      <div class="fg"><label>Informe Técnico Costos y Tarifas N°</label><input type="text" id="iInfCyT" class="idx-input" data-key="idx_iInfCyT" placeholder="Ej: 342/2025"></div>
+      <div class="fg"><label>Informe Técnico Gerencia Transporte N°</label><input type="text" id="iInfGT" class="idx-input" data-key="idx_iInfGT" placeholder="Ej: 03/2025"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>N° de Nota/Sticker de solicitud</label><input type="text" id="iNota" class="idx-input" data-key="idx_iNota" placeholder="Ej: 183535911151125"></div>
+      <div class="fg"><label>Fecha de ingreso de la nota</label><input type="date" id="iFechaNota" class="idx-input" data-key="idx_iFechaNota"></div>
+      <div class="fg"><label>Entidad(es) solicitante(s)</label><input type="text" id="iEntidad" class="idx-input" data-key="idx_iEntidad" placeholder="Ej: FETAP y ASETAC"></div>
     </div>
   </div>
 </div>
@@ -474,6 +492,24 @@ body{
       </tbody>
     </table>
     <p style="font-size:10px;color:var(--neutral-500);margin-top:8px">Ponderadores = Valor / CMP Total. Valor Nuevo = Valor × (1 + Tasa/100).</p>
+  </div>
+</div>
+
+<!-- Valores de respaldo para el párrafo de análisis (salario UTA y combustible) -->
+<div class="panel">
+  <div class="panel-h"><h3>📎 Valores de respaldo del análisis</h3><span class="badge">Opcional</span></div>
+  <div class="panel-b">
+    <p style="font-size:11px;color:var(--neutral-500);margin-bottom:10px">Si se cargan, se usan para redactar el párrafo de análisis de personal y combustible del punto "III.A" del informe (vista previa, PDF y Word). Si se dejan vacíos, ese párrafo simplemente no se incluye.</p>
+    <div class="frow">
+      <div class="fg"><label>Salario básico Conductor Guarda L.D. — mes base ($)</label><input type="number" step="0.01" id="iSalBase" class="idx-input" data-key="idx_iSalBase"></div>
+      <div class="fg"><label>Salario básico Conductor Guarda L.D. — mes período ($)</label><input type="number" step="0.01" id="iSalPeriodo" class="idx-input" data-key="idx_iSalPeriodo"></div>
+      <div class="fg"><label>Variación salarial (%)</label><input type="text" id="iSalVar" readonly style="background:var(--neutral-100);font-weight:700"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>Combustible — valor promedio relevado ($/L)</label><input type="number" step="0.01" id="iGasoilProm" class="idx-input" data-key="idx_iGasoilProm"></div>
+      <div class="fg"><label>Combustible — valor de referencia ($/L)</label><input type="number" step="0.01" id="iGasoilRef" class="idx-input" data-key="idx_iGasoilRef"></div>
+      <div class="fg"><label>Variación combustible (%)</label><input type="text" id="iGasoilVar" readonly style="background:var(--neutral-100);font-weight:700"></div>
+    </div>
   </div>
 </div>
 
@@ -540,7 +576,7 @@ body{
   </div>
   <div class="panel-b">
     <div class="frow">
-      <div class="fg"><label>N° de Mesa Tarifaria</label><input type="text" id="dNroMesa" placeholder="Ej: 16" value="16"></div>
+      <div class="fg"><label>N° de Mesa Tarifaria</label><input type="text" id="dNroMesa" class="idx-input" data-key="idx_dNroMesa" placeholder="Ej: 17"></div>
       <div class="fg"><label>TBK Base Decreto ($/km sin IVA)</label><input type="number" step="0.0001" id="dTBKbase" value="78.5020"></div>
     </div>
   </div>
@@ -696,6 +732,14 @@ function toast(m,t='inf'){const c=document.getElementById('tsts'),e=document.cre
 const fN=(n,d=2)=>Number(n).toLocaleString('es-AR',{minimumFractionDigits:d,maximumFractionDigits:d});
 const f$=n=>'$ '+fN(n,2);
 const fP=n=>fN(n,2)+'%';
+// Marca en el informe los datos administrativos que faltan cargar a mano
+const bk=(v,ph)=>(v&&String(v).trim())?v:`[COMPLETAR ${ph}]`;
+function fFechaLarga(iso){
+  if(!iso)return '';
+  const[a,m,d]=iso.split('-').map(Number);
+  if(!a||!m||!d)return '';
+  return new Date(a,m-1,d).toLocaleDateString('es-AR',{day:'2-digit',month:'long',year:'numeric'});
+}
 function sPer(m,a){return m&&a?m+' '+a:'';}
 function sPerRango(mD,aD,mH,aH){
   const desde=sPer(mD,aD),hasta=sPer(mH,aH);
@@ -775,6 +819,16 @@ function rv(id){return parseFloat(document.getElementById('rv_'+id).value)||0}
   if(b>0&&p>0){const v=(p/b-1)*100;document.getElementById('iIPCvar').value=fP(v);}
 }));
 
+// Salario UTA y Combustible: variación auto calc (solo para el párrafo de análisis)
+['iSalBase','iSalPeriodo'].forEach(id=>document.getElementById(id).addEventListener('input',()=>{
+  const b=pf('iSalBase'),p=pf('iSalPeriodo');
+  document.getElementById('iSalVar').value=(b>0&&p>0)?fP((p/b-1)*100):'';
+}));
+['iGasoilProm','iGasoilRef'].forEach(id=>document.getElementById(id).addEventListener('input',()=>{
+  const r=pf('iGasoilRef'),v=pf('iGasoilProm');
+  document.getElementById('iGasoilVar').value=(r>0&&v>0)?fP((v/r-1)*100):'';
+}));
+
 // LocalStorage
 function ckSv(m){const d=localStorage.getItem('sim_'+m);document.getElementById(m==='indice'?'bnIdx':'bnDec').style.display=d?'flex':'none'}
 function loadSv(m){try{const d=JSON.parse(localStorage.getItem('sim_'+m));if(m==='indice'&&d){
@@ -838,15 +892,24 @@ function calcIdx(){
   const ipcB=pf('iIPCb'),ipcP=pf('iIPCp');
   const ipcVar=ipcB>0&&ipcP>0?((ipcP/ipcB-1)*100):null;
   const cumpleTope=ipcVar===null||tasaTot<=ipcVar;
+  // Tasa efectivamente aplicable: si supera el tope IPC, se aplica solo hasta el tope
+  // y el excedente debe convocarse a Audiencia Pública (art. 2 inc. d, RG ERSeP N° 1/2024)
+  const tasaAplicada=cumpleTope||ipcVar===null?tasaTot:ipcVar;
+  const excedente=cumpleTope||ipcVar===null?0:(tasaTot-ipcVar);
+  const tbkNewAplicada=tbk*(1+tasaAplicada/100);
+  const tbkNewIVAAplicada=tbkNewAplicada*1.105;
+  const incAbsAplicado=tbkNewAplicada-tbk;
   // Tope message
   const topeEl=document.getElementById('iTopeMsg');
   if(ipcVar!==null){
     topeEl.style.display='block';
     if(cumpleTope){topeEl.style.background='var(--success-bg)';topeEl.style.color='var(--success)';topeEl.innerHTML='✓ El incremento de <strong>'+fP(tasaTot)+'</strong> NO supera el tope IPC de <strong>'+fP(ipcVar)+'</strong>. Cumple Res. ERSeP N° 1/2024.'}
-    else{topeEl.style.background='var(--danger-bg)';topeEl.style.color='var(--danger)';topeEl.innerHTML='⚠ El incremento de <strong>'+fP(tasaTot)+'</strong> SUPERA el tope IPC de <strong>'+fP(ipcVar)+'</strong>. Requiere Audiencia Pública.'}
+    else{topeEl.style.background='var(--danger-bg)';topeEl.style.color='var(--danger)';topeEl.innerHTML='⚠ El incremento de <strong>'+fP(tasaTot)+'</strong> SUPERA el tope IPC de <strong>'+fP(ipcVar)+'</strong>. Se aplica solo hasta el tope (<strong>'+fP(ipcVar)+'</strong>); el excedente (<strong>'+fP(excedente)+'</strong>) requiere convocatoria a Audiencia Pública.'}
   }
 
-  indiceData={periodo,periodoCorto:per.corto,tbk,tbkNew,tbkNewIVA,incAbs,tasaTot,cats,totVal,totNuevo,nroMesa:document.getElementById('iNroMesa').value,resBase:document.getElementById('iResBase').value,ipcB,ipcP,ipcVar,cumpleTope};
+  indiceData={periodo,periodoCorto:per.corto,tbk,tbkNew,tbkNewIVA,incAbs,tasaTot,tasaAplicada,excedente,tbkNewAplicada,tbkNewIVAAplicada,incAbsAplicado,cats,totVal,totNuevo,nroMesa:document.getElementById('iNroMesa').value,resBase:document.getElementById('iResBase').value,ipcB,ipcP,ipcVar,cumpleTope,
+    expte:document.getElementById('iExpte').value,infCyT:document.getElementById('iInfCyT').value,infGT:document.getElementById('iInfGT').value,nota:document.getElementById('iNota').value,fechaNota:document.getElementById('iFechaNota').value,entidad:document.getElementById('iEntidad').value,
+    salBase:pf('iSalBase'),salPeriodo:pf('iSalPeriodo'),gasoilProm:pf('iGasoilProm'),gasoilRef:pf('iGasoilRef')};
   localStorage.setItem('sim_indice',JSON.stringify({mD:per.mD,aD:per.aD,mH:per.mH,aH:per.aH,tbk,cA:cats.A.val,cB:cats.B.val,cC:cats.C.val,cD:cats.D.val,tA:cats.A.tasa,tB:cats.B.tasa,tC:cats.C.tasa,tD:cats.D.tasa}));
 
   document.getElementById('idxRP').textContent=periodo;
@@ -863,8 +926,8 @@ function renderIdxRes(d){
   }
   h+=`<tr class="r-total"><td><strong>TOTAL</strong></td><td class="tar"><strong>${fN(d.totVal,2)}</strong></td><td class="tar">100%</td><td colspan="2"></td><td class="tar"><strong>${fP(d.tasaTot)}</strong></td><td class="tar"><strong>${fN(d.totNuevo,2)}</strong></td></tr></tbody></table>`;
   h+=`<div class="hlight"><div class="hi"><div class="hi-l">TBK Base (sin IVA)</div><div class="hi-v">${f$(d.tbk)}</div></div><div class="arrow">→</div><div class="hi"><div class="hi-l">TBK Resultante (sin IVA)</div><div class="hi-v">${f$(d.tbkNew)}</div></div><div class="hi"><div class="hi-l">TBK con IVA 10,5%</div><div class="hi-v">${f$(d.tbkNewIVA)}</div></div><div class="hi"><div class="hi-l">Incremento</div><div class="hi-v">${fP(d.tasaTot)}</div></div></div>`;
-  h+=`<div class="sumbox"><strong>Resumen:</strong> Para el período <strong>${d.periodo}</strong>, la variación ponderada total de los Costos Medios Presupuestados asciende al <strong>${fP(d.tasaTot)}</strong>. La TBK vigente de <strong>${f$(d.tbk)}/km sin IVA</strong> (${d.resBase}) pasa a <strong>${f$(d.tbkNew)}/km sin IVA</strong> (${f$(d.tbkNewIVA)} con IVA 10,5%), representando un incremento de <strong>${f$(d.incAbs)}/km</strong>.`;
-  if(d.ipcVar!==null){h+=` La variación del IPC para el período es del <strong>${fP(d.ipcVar)}</strong>.`; if(d.cumpleTope)h+=' El incremento <strong>no supera</strong> el tope establecido por la Res. ERSeP N° 1/2024.'; else h+=' El incremento <strong>supera</strong> el tope, requiriendo convocatoria a Audiencia Pública.'}
+  h+=`<div class="sumbox"><strong>Resumen:</strong> Para el período <strong>${d.periodo}</strong>, la variación ponderada total de los Costos Medios Presupuestados asciende al <strong>${fP(d.tasaTot)}</strong>.`;
+  if(d.ipcVar!==null){h+=` La variación del IPC para el período es del <strong>${fP(d.ipcVar)}</strong>.`; if(d.cumpleTope)h+=' El incremento <strong>no supera</strong> el tope establecido por la Res. ERSeP N° 1/2024.'; else h+=` El incremento <strong>supera</strong> el tope; se aplica el incremento hasta el tope (TBK ${f$(d.tbkNewAplicada)}/km sin IVA, ${fP(d.tasaAplicada)}) y el excedente de <strong>${fP(d.excedente)}</strong> debe convocarse a Audiencia Pública.`}
   h+='</div>';
   document.getElementById('idxRB').innerHTML=h;
 }
@@ -1159,12 +1222,13 @@ function closePv(){document.getElementById('pvM').classList.remove('on')}
    {{COSTO_D_VAL}},{{COSTO_D_POND}},{{COSTO_D_TASA}},{{COSTO_D_NUEVO}},
    {{RTM}}, {{NPPE}}, {{SUELDO_BASICO}}, {{PRECIO_GASOIL}}
 */
-const TPL_INDICE = `<div class="ph"><img src="{{LOGO}}" alt="ERSeP" style="height:50px"><h2>INFORME TÉCNICO CONJUNTO</h2><p>Gerencia Transporte y Subdirección Costos y Tarifas</p><p>ERSeP — Ente Regulador de los Servicios Públicos</p><p style="margin-top:6px;font-size:11px;color:#666">Córdoba, {{FECHA}}</p><p style="margin-top:6px;font-weight:700;color:var(--primary-800);font-size:13px">— Mesa Tarifaria N° {{NRO_MESA}} del Transporte Interurbano de Pasajeros —</p><p style="font-size:12px;margin-top:4px">Período de costeo: <strong>{{PERIODO}}</strong></p></div>
+const TPL_INDICE = `<div class="ph"><img src="{{LOGO}}" alt="ERSeP" style="height:50px"><h2>INFORME TÉCNICO CONJUNTO</h2><p>ERSeP — Ente Regulador de los Servicios Públicos</p><p style="margin-top:6px;font-size:11px;color:#666">Córdoba, {{FECHA}}.</p><p style="margin-top:6px;font-weight:700;font-size:12px">Ref.: Expte N° {{EXPTE}}</p><p style="margin-top:2px;font-weight:700;font-size:12px">Asunto: SOLICITUD DE AUMENTO DE TARIFA DE TRANSPORTE INTERURBANO DE PASAJEROS.</p><p style="margin-top:10px;font-weight:700;font-size:12px">INFORME TÉCNICO Costos y Tarifas N° {{INFORME_CYT}}</p><p style="margin-top:2px;font-weight:700;font-size:12px">INFORME TÉCNICO Gerencia Transporte N° {{INFORME_GT}}</p><p style="margin-top:8px;font-weight:700;color:var(--primary-800);font-size:13px">— Mesa Tarifaria N° {{NRO_MESA}} del Transporte Interurbano de Pasajeros —</p><p style="font-size:12px;margin-top:4px">Período de costeo: <strong>{{PERIODO}}</strong></p><p style="margin-top:10px;font-weight:700;font-size:12px">Sres. de la Mesa de estudio de la tarifa del transporte:</p></div>
 <div class="ps"><h4>I. INTRODUCCIÓN</h4><p>Atento a la solicitud de la Mesa de Estudio de la Tarifa del Transporte Interurbano de Pasajeros de la Provincia de Córdoba ("La Mesa") y de la Gerencia de Transporte de ERSeP, se pone a consideración el presente Informe Técnico Conjunto de la Gerencia Transporte y de la Subdirección de Jurisdicción de Costos y Tarifas de ERSeP.</p></div>
-<div class="ps"><h4>II. SOLICITUD DE ACTUALIZACIÓN TARIFARIA POR MECANISMO RESOLUCIÓN N° 1/24</h4><p>A partir de la metodología aprobada en la Resolución General ERSeP N° 1/2024 para la determinación tarifaria, y a partir de los índices propios de la prestación del Servicio de Transporte Interurbano de Pasajeros de la Provincia de Córdoba, se realiza una estimación de la actualización de los costos de prestación.</p><p style="margin-top:6px">Se toman los ponderadores establecidos por {{RES_BASE}} en su Anexo Único. El incremento surge de calcular un promedio ponderado de las variables.</p></div>
-<div class="ps"><h4>A. Análisis de los Costos Medios Presupuestados (CMP)</h4><p>La estructura de costos actualizada está representada por los siguientes valores:</p>{{TABLA_COSTOS}}</div>
+<div class="ps"><h4>II. CONSIDERACIONES PREVIAS – ANTECEDENTES</h4><p>En función del Art. 24 Ley 8.835, el cual otorga la función regulatoria al Ente Regulador de los Servicios Públicos (ERSeP) y del inciso a) del Art. 25 de la mencionada Ley, compete a este Ente cumplir y hacer cumplir dicha Ley y sus reglamentos, como así también las normas regulatorias derivadas de la misma.</p><p style="margin-top:6px">Que por su parte la Ley N° 10.433 amplía la regulación sobre la competencia de ERSeP, previendo en su artículo 1°: "Artículo 1º.- Establécese que el Ente Regulador de los Servicios Públicos de la Provincia de Córdoba (ERSeP) será competente, de manera exclusiva para determinar y aprobar las modificaciones, revisiones y ajustes de los cuadros tarifarios y precios de los servicios a cargo de los prestadores de servicios públicos que se encuentren bajo su regulación y control."</p><p style="margin-top:6px">Que atento a lo establecido por Art. 1 de la Resolución ERSeP Nº 54/2016, se han establecido técnicamente las condiciones para la conformación de la Mesa de Estudio de Valores Tarifarios y Precios, a los fines de llevar a cabo la revisión tarifaria del Servicio Público del Transporte Interurbano de la Provincia de Córdoba.</p><p style="margin-top:6px">Que mediante Resolución General ERSeP N° 1/2024 se aprobó el mecanismo especial para la determinación tarifaria de los servicios públicos bajo regulación y control del ERSeP, cuyo Artículo 2° establece que la aplicación del mecanismo deberá ser oportunamente requerida por la prestadora del servicio público, y que la actualización resultante de su aplicación tendrá como tope máximo los índices publicados por el Banco Central de la República Argentina (BCRA) del Relevamiento de Expectativas de Mercado (REM) y/o el Índice de Precios al Consumidor (IPC), para el período considerado en cada caso, ello a los fines de su previsibilidad.</p><p style="margin-top:6px">{{FECHA_NOTA_TXT}} ingresó la nota al Ente Regulador de los Servicios Públicos, bajo el Sticker N° {{NOTA}}, por parte de {{ENTIDAD}}, solicitando la Adecuación Tarifaria correspondiente de conformidad al mecanismo especial para la determinación de la tarifa establecido en la Resolución General ERSeP N° 1/2024.</p><p style="margin-top:6px">Que, conforme lo expuesto, y habiéndose celebrado las reuniones necesarias y suficientes para el análisis de las variaciones correspondientes, corresponde a las áreas técnicas intervinientes proceder a la actualización de la Tarifa Básica Kilométrica vigente, de acuerdo con el período de actualización definido y los criterios establecidos en la normativa aplicable.</p></div>
+<div class="ps"><h4>III. SOLICITUD DE ACTUALIZACIÓN TARIFARIA POR MECANISMO RESOLUCIÓN N° 1/24</h4><p>A partir de la metodología aprobada en la Resolución General ERSeP N° 1/2024 para la determinación tarifaria, y a partir de los índices propios de la prestación del Servicio de Transporte Interurbano de Pasajeros de la Provincia de Córdoba, se realiza una estimación de la actualización de los costos de prestación.</p><p style="margin-top:6px">Se toman los ponderadores establecidos por {{RES_BASE}} en su Anexo Único. El incremento surge de calcular un promedio ponderado de las variables.</p></div>
+<div class="ps"><p>La estructura de costos actualizada está representada por los siguientes valores:</p>{{TABLA_COSTOS}}{{NARRATIVA_CMP}}</div>
 <div class="ps"><h4>Verificación Tope IPC (Res. ERSeP N° 1/2024)</h4>{{TABLA_TOPE_IPC}}<p style="margin-top:6px">{{TOPE_RESULTADO}}</p></div>
-<div class="ps"><h4>III. CONCLUSIÓN</h4><p>En consonancia con los fundamentos expuestos en el presente Informe Técnico Conjunto, y habiéndose verificado el cumplimiento de los requisitos establecidos en el artículo 1° de la Resolución General ERSeP N° 54/2016, así como en virtud de lo dispuesto en el Mecanismo aprobado por Resolución General N° 1/2024, se recomienda:</p><p style="margin-top:8px"><strong>1-</strong> ACTUALIZAR la nueva Tarifa Básica Kilométrica (TBK) en el valor de <strong>{{TBK_NUEVA}}</strong> sin IVA conforme a los estudios de este Informe, incluyendo el 10,5% del IVA resulta un valor de <strong>{{TBK_NUEVA_IVA}}</strong>. De tal modo el incremento asciende al <strong>{{INCREMENTO_PCT}}</strong>, porcentaje determinado por el Índice propio del sector y de conformidad a los topes establecidos por la Resolución General ERSeP N° 01/2024.</p><p style="margin-top:6px"><strong>2-</strong> Corresponde FIJAR la nueva Tarifa Básica Kilométrica (TBK) en el valor de <strong>{{TBK_NUEVA}}</strong> sin IVA. En consecuencia, el incremento asciende a <strong>{{INCREMENTO_PCT}}</strong> respecto a la TBK vigente de <strong>{{TBK_BASE}}</strong> ({{RES_BASE}}).</p></div>`;
+<div class="ps"><h4>IV. CONCLUSIÓN</h4><p>En consonancia con los fundamentos expuestos en el presente Informe Técnico Conjunto, y habiéndose verificado el cumplimiento de los requisitos establecidos en el artículo 1° de la Resolución General ERSeP N° 54/2016, así como en virtud de lo dispuesto en el Mecanismo aprobado por Resolución General N° 1/2024, se recomienda:</p>{{CONCLUSION_BODY}}</div>`;
 
 const TPL_DECRETO = `<div class="ph"><img src="{{LOGO}}" alt="ERSeP" style="height:50px"><h2>INFORME TÉCNICO CONJUNTO</h2><p>Gerencia Transporte y Subdirección Costos y Tarifas</p><p>ERSeP — Ente Regulador de los Servicios Públicos</p><p style="margin-top:6px;font-size:11px;color:#666">Córdoba, {{FECHA}}</p><p style="margin-top:6px;font-weight:700;color:var(--primary-800);font-size:13px">— Mesa Tarifaria N° {{NRO_MESA}} del Transporte Interurbano de Pasajeros —</p><p style="font-size:12px;margin-top:4px">Período de costeo: <strong>{{PERIODO}}</strong></p></div>
 <div class="ps"><h4>I. INTRODUCCIÓN</h4><p>Atento a la solicitud de la Mesa de Estudio de la Tarifa del Transporte Interurbano de Pasajeros de la Provincia de Córdoba ("La Mesa"), se elabora el presente Informe Técnico Conjunto con el fin de exponer los análisis tarifarios correspondientes al período {{PERIODO}} y evaluar las variaciones bajo la metodología del Decreto N° 254/2003.</p></div>
@@ -1190,11 +1254,29 @@ function bldPrev(mod,d){
     vars['{{RES_BASE}}'] = d.resBase||'';
     vars['{{CMP_TOTAL}}'] = fN(d.totVal,2);
     vars['{{CMP_NUEVO}}'] = fN(d.totNuevo,2);
+    // Datos administrativos (carga manual)
+    vars['{{EXPTE}}'] = bk(d.expte,'N° DE EXPEDIENTE');
+    vars['{{INFORME_CYT}}'] = bk(d.infCyT,'N° INFORME TÉCNICO COSTOS Y TARIFAS');
+    vars['{{INFORME_GT}}'] = bk(d.infGT,'N° INFORME TÉCNICO GERENCIA TRANSPORTE');
+    vars['{{NOTA}}'] = bk(d.nota,'N° DE NOTA/STICKER');
+    vars['{{ENTIDAD}}'] = bk(d.entidad,'ENTIDAD(ES) SOLICITANTE(S)');
+    vars['{{FECHA_NOTA_TXT}}'] = d.fechaNota ? `El día ${fFechaLarga(d.fechaNota)}` : '[COMPLETAR FECHA DE INGRESO DE LA NOTA]';
     // Build costs table
     let tb='<table><thead><tr><th>Ítem de Costos</th><th>Valor Costos</th><th>Ponderador</th><th>Índice</th><th>Fuente</th><th>Tasa crec.</th><th>Valor Nuevo</th></tr></thead><tbody>';
     for(const c of Object.values(d.cats)){tb+=`<tr><td>${c.nom}</td><td>${fN(c.val,2)}</td><td>${fP(c.pond)}</td><td>${c.idx}</td><td>${c.fte}</td><td>${fP(c.tasa)}</td><td>${fN(c.nuevo,4)}</td></tr>`}
     tb+=`<tr class="ptot"><td><strong>TOTAL</strong></td><td><strong>${fN(d.totVal,2)}</strong></td><td>100%</td><td colspan="2"></td><td><strong>${fP(d.tasaTot)}</strong></td><td><strong>${fN(d.totNuevo,2)}</strong></td></tr></tbody></table>`;
     vars['{{TABLA_COSTOS}}'] = tb;
+    // Párrafo de análisis: CMP + (si están cargados) salario UTA y combustible
+    let narr = `<p style="margin-top:6px">Del cuadro anterior se desprende que en el período de análisis <strong>${d.periodo}</strong>, el incremento de los Costos Medios Presupuestados asciende al <strong>${fP(d.tasaTot)}</strong>, utilizando los índices propios del servicio de transporte interurbano de pasajeros.</p>`;
+    if(d.salBase>0 && d.salPeriodo>0){
+      const salVar=(d.salPeriodo/d.salBase-1)*100;
+      narr += `<p style="margin-top:6px">De acuerdo con la escala salarial del Convenio UTA – Larga Distancia, el salario básico correspondiente a la categoría Conductor Guarda Larga Distancia pasó de ${f$(d.salBase)} a ${f$(d.salPeriodo)}, lo que representa una variación salarial acumulada del <strong>${fP(salVar)}</strong> en el período considerado.</p>`;
+    }
+    if(d.gasoilProm>0 && d.gasoilRef>0){
+      const gasoilVar=(d.gasoilProm/d.gasoilRef-1)*100;
+      narr += `<p style="margin-top:6px">En relación con el componente combustible, se procedió al relevamiento y análisis de la documentación presentada por las empresas prestatarias del servicio, determinándose un valor promedio de ${f$(d.gasoilProm)} por litro, el cual comparado con el valor de referencia de ${f$(d.gasoilRef)} por litro, arroja una variación del <strong>${fP(gasoilVar)}</strong> para el período considerado.</p>`;
+    }
+    vars['{{NARRATIVA_CMP}}'] = narr;
     // Tope IPC
     if(d.ipcVar!==null){
       vars['{{TABLA_TOPE_IPC}}'] = `<table><thead><tr><th>IPC Base</th><th>IPC Período</th><th>Var. %</th></tr></thead><tbody><tr><td>${fN(d.ipcB,2)}</td><td>${fN(d.ipcP,2)}</td><td><strong>${fP(d.ipcVar)}</strong></td></tr></tbody></table>`;
@@ -1202,6 +1284,13 @@ function bldPrev(mod,d){
     }else{
       vars['{{TABLA_TOPE_IPC}}'] = '<p style="color:#999">Sin datos de IPC ingresados.</p>';
       vars['{{TOPE_RESULTADO}}'] = '';
+    }
+    // Conclusión: incremento completo si no supera el tope; si lo supera, se aplica
+    // solo hasta el tope y el resto se remite a Audiencia Pública.
+    if(d.ipcVar===null||d.cumpleTope){
+      vars['{{CONCLUSION_BODY}}'] = `<p style="margin-top:8px"><strong>1-</strong> ACTUALIZAR la nueva Tarifa Básica Kilométrica (TBK) en el valor de <strong>${f$(d.tbkNew)}/km</strong> sin IVA conforme a los estudios de este Informe, incluyendo el 10,5% del IVA resulta un valor de <strong>${f$(d.tbkNewIVA)}</strong>. De tal modo el incremento asciende al <strong>${fP(d.tasaTot)}</strong>, porcentaje determinado por el Índice propio del sector y de conformidad a los topes establecidos por la Resolución General ERSeP N° 01/2024.</p><p style="margin-top:6px"><strong>2-</strong> Corresponde FIJAR la nueva Tarifa Básica Kilométrica (TBK) en el valor de <strong>${f$(d.tbkNew)}/km</strong> sin IVA. En consecuencia, el incremento asciende a <strong>${fP(d.tasaTot)}</strong> respecto a la TBK vigente de <strong>${f$(d.tbk)}/km</strong> (${d.resBase||''}).</p>`;
+    }else{
+      vars['{{CONCLUSION_BODY}}'] = `<p style="margin-top:8px"><strong>1-</strong> ACTUALIZAR la nueva Tarifa Básica Kilométrica (TBK) en el valor de <strong>${f$(d.tbkNewAplicada)}/km</strong> sin IVA, incluyendo el 10,5% del IVA resulta un valor de <strong>${f$(d.tbkNewIVAAplicada)}</strong>. El incremento surgido de los índices propios del sector asciende al <strong>${fP(d.tasaTot)}</strong>, el cual <strong>SUPERA</strong> el tope establecido por la Resolución General ERSeP N° 1/2024 (${fP(d.ipcVar)}); en consecuencia, corresponde aplicar el incremento únicamente hasta dicho tope, es decir un <strong>${fP(d.tasaAplicada)}</strong>.</p><p style="margin-top:6px"><strong>2-</strong> Corresponde FIJAR la nueva Tarifa Básica Kilométrica (TBK) en el valor de <strong>${f$(d.tbkNewAplicada)}/km</strong> sin IVA. En consecuencia, el incremento asciende a <strong>${fP(d.tasaAplicada)}</strong> respecto a la TBK vigente de <strong>${f$(d.tbk)}/km</strong> (${d.resBase||''}).</p><p style="margin-top:6px"><strong>3-</strong> Por el excedente de <strong>${fP(d.excedente)}</strong> que no puede reconocerse por esta vía, deberá convocarse a Audiencia Pública, conforme lo dispuesto en el inciso d) del artículo 2° de la Resolución General ERSeP N° 1/2024.</p>`;
     }
   }else{
     vars['{{TBK_NUEVA}}'] = f$(d.tbkCalc)+'/km';
