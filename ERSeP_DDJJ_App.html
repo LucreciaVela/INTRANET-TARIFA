@@ -571,18 +571,37 @@ async function fbLoadAll() {
 async function fbSetPass(key, val) {
   try {
     var id = fbDocId(key);
-    window.passCache[id] = val;
     var url = FB_BASE + "/" + id + "?updateMask.fieldPaths=pass&key=" + FB_API_KEY;
-    await fetch(url, {
+    var res = await fetch(url, {
       method: "PATCH",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({fields: {pass: {stringValue: val}}})
     });
-  } catch(e) {}
+    if (res.ok) { window.passCache[id] = val; return true; }
+    return false;
+  } catch(e) { return false; }
 }
 
 function fbGetCached(key) {
   return window.passCache[fbDocId(key)] || null;
+}
+
+// Carga puntual de UN solo documento de contraseña (en vez de listar toda la
+// colección). Se agrega para poder restringir la regla de Firestore a
+// "get" permitido / "list" denegado sin romper el login existente.
+function fbPreloadOne(key) {
+  return new Promise(function (resolve) {
+    var id = fbDocId(key);
+    fetch(FB_BASE + "/" + id + "?key=" + FB_API_KEY)
+      .then(function (res) { return res.ok ? res.json() : null; })
+      .then(function (doc) {
+        if (doc && doc.fields && doc.fields.pass) {
+          window.passCache[id] = doc.fields.pass.stringValue;
+        }
+        resolve();
+      })
+      .catch(function () { resolve(); });
+  });
 }
 
 var ADMIN = {
@@ -3558,7 +3577,14 @@ function LoginScreen(_ref0) {
     loading = _useState0[0],
     setLoading = _useState0[1];
   function doLogin() {
-    return _doLogin.apply(this, arguments);
+    // Antes de validar, precarga solo el documento de contraseña que hace
+    // falta para este intento de login (no toda la colección), así el login
+    // sigue funcionando aunque Firestore ya no permita "list" público.
+    var _this = this, _args = arguments;
+    var key = (tipo === "admin") ? "ersep-admin-pass" : ("ersep-pass-" + cuit.trim());
+    return fbPreloadOne(key).then(function () {
+      return _doLogin.apply(_this, _args);
+    });
   }
   function _doLogin() {
     _doLogin = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4() {
@@ -6933,13 +6959,17 @@ function ChangePasswordScreen(_ref_cp) {
   var _er = useState(""), err = _er[0], setErr = _er[1];
   var _ok = useState(false), saved = _ok[0], setSaved = _ok[1];
 
-  function handleSave() {
+  async function handleSave() {
     if (newPass.length < 6) { setErr("La contraseña debe tener al menos 6 caracteres."); return; }
     if (newPass !== confPass) { setErr("Las contraseñas no coinciden."); return; }
     var key = user.tipo === "admin" ? "ersep-admin-pass" : ("ersep-pass-" + user.cuit);
-    fbSetPass(key, newPass);
-    setSaved(true);
-    setTimeout(function() { onDone(); }, 1200);
+    var ok = await fbSetPass(key, newPass);
+    if (ok) {
+      setSaved(true);
+      setTimeout(function() { onDone(); }, 1200);
+    } else {
+      setErr("No se pudo guardar el cambio de contraseña (mantenimiento de seguridad en curso). Podés seguir ingresando con tu contraseña actual; para cambiarla contactá a ERSeP.");
+    }
   }
 
   var inp = function(label, val, setter, placeholder) {
